@@ -12,16 +12,33 @@
 #include <WinSock2.h>
 #pragma comment(lib, "ws2_32.lib")
 
+#include <vector>
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <vector>
+#include <signal.h>
+
+void     INThandler(int);
+
+static volatile int keepRunning = 1;
+
+void  INThandler(int sig)
+{
+	signal(sig, SIG_IGN);
+	printf("break\n");
+	keepRunning = 0;
+}
+
 
 void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets);
 BOOL AddClient(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET& sock_tcp_listen);
 
 int main(int argc, const char* argv[])
 {
+	signal(SIGINT, INThandler);
+
+
 	const long nPort = 5003;
 
 	// 윈속 초기화에 실패할 경우 종료
@@ -85,20 +102,16 @@ int main(int argc, const char* argv[])
 	std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 	
 
-	while (true) 
+	while (keepRunning)
 	{ // 프로그램 대기상태를 위한 #while_1
-		
 		// 패킷을 수신한다
 		RecvPacket(sockets);
 		AddClient(sockets, listen_sock);
 
-
-
-
 	} // END #while_1
 
 	// ===============================================================================
-
+	printf("Exit ! \n");
 	closesocket(listen_sock);
 
 	// 윈속 종료
@@ -114,7 +127,8 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 	char buf[BUFSIZE + sizeof(TCHAR)];
 
 	// 메세지 목록을 먼저 본다.
-	for (int i = 0; i < sockets.size(); ++i)
+	int i;
+	for (i = 0; i < sockets.size(); ++i)
 	{ // 클라이언트와의 데이터 통신을 위한 #while_2
 		ret_value = recv(sockets[i].first, buf, BUFSIZE, 0);
 		if (ret_value == SOCKET_ERROR)
@@ -129,7 +143,10 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 		else if (ret_value == 0)
 		{
 			// Peer Closed
-			break;
+			//sockets.erase(sockets.begin(), i);
+			sockets.erase(sockets.begin() + i);
+			if (i > 0) --i;
+			continue;
 		}
 
 		buf[ret_value] = '\0';
