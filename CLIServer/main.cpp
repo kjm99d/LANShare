@@ -15,6 +15,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <vector>
+
+void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets);
+BOOL AddClient(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET& sock_tcp_listen);
+
 int main(int argc, const char* argv[])
 {
 	const long nPort = 5003;
@@ -77,50 +82,18 @@ int main(int argc, const char* argv[])
 	// Connection Co-Routine
 	// ===============================================================================
 	
-	SOCKET client_sock;
-	SOCKADDR_IN clientaddr;
-	int addrlen;
-	char buf[BUFSIZE + sizeof(TCHAR)];
-
-	int var = 0;
+	std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
+	
 
 	while (true) 
 	{ // 프로그램 대기상태를 위한 #while_1
-
-		addrlen = sizeof(clientaddr);
-
-		// accept() - 서버에 접속한 클라이언트와 통신할 수 있도록 새로운 소켓을 생성리턴한다.
-		client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-		//printf("%d \n", var++);
 		
-		if (client_sock == INVALID_SOCKET) {
-			//printf(">> [!] Accept() Failure \n");
-			continue;
-		}
+		// 패킷을 수신한다
+		RecvPacket(sockets);
+		AddClient(sockets, listen_sock);
 
-		printf("[TCP 서버] 클라이언트 접속 : IP 주소 = %s\t 포트 번호 = %d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
-		while (1)
-		{ // 클라이언트와의 데이터 통신을 위한 #while_2
-			ret_value = recv(client_sock, buf, BUFSIZE, 0);
-			if (ret_value == SOCKET_ERROR) 
-			{
-				if (WSAGetLastError() != WSAEWOULDBLOCK) {
-					//printf("No Recved Data")
-					break;
-				}
 
-				continue; // 음... 
-			}
-			else if (ret_value == 0)
-			{
-				break;
-			}
-
-			buf[ret_value] = '\0';
-			printf("TCP - %s:%d] %s \n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port), buf);
-
-		} // END #while_2
 
 	} // END #while_1
 
@@ -132,4 +105,58 @@ int main(int argc, const char* argv[])
 	WSACleanup();
 
 	return 0;
+}
+
+
+void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
+{
+	int ret_value = 0;
+	char buf[BUFSIZE + sizeof(TCHAR)];
+
+	// 메세지 목록을 먼저 본다.
+	for (int i = 0; i < sockets.size(); ++i)
+	{ // 클라이언트와의 데이터 통신을 위한 #while_2
+		ret_value = recv(sockets[i].first, buf, BUFSIZE, 0);
+		if (ret_value == SOCKET_ERROR)
+		{
+			if (WSAGetLastError() != WSAEWOULDBLOCK) {
+				//printf("No Recved Data")
+				break;
+			}
+
+			continue; // 음... 
+		}
+		else if (ret_value == 0)
+		{
+			// Peer Closed
+			break;
+		}
+
+		buf[ret_value] = '\0';
+		printf("TCP - %s:%d] %s \n", inet_ntoa(sockets[i].second.sin_addr), ntohs(sockets[i].second.sin_port), buf);
+
+	} // END #while_2
+}
+
+BOOL AddClient(std::vector<std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET &sock_tcp_listen)
+{
+	int addrlen;
+
+	addrlen = sizeof(SOCKADDR_IN);
+	SOCKET client_sock;
+	SOCKADDR_IN clientaddr;
+	// accept() - 서버에 접속한 클라이언트와 통신할 수 있도록 새로운 소켓을 생성리턴한다.
+	client_sock = accept(sock_tcp_listen, (SOCKADDR*)&clientaddr, &addrlen);
+	//printf("%d \n", var++);
+
+	if (client_sock == INVALID_SOCKET) {
+		//printf(">> [!] Accept() Failure \n");
+		return FALSE;
+	}
+
+	sockets.push_back({ client_sock, clientaddr });
+
+	printf("[TCP 서버] 클라이언트 접속 : IP 주소 = %s\t 포트 번호 = %d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+
+	return TRUE;
 }
