@@ -20,8 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NBSocketServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="NBSocketServer.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
