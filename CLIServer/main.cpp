@@ -101,12 +101,27 @@ int main(int argc, const char* argv[])
 	
 	std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 	
+	int counter = 0;
 
 	while (keepRunning)
 	{ // 프로그램 대기상태를 위한 #while_1
 		// 패킷을 수신한다
 		RecvPacket(sockets);
 		AddClient(sockets, listen_sock);
+
+		counter++;
+		if (counter % 10000 == 0)
+			printf("counter = [%d] \n", counter);
+		if (counter == 100000)
+		{
+			counter = 0;
+			// Send 기능 테스트
+			for (int i = 0; i < sockets.size(); ++i)
+			{
+				const char* arg = "hello world     ";
+				send(sockets[i].first, arg, strlen(arg), 0);
+			}
+		}
 
 	} // END #while_1
 
