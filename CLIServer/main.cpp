@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <signal.h>
+#include <iostream>
 
 void     INThandler(int);
 
@@ -46,9 +47,38 @@ int main(int argc, const char* argv[])
 		RecvPacket(sockets);
 		AddClient(sockets, Sock);
 
+
+		if (sockets.size() > 0 && 0 == counter) 
+		{
+			std::string path;
+			std::cout << "PATH >> " << std::endl;
+			std::cin >> path;
+
+			FILE* fd = NULL;
+			fopen_s(&fd, path.c_str(), "rb");
+
+			fseek(fd, 0, SEEK_END);
+			long length = ftell(fd);
+			fseek(fd, 0, SEEK_SET);
+
+			while (true) 
+			{
+				unsigned char buffer[1024] = { 0, };
+				const size_t read_byte = fread(buffer, 1, 1024, fd);
+				if (read_byte == 0) 
+				{
+					break;
+				}
+
+				send(sockets[0].first, (const char*)buffer, read_byte, 0);
+			}
+
+			fclose(fd);
+		}
+
+#if 0
 		counter++;
-		if (counter % 10000 == 0)
-			printf("counter = [%d] \n", counter);
+		 if (counter % 10000 == 0) printf("counter = [%d] \n", counter);
 		if (counter == 100000)
 		{
 			counter = 0;
@@ -59,6 +89,7 @@ int main(int argc, const char* argv[])
 				send(sockets[i].first, arg, strlen(arg), 0);
 			}
 		}
+#endif
 
 	} // END #while_1
 
