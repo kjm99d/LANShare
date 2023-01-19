@@ -5,12 +5,22 @@
 #include <vector>
 #include <signal.h>
 #include <iostream>
+#include <thread>
 
 
 #include "INISettingLoader.h"
+#include "ProtocolBase.h"
+
+
+// ==============
+string fileName;
+string fhash;
+UINT fsize;
+// ==============
+
+
 
 void     INThandler(int);
-
 static volatile int keepRunning = 1;
 
 
@@ -18,10 +28,14 @@ static volatile int keepRunning = 1;
 void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets);
 BOOL AddClient(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET& sock_tcp_listen);
 void PrintCommand();
+void PrintClient(const std::vector<std::pair<SOCKET, SOCKADDR_IN>> sockets);
 int LoadINI();
+
+std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 
 int main(int argc, const char* argv[])
 {
+	// [Ctrl + C] Interrupt
 	signal(SIGINT, INThandler);
 
 
@@ -31,72 +45,30 @@ int main(int argc, const char* argv[])
 	server.Bind();
 
 
-	// ===============================================================================
-	// 명령어 입력 받기
-	PrintCommand();
-	// ===============================================================================
+
+	std::thread CommandListener = std::thread([] {
+		// 명령어 입력 받기
+		while (true) {
+			system("cls"); // 콘솔창 지워라 
+			PrintCommand();
+		}
+		});
+
 	
 
 	// ===============================================================================
 	// Connection Co-Routine
 	// ===============================================================================
-	
-	std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
-	
 	int counter = 0;
-
-
-
+	CProtocolBase base(fileName, fhash, fsize, NULL);
+	
+	
 	while (keepRunning)
-	{ // 프로그램 대기상태를 위한 #while_1
+	{ 
 		// 패킷을 수신한다
 		SOCKET Sock = server.GetListen();
 		RecvPacket(sockets);
 		AddClient(sockets, Sock);
-
-
-		if (sockets.size() > 0 && 0 == counter) 
-		{
-			std::string path;
-			std::cout << "PATH >> " << std::endl;
-			std::cin >> path;
-
-			FILE* fd = NULL;
-			fopen_s(&fd, path.c_str(), "rb");
-
-			fseek(fd, 0, SEEK_END);
-			long length = ftell(fd);
-			fseek(fd, 0, SEEK_SET);
-
-			while (true) 
-			{
-				unsigned char buffer[1024] = { 0, };
-				const size_t read_byte = fread(buffer, 1, 1024, fd);
-				if (read_byte == 0) 
-				{
-					break;
-				}
-
-				send(sockets[0].first, (const char*)buffer, read_byte, 0);
-			}
-
-			fclose(fd);
-		}
-
-#if 0
-		counter++;
-		 if (counter % 10000 == 0) printf("counter = [%d] \n", counter);
-		if (counter == 100000)
-		{
-			counter = 0;
-			// Send 기능 테스트
-			for (int i = 0; i < sockets.size(); ++i)
-			{
-				const char* arg = "hello world     ";
-				send(sockets[i].first, arg, strlen(arg), 0);
-			}
-		}
-#endif
 
 	} // END #while_1
 
@@ -178,6 +150,7 @@ void PrintCommand()
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| [1] 파일로 부터 읽기(base.ini)                             | \n");
 	printf("| [2] 커맨드로 읽기                                          | \n");
+	printf("| [3] 현재 연결된 모든 클라이언트 정보 출력	                 | \n");
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| COMMAND >> ");
 	// 현재 커서 정보를 가져온다
@@ -198,21 +171,38 @@ void PrintCommand()
 	switch (menu_num)
 	{
 	case 1:
-		LoadINI();
-		break;
+		LoadINI(); break;
+	case 3:
+		PrintClient(sockets); break;
 	default:
 		break;
 	}
+
+	system("pause");
 }
+
+void PrintClient(const std::vector<std::pair<SOCKET, SOCKADDR_IN>> sockets)
+{
+	for(int i = 0; i < sockets.size(); ++i)
+	{
+		const int num = i + 1;
+		const std::pair<SOCKET, SOCKADDR_IN> client = sockets[i];
+		printf("[%d] 클라이언트 접속 : IP 주소 = %s\t 포트 번호 = %d\n", num, inet_ntoa(client.second.sin_addr), ntohs(client.second.sin_port));
+
+	}
+}
+
 
 int LoadINI()
 {
 	std::string temp; // 임시 변수
 
-	CINISettingLoader ldr("test.ini");
+	CINISettingLoader ldr(".\\test.ini");
 	ldr.SetSection("Profile");
-	ldr.Get("FileName", temp);
-	printf("%s", temp.c_str());
+	ldr.Get("FileName", fileName);
+	ldr.Get("hash", fhash);
+	//ldr.Get("size", fsize);
+	ldr.Get("size", fsize);
 
 
 
