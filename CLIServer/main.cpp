@@ -180,9 +180,9 @@ void PrintCommand()
 	printf("| [2] 커맨드로 읽기                                          | \n");
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| COMMAND >> ");
-
 	// 현재 커서 정보를 가져온다
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &a);
+	printf("                                                |");
 	Cur.X = a.dwCursorPosition.X;
 	Cur.Y = a.dwCursorPosition.Y;
 	printf("\n"); // newline
