@@ -4,6 +4,10 @@
 using namespace std;
 
 #include "SettingLoader.h"
+
+/**
+ * \brief INI포맷의 파일을 조회 및 구축 하는 클래스.
+ */
 class CINISettingLoader : public ISettingLoader
 {
 public:
@@ -13,8 +17,10 @@ public:
 
 public:
 	void SetSection(string section) { m_section = section; };
-	bool Get(string key, string& dest) override;
-	bool Set(string key, string value) override;
+
+	bool Get(string key, UINT& dest)	override;
+	bool Get(string key, string& dest)	override;
+	bool Set(string key, string value)	override;
 
 
 private:

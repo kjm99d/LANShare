@@ -1,9 +1,17 @@
 ﻿#include "INISettingLoader.h"
 
+bool CINISettingLoader::Get(string key, UINT& dest)
+{
+	UINT buffer = GetPrivateProfileIntA(m_section.c_str(), key.c_str(), 0, m_ini_path.c_str());
+	dest = buffer;
+
+	return true;
+}
+
 bool CINISettingLoader::Get(string key, string& dest)
 {
 	char buffer[MAX_PATH] = { 0, };
-	const DWORD nBufferCopied = GetPrivateProfileStringA(m_section.c_str(), key.c_str(), "NONE", 
+	const DWORD nBufferCopied = GetPrivateProfileStringA(m_section.c_str(), key.c_str(), "NONE",
 		buffer, MAX_PATH, m_ini_path.c_str());
 
 	dest = buffer;

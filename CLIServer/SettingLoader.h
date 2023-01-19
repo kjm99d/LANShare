@@ -12,6 +12,7 @@ using namespace std;
 class ISettingLoader 
 {
 protected:
+	virtual bool Get(string key, UINT& dest) = 0;
 	virtual bool Get(string key, string& dest) = 0;
 	virtual bool Set(string key, string value) = 0;
 };
