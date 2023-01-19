@@ -19,11 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="INISettingLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NBSocketServer.cpp" />
+    <ClCompile Include="ProtocolBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="INISettingLoader.h" />
+    <ClInclude Include="SettingLoader.h" />
     <ClInclude Include="NBSocketServer.h" />
+    <ClInclude Include="ProtocolBase.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

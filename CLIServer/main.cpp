@@ -6,20 +6,19 @@
 #include <signal.h>
 #include <iostream>
 
+
+#include "INISettingLoader.h"
+
 void     INThandler(int);
 
 static volatile int keepRunning = 1;
 
-void  INThandler(int sig)
-{
-	signal(sig, SIG_IGN);
-	printf("break\n");
-	keepRunning = 0;
-}
 
 
 void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets);
 BOOL AddClient(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET& sock_tcp_listen);
+void PrintCommand();
+int LoadINI();
 
 int main(int argc, const char* argv[])
 {
@@ -33,12 +32,20 @@ int main(int argc, const char* argv[])
 
 
 	// ===============================================================================
+	// 명령어 입력 받기
+	PrintCommand();
+	// ===============================================================================
+	
+
+	// ===============================================================================
 	// Connection Co-Routine
 	// ===============================================================================
 	
 	std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 	
 	int counter = 0;
+
+
 
 	while (keepRunning)
 	{ // 프로그램 대기상태를 위한 #while_1
@@ -106,7 +113,7 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 	char buf[BUFSIZE + sizeof(TCHAR)];
 
 	// 메세지 목록을 먼저 본다.
-	int i;
+	unsigned int i;
 	for (i = 0; i < sockets.size(); ++i)
 	{ // 클라이언트와의 데이터 통신을 위한 #while_2
 		ret_value = recv(sockets[i].first, buf, BUFSIZE, 0);
@@ -155,4 +162,67 @@ BOOL AddClient(std::vector<std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET &soc
 	printf("[TCP 서버] 클라이언트 접속 : IP 주소 = %s\t 포트 번호 = %d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
 	return TRUE;
+}
+
+
+
+void PrintCommand()
+{
+	COORD Cur;
+	CONSOLE_SCREEN_BUFFER_INFO a;
+	int menu_num = 0;
+
+
+	printf("| ---------------------------------------------------------- | \n");
+	printf("| ---------------------- Command Box ----------------------- | \n");
+	printf("| ---------------------------------------------------------- | \n");
+	printf("| [1] 파일로 부터 읽기(base.ini)                             | \n");
+	printf("| [2] 커맨드로 읽기                                          | \n");
+	printf("| ---------------------------------------------------------- | \n");
+	printf("| COMMAND >> ");
+
+	// 현재 커서 정보를 가져온다
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &a);
+	Cur.X = a.dwCursorPosition.X;
+	Cur.Y = a.dwCursorPosition.Y;
+	printf("\n"); // newline
+	printf("| ---------------------------------------------------------- | \n");
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
+
+	scanf_s("%d", &menu_num);
+	Cur.X = 0;
+	Cur.Y += 2;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
+
+
+	switch (menu_num)
+	{
+	case 1:
+		LoadINI();
+		break;
+	default:
+		break;
+	}
+}
+
+int LoadINI()
+{
+	std::string temp; // 임시 변수
+
+	CINISettingLoader ldr("test.ini");
+	ldr.SetSection("Profile");
+	ldr.Get("FileName", temp);
+	printf("%s", temp.c_str());
+
+
+
+	return 0;
+}
+
+
+void  INThandler(int sig)
+{
+	signal(sig, SIG_IGN);
+	printf("break\n");
+	keepRunning = 0;
 }
