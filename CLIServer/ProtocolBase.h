@@ -1,25 +1,26 @@
-﻿#pragma once
+﻿/*****************************************************************//**
+ * \file   ProtocolBase.h
+ * \brief  수신된 패킷의 프로토콜 인터페이스
+ * 
+ * \author KJM
+ * \date   January 2023
+ *********************************************************************/
+
+#pragma once
 #include <string>
+#include <vector>
 
 using namespace std;
 
-class CProtocolBase
+
+class CProtocolBase 
 {
-public:
-	CProtocolBase(string name, string hash, long size, char* buffer);
-	CProtocolBase() = delete;
-	~CProtocolBase();
-
-
+protected:
+	virtual void SetMessage(string message) = 0;
+	virtual bool Parse() = 0;
+	virtual void Start() = 0;
 
 protected:
-	string	m_name;	// 파일명
-	string	m_hash;	// 파일의 해쉬 정보 (무결성 체크)
-	long	m_size;	// 파일의 길이
-	char*	m_buffer; // 버퍼
-
-
-
-
+	string message;
 };
 

@@ -22,10 +22,11 @@
     <ClCompile Include="INISettingLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NBSocketServer.cpp" />
-    <ClCompile Include="ProtocolBase.cpp" />
+    <ClCompile Include="ProtocolV1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="INISettingLoader.h" />
+    <ClInclude Include="ProtocolV1.h" />
     <ClInclude Include="SettingLoader.h" />
     <ClInclude Include="NBSocketServer.h" />
     <ClInclude Include="ProtocolBase.h" />

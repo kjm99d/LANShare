@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\ReceiveProtocol">
+      <UniqueIdentifier>{33ca1b0d-ad8f-4e19-b44e-d3e06f3d8f1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\ReceiveProtocol">
+      <UniqueIdentifier>{c40fb626-a61a-4aff-b28a-dec37216b488}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,11 +27,11 @@
     <ClCompile Include="NBSocketServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ProtocolBase.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="INISettingLoader.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtocolV1.cpp">
+      <Filter>소스 파일\ReceiveProtocol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -35,14 +41,17 @@
     <ClInclude Include="NBSocketServer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ProtocolBase.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="SettingLoader.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="INISettingLoader.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolBase.h">
+      <Filter>헤더 파일\ReceiveProtocol</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolV1.h">
+      <Filter>헤더 파일\ReceiveProtocol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

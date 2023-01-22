@@ -10,6 +10,7 @@
 
 #include "INISettingLoader.h"
 #include "ProtocolBase.h"
+#include "ProtocolV1.h"
 
 
 // ==============
@@ -60,7 +61,7 @@ int main(int argc, const char* argv[])
 	// Connection Co-Routine
 	// ===============================================================================
 	int counter = 0;
-	CProtocolBase base(fileName, fhash, fsize, NULL);
+	
 	
 	
 	while (keepRunning)
@@ -108,7 +109,14 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 		}
 
 		buf[ret_value] = '\0';
-		printf("TCP - %s:%d] %s \n", inet_ntoa(sockets[i].second.sin_addr), ntohs(sockets[i].second.sin_port), buf);
+		//printf("TCP - %s:%d] %s \n", inet_ntoa(sockets[i].second.sin_addr), ntohs(sockets[i].second.sin_port), buf);
+		
+		CProtocolV1* protocol = new CProtocolV1();
+		protocol->SetMessage(buf);
+		if (protocol->Parse() == true)
+			protocol->Start();
+
+
 
 	} // END #while_2
 }
