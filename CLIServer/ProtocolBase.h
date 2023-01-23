@@ -15,7 +15,7 @@ using namespace std;
 
 class CProtocolBase 
 {
-protected:
+public:
 	virtual void SetMessage(string message) = 0;
 	virtual bool Parse() = 0;
 	virtual void Start() = 0;

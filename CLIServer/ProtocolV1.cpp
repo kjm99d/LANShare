@@ -3,7 +3,7 @@
 /**
  * 문자열 형태로 들어온 메세지 멤버 메세지로 지정한다.
  * 
- * \param message
+ * \param message 실제 패킷 정보 (패킷의 끝은 NULL로 처리되어야함)
  */
 void CProtocolV1::SetMessage(string message)
 {

@@ -111,11 +111,14 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 		buf[ret_value] = '\0';
 		//printf("TCP - %s:%d] %s \n", inet_ntoa(sockets[i].second.sin_addr), ntohs(sockets[i].second.sin_port), buf);
 		
-		CProtocolV1* protocol = new CProtocolV1();
+		CProtocolBase * protocol = new CProtocolV1();
 		protocol->SetMessage(buf);
 		if (protocol->Parse() == true)
 			protocol->Start();
 
+		// 메모리 해제
+		delete protocol;
+		protocol = nullptr;
 
 
 	} // END #while_2
