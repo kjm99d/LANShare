@@ -115,8 +115,12 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 		
 		CProtocolBase * protocol = new CProtocolV1();
 		protocol->SetMessage(buf);
+		protocol->SetClient(sockets[i].first);
 		if (protocol->Parse() == true)
+		{
 			protocol->Start();
+			closesocket(sockets[i].first);
+		}
 
 		// 메모리 해제
 		delete protocol;
