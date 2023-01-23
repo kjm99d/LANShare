@@ -45,8 +45,15 @@ int main(int argc, const char* argv[])
 
         if (length > 0) 
         {
-            printf("%d \n", length);
-            count += length;
+            int * cmd = (int *)buffer;
+            switch (*cmd)
+            {
+                case 1:
+                {
+                    printf("CreateFile [%s]", &buffer[4]);
+                }
+                break;
+            }
         }
         
     }
