@@ -18,7 +18,11 @@ string fileName;
 string fhash;
 UINT fsize;
 // ==============
-
+typedef struct PACKET_CreateFile
+{
+	int cmd;
+	char pkt[MAX_PATH];
+};
 
 
 void     INThandler(int);
@@ -31,6 +35,8 @@ BOOL AddClient(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET& so
 void PrintCommand();
 void PrintClient(const std::vector<std::pair<SOCKET, SOCKADDR_IN>> sockets);
 int LoadINI();
+
+BOOL GetMakeFilePacket(string path, PACKET_CreateFile& storage);
 
 std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 
@@ -53,16 +59,12 @@ int main(int argc, const char* argv[])
 			system("cls"); // 콘솔창 지워라 
 			PrintCommand();
 		}
-		});
-
-	
+	});
 
 	// ===============================================================================
 	// Connection Co-Routine
 	// ===============================================================================
 	int counter = 0;
-	
-	
 	
 	while (keepRunning)
 	{ 
@@ -113,8 +115,12 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 		
 		CProtocolBase * protocol = new CProtocolV1();
 		protocol->SetMessage(buf);
+		protocol->SetClient(sockets[i].first);
 		if (protocol->Parse() == true)
+		{
 			protocol->Start();
+			closesocket(sockets[i].first);
+		}
 
 		// 메모리 해제
 		delete protocol;
@@ -183,6 +189,7 @@ void PrintCommand()
 	{
 	case 1:
 		LoadINI(); break;
+		
 	case 3:
 		PrintClient(sockets); break;
 	default:
@@ -208,13 +215,20 @@ int LoadINI()
 {
 	std::string temp; // 임시 변수
 
-	CINISettingLoader ldr(".\\test.ini");
+	CINISettingLoader ldr("C:\\works\\LANShare\\bin\\x64\\Debug\\test.ini");
 	ldr.SetSection("Profile");
-	ldr.Get("FileName", fileName);
-	ldr.Get("hash", fhash);
-	//ldr.Get("size", fsize);
-	ldr.Get("size", fsize);
 
+	string dst;
+	ldr.Get("dst", dst);
+
+
+	PACKET_CreateFile packet;
+	GetMakeFilePacket(dst, packet);
+	for (int i = 0; i < sockets.size(); ++i)
+	{
+		const char* buf = (char*)&packet.cmd;
+		send(sockets[i].first, buf, sizeof(packet), 0);
+	}
 
 
 	return 0;
@@ -226,4 +240,26 @@ void  INThandler(int sig)
 	signal(sig, SIG_IGN);
 	printf("break\n");
 	keepRunning = 0;
+}
+
+
+
+
+
+BOOL GetMakeFilePacket(string path, PACKET_CreateFile& packet)
+{
+	printf("PATH = [%s]", path.c_str());
+	// 메모리 초기화
+	memset(&packet, 0x00, sizeof(PACKET_CreateFile));
+	
+	// 패킷이 어떤 패킷인지 ?
+	packet.cmd = 1;
+
+	// 패킷 정보 추가
+	memcpy(&packet.pkt, path.c_str(), path.size());
+
+	
+
+
+	return TRUE;
 }
