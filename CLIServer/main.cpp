@@ -12,17 +12,16 @@
 #include "ProtocolBase.h"
 #include "ProtocolV1.h"
 
+#include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
+#include "CLIPacketStruct.h"	// 패킷정의 할 구조체 정보
+
 
 // ==============
 string fileName;
 string fhash;
 UINT fsize;
 // ==============
-typedef struct PACKET_CreateFile
-{
-	int cmd;
-	char pkt[MAX_PATH];
-};
+
 
 
 void     INThandler(int);
@@ -36,7 +35,8 @@ void PrintCommand();
 void PrintClient(const std::vector<std::pair<SOCKET, SOCKADDR_IN>> sockets);
 int LoadINI();
 
-BOOL GetMakeFilePacket(string path, PACKET_CreateFile& storage);
+BOOL GetCreateFilePacket(string path, PACKET_CreateFile& packet);
+BOOL GetCloseHandlePacket(string path, PACKET_CloseHandle& packet);
 
 std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 
@@ -184,14 +184,20 @@ void PrintCommand()
 	Cur.Y += 2;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
 
-
+	// Selector >> 나중에 함수로 별도로 만들어 둘 것
+	// 입출력 부분과 이벤트 트리거 해주는 부분은 달라야함.
 	switch (menu_num)
 	{
 	case 1:
+
+		Cur.X = 0;
+		Cur.Y += 2;
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
 		LoadINI(); break;
 		
 	case 3:
-		PrintClient(sockets); break;
+		PrintClient(sockets); 
+		break;
 	default:
 		break;
 	}
@@ -223,11 +229,35 @@ int LoadINI()
 
 
 	PACKET_CreateFile packet;
-	GetMakeFilePacket(dst, packet);
+	GetCreateFilePacket(dst, packet);
 	for (int i = 0; i < sockets.size(); ++i)
 	{
 		const char* buf = (char*)&packet.cmd;
 		send(sockets[i].first, buf, sizeof(packet), 0);
+	}
+
+
+	PACKET_WriteFile wf;
+	wf.cmd = PROTOCOL_ID_WRITEFILE;
+
+	// 전송
+	memcpy(wf.buffer, "Hello World", sizeof("Hello World"));
+	for (int i = 0; i < sockets.size(); ++i)
+	{
+		const char* buf = (char*)&wf.cmd;
+		//							동적 메모리 이므로, 시작 주소부터 데이터의 끝 주소까지를 최종 버퍼사이즈로 잡아서 전송한다
+		//const size_t buffer_size = sizeof(wf.cmd) + (512 * sizeof(char));
+		send(sockets[i].first, buf, sizeof(wf), 0);
+	}
+
+
+
+	PACKET_CloseHandle packet2;
+	GetCloseHandlePacket(dst, packet2);
+	for (int i = 0; i < sockets.size(); ++i)
+	{
+		const char* buf = (char*)&packet2.cmd;
+		send(sockets[i].first, buf, sizeof(packet2), 0);
 	}
 
 
@@ -246,20 +276,30 @@ void  INThandler(int sig)
 
 
 
-BOOL GetMakeFilePacket(string path, PACKET_CreateFile& packet)
+BOOL GetCreateFilePacket(string path, PACKET_CreateFile& packet)
 {
-	printf("PATH = [%s]", path.c_str());
+	printf("[Send Packet] CreateFile = [%s] \n\n", path.c_str());
 	// 메모리 초기화
 	memset(&packet, 0x00, sizeof(PACKET_CreateFile));
-	
+
 	// 패킷이 어떤 패킷인지 ?
-	packet.cmd = 1;
+	packet.cmd = PROTOCOL_ID_CREATEFILE;
 
 	// 패킷 정보 추가
 	memcpy(&packet.pkt, path.c_str(), path.size());
 
-	
+	return TRUE;
+}
 
+
+BOOL GetCloseHandlePacket(string path, PACKET_CloseHandle& packet)
+{
+	printf("[Send Packet] CloseHandle \n\n", path.c_str());
+	// 메모리 초기화
+	memset(&packet, 0x00, sizeof(PACKET_CloseHandle));
+
+	// 패킷이 어떤 패킷인지 ?
+	packet.cmd = PROTOCOL_ID_CLOSEHANDLE;
 
 	return TRUE;
 }

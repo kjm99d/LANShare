@@ -55,12 +55,8 @@ void CProtocolV1::Start()
 		const char* str_header = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nContent-length: 3\r\n\r\n";
 		const char* str_body = "aaa\r\n";
 
-		
-
 		send(this->client, str_header, strlen(str_header), 0);
 		send(this->client, str_body, strlen(str_body), 0);
-		
-
 		
 	}
 

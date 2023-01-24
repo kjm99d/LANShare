@@ -19,6 +19,9 @@
     <Filter Include="헤더 파일\ReceiveProtocol">
       <UniqueIdentifier>{c40fb626-a61a-4aff-b28a-dec37216b488}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Common">
+      <UniqueIdentifier>{d0b8405c-282e-4acd-8ed7-2ec280791b80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -52,6 +55,12 @@
     </ClInclude>
     <ClInclude Include="ProtocolV1.h">
       <Filter>헤더 파일\ReceiveProtocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\CLIPacketStruct.h">
+      <Filter>헤더 파일\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\ProtocolID.h">
+      <Filter>헤더 파일\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
