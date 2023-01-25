@@ -42,6 +42,8 @@ std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 
 int main(int argc, const char* argv[])
 {
+
+	printf("%d", sizeof(PACKET_STREAM));
 	// [Ctrl + C] Interrupt
 	signal(SIGINT, INThandler);
 
@@ -227,6 +229,14 @@ int LoadINI()
 	string dst;
 	ldr.Get("dst", dst);
 
+	PACKET_STREAM stream;
+	stream.cmd = 1;
+	memcpy(stream.buffer + sizeof(int), "Hello WWWWW", sizeof("Hello WWWWW"));
+	for (int i = 0; i < sockets.size(); ++i)
+	{
+		const char* buf = (char*)&stream.cmd;
+		send(sockets[i].first, buf, sizeof(stream), 0);
+	}
 
 	PACKET_CreateFile packet;
 	GetCreateFilePacket(dst, packet);

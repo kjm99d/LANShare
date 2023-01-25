@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <minwindef.h>
 
+// ========================================================================================== //
 typedef struct PACKET_Command
 {
 	int cmd;
@@ -22,3 +23,11 @@ typedef struct PACKET_WriteFile: public PACKET_Command
 	char buffer[512];
 };
 
+// ========================================================================================== //
+
+union PACKET_STREAM
+{
+	int cmd;
+
+	char buffer[MAX_PATH + sizeof(int)];
+};
