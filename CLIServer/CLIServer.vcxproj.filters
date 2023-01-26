@@ -62,6 +62,9 @@
     <ClInclude Include="..\CLICommon\ProtocolID.h">
       <Filter>헤더 파일\Common</Filter>
     </ClInclude>
+    <ClInclude Include="MemoryPool.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CLIServer.rc">

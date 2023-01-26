@@ -28,6 +28,7 @@
     <ClInclude Include="..\CLICommon\CLIPacketStruct.h" />
     <ClInclude Include="..\CLICommon\ProtocolID.h" />
     <ClInclude Include="INISettingLoader.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="ProtocolV1.h" />
     <ClInclude Include="SettingLoader.h" />
     <ClInclude Include="NBSocketServer.h" />
