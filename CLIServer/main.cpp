@@ -15,6 +15,7 @@
 #include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
 #include "CLIPacketStruct.h"	// 패킷정의 할 구조체 정보
 #include "MemoryPool.h"
+#include "MemoryStreamPool.h"
 
 
 // ==============
@@ -43,6 +44,21 @@ std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 
 int main(int argc, const char* argv[])
 {
+	// ============================================================================================================================== // 
+	// 테스트 코드
+	// ============================================================================================================================== // 
+	CMemoryStreamPool<char>* pool = new CMemoryStreamPool<char>(16);
+	if (false == pool->Append((char*)"AAAAAAAAAAAAAAAAAA", sizeof("AAAAAAAAAAAAAAAAAA")))
+		printf("Buffer Overflow \n");
+	else 
+	{
+		const char* const b = pool->GetBuffer();
+		printf("%s", b);
+	}
+
+	// ============================================================================================================================== // 
+	return -1;
+	// ============================================================================================================================== // 
 
 	printf("%d", sizeof(PACKET_STREAM));
 	// [Ctrl + C] Interrupt
