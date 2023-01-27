@@ -39,6 +39,9 @@
     <ClCompile Include="ProtocolV1.cpp">
       <Filter>소스 파일\ReceiveProtocol</Filter>
     </ClCompile>
+    <ClCompile Include="CommandGenerater.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="..\CLICommon\Defines.h">
       <Filter>헤더 파일\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandGenerater.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -41,6 +41,8 @@ template<typename T>
 bool CMemoryStreamPool<T>::Append(T* data, int length)
 {
 	int ret = this->WriteBuffer(pos, data, length);
+	if (true == ret)
+		pos += length;
 	return ret;
 }
 

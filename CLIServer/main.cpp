@@ -16,6 +16,7 @@
 #include "CLIPacketStruct.h"	// 패킷정의 할 구조체 정보
 #include "MemoryPool.h"
 #include "MemoryStreamPool.h"
+#include "CommandGenerater.h"
 
 
 // ==============
@@ -44,22 +45,6 @@ std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 
 int main(int argc, const char* argv[])
 {
-	// ============================================================================================================================== // 
-	// 테스트 코드
-	// ============================================================================================================================== // 
-	CMemoryStreamPool<char>* pool = new CMemoryStreamPool<char>(16);
-	if (false == pool->Append((char*)"AAAAAAAAAAAAAAAAAA", sizeof("AAAAAAAAAAAAAAAAAA")))
-		printf("Buffer Overflow \n");
-	else 
-	{
-		const char* const b = pool->GetBuffer();
-		printf("%s", b);
-	}
-
-	// ============================================================================================================================== // 
-	return -1;
-	// ============================================================================================================================== // 
-
 	printf("%d", sizeof(PACKET_STREAM));
 	// [Ctrl + C] Interrupt
 	signal(SIGINT, INThandler);
@@ -245,6 +230,25 @@ int LoadINI()
 
 	string dst;
 	ldr.Get("dst", dst);
+
+	// ================================================================================================== //
+	const char* tempFile = "AAA.txt";
+	CCommandGenerater cmdGen(PROTOCOL_ID_CREATEFILE, (char *)tempFile, strlen(tempFile) * sizeof(char));
+	cmdGen.Run();
+
+	const char* tempBuffer = cmdGen.GetBuffer();
+	int sz = cmdGen.GetSize();
+
+	for (int i = 0; i < sockets.size(); ++i)
+		send(sockets[i].first, tempBuffer, sz, 0);
+
+
+
+
+	// ================================================================================================== //
+
+
+
 
 	PACKET_STREAM stream;
 	stream.cmd = 1;
