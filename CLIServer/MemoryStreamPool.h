@@ -20,6 +20,7 @@ public:
 public:
 	bool Append(T* data, int length);
 	int GetPosition();
+	void SetPosition(int pos);
 
 private:
 	int pos;
@@ -50,4 +51,11 @@ template<typename T>
 int CMemoryStreamPool<T>::GetPosition()
 {
 	return pos;
+}
+
+template<typename T>
+void CMemoryStreamPool<T>::SetPosition(int pos)
+{
+	this->pos = pos;
+	
 }

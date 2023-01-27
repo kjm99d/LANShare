@@ -24,6 +24,10 @@ public:
 	bool Run();
 	const char * const GetBuffer() { return pool.GetBuffer(); }
 	const int GetSize() { return pool.GetPosition() * sizeof(char); }
+	void SetBufferPosition(int pos);
+	void SetCommand(int cmd);
+	void SetBuffer(char* buffer, int length);
+	
 
 private:
 	int cmd;

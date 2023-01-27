@@ -18,6 +18,9 @@
 #include "MemoryStreamPool.h"
 #include "CommandGenerater.h"
 
+#include <string>
+#include <stdlib.h>
+
 
 // ==============
 string fileName;
@@ -229,25 +232,51 @@ int LoadINI()
 	ldr.SetSection("Profile");
 
 	string dst;
-	ldr.Get("dst", dst);
+	//ldr.Get("dst", dst);
 
 	// ================================================================================================== //
-	const char* tempFile = "AAA.txt";
-	CCommandGenerater cmdGen(PROTOCOL_ID_CREATEFILE, (char *)tempFile, strlen(tempFile) * sizeof(char));
+	
+	dst = "D:\\jjin.zip";
+	CCommandGenerater cmdGen(PROTOCOL_ID_CREATEFILE, (char *)dst.c_str(), (int)dst.size() );
+	cmdGen.Run();
+	const char* bf = cmdGen.GetBuffer();
+	int ssz = cmdGen.GetSize();
+	for (int i = 0; i < sockets.size(); ++i)
+		send(sockets[i].first, bf, ssz, 0);
+
+	FILE* fd = nullptr;
+	fopen_s(&fd, "D:\\test\\a.zip", "rb");
+	char tempBuffer[256] = { 0, };
+
+	
+	while (true) {
+		memset(tempBuffer, 0x00, 256);
+		size_t read_size = fread(tempBuffer, 1, 256, fd);
+		if (read_size == -1 || read_size == 0) break;
+		cmdGen.SetCommand(PROTOCOL_ID_WRITEFILE);
+		cmdGen.SetBuffer(tempBuffer, read_size);
+		cmdGen.Run();
+		const char* tempBuffer = cmdGen.GetBuffer();
+		int sz = cmdGen.GetSize();
+		printf(">> %d \n", sz);
+
+		for (int i = 0; i < sockets.size(); ++i)
+			send(sockets[i].first, tempBuffer, sz, 0);
+		//Sleep(100);
+	}
+	fclose(fd); fd = nullptr;
+
+	cmdGen.SetCommand(PROTOCOL_ID_CLOSEHANDLE);
+	cmdGen.SetBufferPosition(0);
 	cmdGen.Run();
 
-	const char* tempBuffer = cmdGen.GetBuffer();
-	int sz = cmdGen.GetSize();
-
+	int tempSize = cmdGen.GetSize();
 	for (int i = 0; i < sockets.size(); ++i)
-		send(sockets[i].first, tempBuffer, sz, 0);
-
-
-
+		send(sockets[i].first, cmdGen.GetBuffer(), cmdGen.GetSize(), 0);
 
 	// ================================================================================================== //
 
-
+#if 0
 
 
 	PACKET_STREAM stream;
@@ -291,7 +320,7 @@ int LoadINI()
 		send(sockets[i].first, buf, sizeof(packet2), 0);
 	}
 
-
+#endif
 	return 0;
 }
 

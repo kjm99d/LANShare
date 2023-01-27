@@ -35,9 +35,11 @@ int main(int argc, const char* argv[])
 
     unsigned long long count = 0;
 
+    static FILE* fd = nullptr;
+
     while (true) {
-        unsigned char buffer[1024] = { 0, };
-        const int length = recv(client, (char*)buffer, 1024, 0);
+        unsigned char buffer[260] = { 0, };
+        const int length = recv(client, (char*)buffer, 260, 0);
         if (length == 0) {
             break;
         }
@@ -53,13 +55,16 @@ int main(int argc, const char* argv[])
             {
                 case PROTOCOL_ID_CREATEFILE:
                     printf("CreateFile [%s] \n", &buffer[4]);
+                    fopen_s(&fd, (char *)&buffer[4], "wb");
                     break;
                 case PROTOCOL_ID_CLOSEHANDLE:
                     printf("CloseHandle \n");
-                    
+                    fclose(fd);
+                    fd = nullptr;
                     break;
                 case PROTOCOL_ID_WRITEFILE:
-                    printf("WriteFile [%s]\n", &buffer[4]);
+                    fwrite(&buffer[4], 1, length - 4, fd);
+                    printf("WriteFile [%d]\n", length);
                     break;
             }
         }
