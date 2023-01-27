@@ -38,7 +38,7 @@ int main(int argc, const char* argv[])
     static FILE* fd = nullptr;
 
     while (true) {
-        unsigned char buffer[260] = { 0, };
+        unsigned char buffer[512] = { 0, };
         const int length = recv(client, (char*)buffer, 260, 0);
         if (length == 0) {
             break;
@@ -54,17 +54,68 @@ int main(int argc, const char* argv[])
             switch (*cmd)
             {
                 case PROTOCOL_ID_CREATEFILE:
-                    printf("CreateFile [%s] \n", &buffer[4]);
-                    fopen_s(&fd, (char *)&buffer[4], "wb");
+                {
+                    
+                    int FileSize = *(int*)(buffer + 4);
+                    int kFs = FileSize;
+                    //memset(buffer, 0x00, 512);
+                    printf("CreateFile Length = [%d] [%d] ", FileSize, kFs);
+
+                    while (true)
+                    {
+                        const int ReadSize = recv(client, (char*)buffer, 260, 0);
+                        if (FileSize == 0)
+                            break;
+
+                        if (FileSize - ReadSize >= 0)
+                        {
+                            FileSize -= ReadSize;
+                        }
+                        else
+                        {
+                            FileSize -= FileSize;
+                        }
+
+                    }
+                    char * m = (char *)malloc(kFs +1);
+                    memset(m, 0x00, kFs +1);
+                    memcpy(m, buffer, kFs);
+                    printf("[%s] \n", m);
+
+                    fopen_s(&fd, (char*)m, "wb");
+                    delete m;
+                }
+                    break;
+                case PROTOCOL_ID_WRITEFILE:
+                {
+                    int FileSize = *(int*)(buffer + 4);
+                    printf("CreateFile Length = [%d] \n", FileSize);
+                    memset(buffer, 0x00, 512);
+
+                    while (true)
+                    {
+                        const int ReadSize = recv(client, (char*)buffer, 260, 0);
+                        if (FileSize == 0)
+                            break;
+
+                        if (FileSize - ReadSize >= 0) 
+                        {
+                            fwrite(buffer, 1, length, fd);
+                            FileSize -= ReadSize;
+                        }
+                        else
+                        {
+                            fwrite(buffer, 1, FileSize, fd);
+                            FileSize -= FileSize;
+                        }
+
+                    }
+                }
                     break;
                 case PROTOCOL_ID_CLOSEHANDLE:
                     printf("CloseHandle \n");
                     fclose(fd);
                     fd = nullptr;
-                    break;
-                case PROTOCOL_ID_WRITEFILE:
-                    fwrite(&buffer[4], 1, length - 4, fd);
-                    printf("WriteFile [%d]\n", length);
                     break;
             }
         }
