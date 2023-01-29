@@ -137,10 +137,8 @@ int main(int argc, const char* argv[])
 
 
 		const int pkt_size = *(int*)buffer;
-		char * pool = (char *)malloc(pkt_size);
-		memcpy_s(pool, pkt_size, buffer, pkt_size);
+		const int Cmd = *(int *)(buffer + 4);
 
-		const int Cmd = *(int *)(pool + 4);
 		// CreateFile 이라면
 		if (Cmd == PROTOCOL_ID_CREATEFILE)
 		{
@@ -174,7 +172,7 @@ int main(int argc, const char* argv[])
 
 			delete file_data;
 		}
-		else
+		else if (Cmd == PROTOCOL_ID_CLOSEHANDLE)
 		{
 			printf("파일 다 씀 !");
 			
@@ -187,7 +185,6 @@ int main(int argc, const char* argv[])
 			//delete file_data;
 		}
 
-		delete pool;
 	}
 
 	printf("%d \n", count);
