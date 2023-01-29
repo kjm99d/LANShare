@@ -32,8 +32,8 @@ private:
 	
 
 private:
-	int cmd;
 	int length;
+	int cmd;
 	
 	CMemoryStreamPool<char> pool = CMemoryStreamPool<char>(8);
 };

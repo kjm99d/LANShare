@@ -17,8 +17,19 @@ bool CCommandGenerater::Run()
 	int ret = false;
 	
 	pool.SetPosition(0);
+	
+	/*
+	* length -> 실제 데이터의 길이
+	* cmd -> 명령 정보를 할당받은 크기
+	* 
+	* EX)만약 데이터의 길이가 30바이트라면,
+	*		명령어 4바이트 까지 해서
+	*		총 34바이트를 전송한다.
+	*/
+	const int nLengthPacket = length + sizeof(cmd);
+
+	ret = pool.Append((char*)(&nLengthPacket), sizeof(int));
 	ret = pool.Append((char*)(&cmd), sizeof(cmd));
-	ret = pool.Append((char*)(&length), sizeof(length));
 
 	return ret;
 }

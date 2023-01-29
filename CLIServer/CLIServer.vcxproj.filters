@@ -74,12 +74,6 @@
     <ClInclude Include="..\CLICommon\ProtocolID.h">
       <Filter>헤더 파일\Common</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryPool.h">
-      <Filter>헤더 파일\MemoryEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryStreamPool.h">
-      <Filter>헤더 파일\MemoryEngine</Filter>
-    </ClInclude>
     <ClInclude Include="..\CLICommon\Defines.h">
       <Filter>헤더 파일\Common</Filter>
     </ClInclude>
@@ -91,6 +85,12 @@
     </ClInclude>
     <ClInclude Include="FileReader.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\MemoryStreamPool.h">
+      <Filter>헤더 파일\MemoryEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\MemoryPool.h">
+      <Filter>헤더 파일\MemoryEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

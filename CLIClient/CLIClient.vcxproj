@@ -68,10 +68,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PakcetReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CLICommon\CLIPacketStruct.h" />
+    <ClInclude Include="..\CLICommon\MemoryPool.h" />
+    <ClInclude Include="..\CLICommon\MemoryStreamPool.h" />
     <ClInclude Include="..\CLICommon\ProtocolID.h" />
+    <ClInclude Include="PakcetReader.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -463,6 +467,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -527,6 +532,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
