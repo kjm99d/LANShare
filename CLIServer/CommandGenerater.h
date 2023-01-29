@@ -17,23 +17,24 @@ class CCommandGenerater
 {
 
 public:
-	CCommandGenerater(int cmd, char * buffer, int length);
+	CCommandGenerater(int cmd, int length);
 	~CCommandGenerater();
 
+
 public:
-	bool Run();
 	const char * const GetBuffer() { return pool.GetBuffer(); }
 	const int GetSize() { return pool.GetPosition() * sizeof(char); }
-	void SetBufferPosition(int pos);
+
+private:
+	bool Run();
 	void SetCommand(int cmd);
-	void SetBuffer(char* buffer, int length);
+	void SetLength(int length);
 	
 
 private:
-	int cmd;
-	char* buffer;
 	int length;
+	int cmd;
 	
-	CMemoryStreamPool<char> pool = CMemoryStreamPool<char>(512);
+	CMemoryStreamPool<char> pool = CMemoryStreamPool<char>(8);
 };
 

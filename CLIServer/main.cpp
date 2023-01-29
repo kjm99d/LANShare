@@ -17,6 +17,8 @@
 #include "MemoryPool.h"
 #include "MemoryStreamPool.h"
 #include "CommandGenerater.h"
+#include "BufferWriter.h"
+#include "FileReader.h"
 
 #include <string>
 #include <stdlib.h>
@@ -66,15 +68,15 @@ int main(int argc, const char* argv[])
 			system("cls"); // 콘솔창 지워라 
 			PrintCommand();
 		}
-	});
+		});
 
 	// ===============================================================================
 	// Connection Co-Routine
 	// ===============================================================================
 	int counter = 0;
-	
+
 	while (keepRunning)
-	{ 
+	{
 		// 패킷을 수신한다
 		SOCKET Sock = server.GetListen();
 		RecvPacket(sockets);
@@ -119,8 +121,8 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 
 		buf[ret_value] = '\0';
 		//printf("TCP - %s:%d] %s \n", inet_ntoa(sockets[i].second.sin_addr), ntohs(sockets[i].second.sin_port), buf);
-		
-		CProtocolBase * protocol = new CProtocolV1();
+
+		CProtocolBase* protocol = new CProtocolV1();
 		protocol->SetMessage(buf);
 		protocol->SetClient(sockets[i].first);
 		if (protocol->Parse() == true)
@@ -137,7 +139,7 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 	} // END #while_2
 }
 
-BOOL AddClient(std::vector<std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET &sock_tcp_listen)
+BOOL AddClient(std::vector<std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET& sock_tcp_listen)
 {
 	int addrlen;
 
@@ -201,9 +203,9 @@ void PrintCommand()
 		Cur.Y += 2;
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
 		LoadINI(); break;
-		
+
 	case 3:
-		PrintClient(sockets); 
+		PrintClient(sockets);
 		break;
 	default:
 		break;
@@ -214,7 +216,7 @@ void PrintCommand()
 
 void PrintClient(const std::vector<std::pair<SOCKET, SOCKADDR_IN>> sockets)
 {
-	for(int i = 0; i < sockets.size(); ++i)
+	for (int i = 0; i < sockets.size(); ++i)
 	{
 		const int num = i + 1;
 		const std::pair<SOCKET, SOCKADDR_IN> client = sockets[i];
@@ -235,92 +237,51 @@ int LoadINI()
 	//ldr.Get("dst", dst);
 
 	// ================================================================================================== //
-	
-	dst = "D:\\jjin.zip";
-	CCommandGenerater cmdGen(PROTOCOL_ID_CREATEFILE, (char *)dst.c_str(), (int)dst.size() );
-	cmdGen.Run();
-	const char* bf = cmdGen.GetBuffer();
-	int ssz = cmdGen.GetSize();
+
+	dst = "D:\\jjin.exe";
+	CBufferWriter buffer_writer;
+
+	// 파일 생성
+	CCommandGenerater create_file(PROTOCOL_ID_CREATEFILE, (int)dst.size());
 	for (int i = 0; i < sockets.size(); ++i)
-		send(sockets[i].first, bf, ssz, 0);
-
-	FILE* fd = nullptr;
-	fopen_s(&fd, "D:\\test\\a.zip", "rb");
-	char tempBuffer[256] = { 0, };
+	{
+		buffer_writer.Write(sockets[i].first, create_file); // 헤더 전송
+		buffer_writer.Write(sockets[i].first, (char*)dst.c_str(), dst.size()); // 데이터 전송
+	}
 
 	
-	while (true) {
-		memset(tempBuffer, 0x00, 256);
-		size_t read_size = fread(tempBuffer, 1, 256, fd);
-		if (read_size == -1 || read_size == 0) break;
-		cmdGen.SetCommand(PROTOCOL_ID_WRITEFILE);
-		cmdGen.SetBuffer(tempBuffer, read_size);
-		cmdGen.Run();
-		const char* tempBuffer = cmdGen.GetBuffer();
-		int sz = cmdGen.GetSize();
-		printf(">> %d \n", sz);
+	// 파일 버퍼 쓰기
+	CFileReader* reader = new CFileReader(512, (char*)"D:\\test\\test.exe");
+	size_t file_size = reader->FileSize();
+	while (true)
+	{
+		// 서버 PC 에서 파일을 읽고
+		const char* const file_buf = reader->GetBuffer();
+		const size_t buffer_size = reader->GetBufferSize();
 
+		// 파일이 끝이면 그만 보내라
+		if (buffer_size == 0)
+			break;
+
+		// 헤더에 명령줄이랑 현재 시점에 읽은 버퍼 크기 넣고 
+		CCommandGenerater write_file(PROTOCOL_ID_WRITEFILE, buffer_size);
 		for (int i = 0; i < sockets.size(); ++i)
-			send(sockets[i].first, tempBuffer, sz, 0);
-		//Sleep(100);
+		{
+			// 쏜다 !
+			buffer_writer.Write(sockets[i].first, write_file); // 헤더 전송
+			buffer_writer.Write(sockets[i].first, (char*)file_buf, buffer_size); // 데이터 전송
+		}
 	}
-	fclose(fd); fd = nullptr;
 
-	cmdGen.SetCommand(PROTOCOL_ID_CLOSEHANDLE);
-	cmdGen.SetBufferPosition(0);
-	cmdGen.Run();
-
-	int tempSize = cmdGen.GetSize();
-	for (int i = 0; i < sockets.size(); ++i)
-		send(sockets[i].first, cmdGen.GetBuffer(), cmdGen.GetSize(), 0);
-
-	// ================================================================================================== //
-
-#if 0
-
-
-	PACKET_STREAM stream;
-	stream.cmd = 1;
-	memcpy(stream.buffer + sizeof(int), "Hello WWWWW", sizeof("Hello WWWWW"));
+	// 파일 핸들 닫기
+	CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
 	for (int i = 0; i < sockets.size(); ++i)
 	{
-		const char* buf = (char*)&stream.cmd;
-		send(sockets[i].first, buf, sizeof(stream), 0);
+		const char* const b = close_handle.GetBuffer();
+		const int sz = close_handle.GetSize();
+		send(sockets[i].first, b, sz, 0);
 	}
-
-	PACKET_CreateFile packet;
-	GetCreateFilePacket(dst, packet);
-	for (int i = 0; i < sockets.size(); ++i)
-	{
-		const char* buf = (char*)&packet.cmd;
-		send(sockets[i].first, buf, sizeof(packet), 0);
-	}
-
-
-	PACKET_WriteFile wf;
-	wf.cmd = PROTOCOL_ID_WRITEFILE;
-
-	// 전송
-	memcpy(wf.buffer, "Hello World", sizeof("Hello World"));
-	for (int i = 0; i < sockets.size(); ++i)
-	{
-		const char* buf = (char*)&wf.cmd;
-		//							동적 메모리 이므로, 시작 주소부터 데이터의 끝 주소까지를 최종 버퍼사이즈로 잡아서 전송한다
-		//const size_t buffer_size = sizeof(wf.cmd) + (512 * sizeof(char));
-		send(sockets[i].first, buf, sizeof(wf), 0);
-	}
-
-
-
-	PACKET_CloseHandle packet2;
-	GetCloseHandlePacket(dst, packet2);
-	for (int i = 0; i < sockets.size(); ++i)
-	{
-		const char* buf = (char*)&packet2.cmd;
-		send(sockets[i].first, buf, sizeof(packet2), 0);
-	}
-
-#endif
+	
 	return 0;
 }
 

@@ -87,9 +87,9 @@ bool CMemoryPool<T>::WriteBuffer(int pos, T* buffer, int nLenBuffer)
 
 	// 버퍼에 쓸 위치가 이 버퍼풀의 최대 크기보다 크면 안됭 그럼 곤란행
 	const int max = Length();
-	if (pos >= max)
+	if (pos > max)
 		ret = false;
-	else if (pos + nLenBuffer >= max)
+	else if (pos + nLenBuffer > max)
 		ret = false;
 	else
 		memcpy(this->buffer + pos, (void *)buffer, sizeof(T) * nLenBuffer);

@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BufferWriter.cpp" />
     <ClCompile Include="CommandGenerater.cpp" />
+    <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="INISettingLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NBSocketServer.cpp" />
@@ -28,11 +30,13 @@
   <ItemGroup>
     <ClInclude Include="..\CLICommon\CLIPacketStruct.h" />
     <ClInclude Include="..\CLICommon\Defines.h" />
+    <ClInclude Include="..\CLICommon\MemoryPool.h" />
+    <ClInclude Include="..\CLICommon\MemoryStreamPool.h" />
     <ClInclude Include="..\CLICommon\ProtocolID.h" />
+    <ClInclude Include="BufferWriter.h" />
     <ClInclude Include="CommandGenerater.h" />
+    <ClInclude Include="FileReader.h" />
     <ClInclude Include="INISettingLoader.h" />
-    <ClInclude Include="MemoryPool.h" />
-    <ClInclude Include="MemoryStreamPool.h" />
     <ClInclude Include="ProtocolV1.h" />
     <ClInclude Include="SettingLoader.h" />
     <ClInclude Include="NBSocketServer.h" />
