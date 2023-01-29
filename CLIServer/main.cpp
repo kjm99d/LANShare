@@ -245,31 +245,43 @@ int LoadINI()
 	CCommandGenerater create_file(PROTOCOL_ID_CREATEFILE, (int)dst.size());
 	for (int i = 0; i < sockets.size(); ++i)
 	{
-		buffer_writer.Write(sockets[i].first, create_file);
-		buffer_writer.Write(sockets[i].first, (char *)dst.c_str(), dst.size());
+		buffer_writer.Write(sockets[i].first, create_file); // 헤더 전송
+		buffer_writer.Write(sockets[i].first, (char*)dst.c_str(), dst.size()); // 데이터 전송
 	}
 
+	
 	// 파일 버퍼 쓰기
 	CFileReader* reader = new CFileReader(512, (char*)"D:\\test\\test.exe");
 	size_t file_size = reader->FileSize();
-	CCommandGenerater write_file(PROTOCOL_ID_WRITEFILE, file_size);
 	while (true)
 	{
+		// 서버 PC 에서 파일을 읽고
 		const char* const file_buf = reader->GetBuffer();
 		const size_t buffer_size = reader->GetBufferSize();
 
+		// 파일이 끝이면 그만 보내라
 		if (buffer_size == 0)
 			break;
 
+		// 헤더에 명령줄이랑 현재 시점에 읽은 버퍼 크기 넣고 
+		CCommandGenerater write_file(PROTOCOL_ID_WRITEFILE, buffer_size);
 		for (int i = 0; i < sockets.size(); ++i)
-			buffer_writer.Write(sockets[i].first, (char *)file_buf, buffer_size);
+		{
+			// 쏜다 !
+			buffer_writer.Write(sockets[i].first, write_file); // 헤더 전송
+			buffer_writer.Write(sockets[i].first, (char*)file_buf, buffer_size); // 데이터 전송
+		}
 	}
 
-	// CloseHandle
+	// 파일 핸들 닫기
 	CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
 	for (int i = 0; i < sockets.size(); ++i)
-		send(sockets[i].first, close_handle.GetBuffer(), close_handle.GetSize(), 0);
-
+	{
+		const char* const b = close_handle.GetBuffer();
+		const int sz = close_handle.GetSize();
+		send(sockets[i].first, b, sz, 0);
+	}
+	
 	return 0;
 }
 
