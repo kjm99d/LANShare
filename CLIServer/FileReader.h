@@ -6,6 +6,7 @@ class CFileReader
 {
 public:
 	CFileReader() = delete;
+	CFileReader(CFileReader&) = delete;
 	CFileReader(int buffer_size, char * path);
 	~CFileReader();
 
