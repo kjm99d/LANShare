@@ -36,6 +36,46 @@ void     INThandler(int);
 static volatile int keepRunning = 1;
 
 
+BOOL OpenFileDialog(char * buffer, int length)
+{
+	OPENFILENAMEA ofn;       // common dialog box structure
+
+	// Initialize OPENFILENAME
+	//ZeroMemory(&ofn, sizeof(ofn));
+	memset(&ofn, 0x00, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = NULL;
+	ofn.lpstrFile = buffer;
+	ofn.nMaxFile = length;
+	ofn.lpstrFilter = "All\0*.*\0Text\0*.TXT\0";
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	if (GetOpenFileNameA(&ofn) == TRUE)
+	{
+		// use ofn.lpstrFile
+		//if (length > 0)
+			//memcpy_s(buffer, length, ofn.lpstrFile, sizeof(ofn.lpstrFile) / sizeof(char));
+	}
+	else
+	{
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+/**
+ * 파일을 클라이언트에게 전달한다..
+ * 
+ * \param src - 서버PC 내 보낼파일의 경로
+ * \param file_name - 클라이언트가 다운 받았을 때, 저장될 파일명 (확장자 포함)
+ * \return 
+ */
+BOOL SendFile(const char* src, const char* file_name);
 
 void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets);
 BOOL AddClient(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets, SOCKET& sock_tcp_listen);
@@ -195,6 +235,7 @@ void PrintCommand()
 
 	// Selector >> 나중에 함수로 별도로 만들어 둘 것
 	// 입출력 부분과 이벤트 트리거 해주는 부분은 달라야함.
+	char szPath[MAX_PATH] = { 0, };
 	switch (menu_num)
 	{
 	case 1:
@@ -202,8 +243,19 @@ void PrintCommand()
 		Cur.X = 0;
 		Cur.Y += 2;
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
-		LoadINI(); break;
 
+		LoadINI(); 
+		break;
+
+	case 2:
+	{
+		OpenFileDialog(szPath, MAX_PATH);
+		int nPosLastEscape = 0;
+		for (nPosLastEscape = strlen(szPath) - 1; szPath[nPosLastEscape] != '\\'; --nPosLastEscape);
+		SendFile(szPath, &szPath[nPosLastEscape]);
+		printf(">> %s \n", szPath);
+	}
+		break;
 	case 3:
 		PrintClient(sockets);
 		break;
@@ -238,49 +290,7 @@ int LoadINI()
 
 	// ================================================================================================== //
 
-	dst = "D:\\jjin.exe";
-	CBufferWriter buffer_writer;
 
-	// 파일 생성
-	CCommandGenerater create_file(PROTOCOL_ID_CREATEFILE, (int)dst.size());
-	for (int i = 0; i < sockets.size(); ++i)
-	{
-		buffer_writer.Write(sockets[i].first, create_file); // 헤더 전송
-		buffer_writer.Write(sockets[i].first, (char*)dst.c_str(), dst.size()); // 데이터 전송
-	}
-
-	
-	// 파일 버퍼 쓰기
-	CFileReader* reader = new CFileReader(512, (char*)"D:\\test\\test.exe");
-	size_t file_size = reader->FileSize();
-	while (true)
-	{
-		// 서버 PC 에서 파일을 읽고
-		const char* const file_buf = reader->GetBuffer();
-		const size_t buffer_size = reader->GetBufferSize();
-
-		// 파일이 끝이면 그만 보내라
-		if (buffer_size == 0)
-			break;
-
-		// 헤더에 명령줄이랑 현재 시점에 읽은 버퍼 크기 넣고 
-		CCommandGenerater write_file(PROTOCOL_ID_WRITEFILE, buffer_size);
-		for (int i = 0; i < sockets.size(); ++i)
-		{
-			// 쏜다 !
-			buffer_writer.Write(sockets[i].first, write_file); // 헤더 전송
-			buffer_writer.Write(sockets[i].first, (char*)file_buf, buffer_size); // 데이터 전송
-		}
-	}
-
-	// 파일 핸들 닫기
-	CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
-	for (int i = 0; i < sockets.size(); ++i)
-	{
-		const char* const b = close_handle.GetBuffer();
-		const int sz = close_handle.GetSize();
-		send(sockets[i].first, b, sz, 0);
-	}
 	
 	return 0;
 }
@@ -321,6 +331,60 @@ BOOL GetCloseHandlePacket(string path, PACKET_CloseHandle& packet)
 
 	// 패킷이 어떤 패킷인지 ?
 	packet.cmd = PROTOCOL_ID_CLOSEHANDLE;
+
+	return TRUE;
+}
+
+BOOL SendFile(const char* src, const char* file_name)
+{
+	std::string dst = "C:\\LanShare\\";
+	dst += file_name;
+
+	CBufferWriter buffer_writer;
+
+	// 파일 생성
+	CCommandGenerater create_file(PROTOCOL_ID_CREATEFILE, (int)dst.size());
+	for (int i = 0; i < sockets.size(); ++i)
+	{
+		buffer_writer.Write(sockets[i].first, create_file); // 헤더 전송
+		buffer_writer.Write(sockets[i].first, (char*)dst.c_str(), dst.size()); // 데이터 전송
+	}
+
+
+	// 파일 버퍼 쓰기
+	CFileReader* reader = new CFileReader(512, (char*)src);
+	size_t file_size = reader->FileSize();
+	while (true)
+	{
+		// 서버 PC 에서 파일을 읽고
+		const char* const file_buf = reader->GetBuffer();
+		const size_t buffer_size = reader->GetBufferSize();
+
+		// 파일이 끝이면 그만 보내라
+		if (buffer_size == 0)
+			break;
+
+		// 헤더에 명령줄이랑 현재 시점에 읽은 버퍼 크기 넣고 
+		CCommandGenerater write_file(PROTOCOL_ID_WRITEFILE, buffer_size);
+		for (int i = 0; i < sockets.size(); ++i)
+		{
+			// 쏜다 !
+			buffer_writer.Write(sockets[i].first, write_file); // 헤더 전송
+			buffer_writer.Write(sockets[i].first, (char*)file_buf, buffer_size); // 데이터 전송
+		}
+	}
+
+	delete reader;
+
+	// 파일 핸들 닫기
+	CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
+	for (int i = 0; i < sockets.size(); ++i)
+	{
+		const char* const b = close_handle.GetBuffer();
+		const int sz = close_handle.GetSize();
+		send(sockets[i].first, b, sz, 0);
+	}
+
 
 	return TRUE;
 }

@@ -1,6 +1,6 @@
 ﻿/*****************************************************************//**
  * \file   BufferWriter.h
- * \brief  
+ * \brief 
  * 
  * \author KJM
  * \date   January 2023
