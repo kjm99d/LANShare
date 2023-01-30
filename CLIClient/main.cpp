@@ -71,7 +71,7 @@ int main(int argc, const char* argv[])
 			{
 				int tmp_read_size = recv(client, (char*)fileName, pkt_size - 4, 0);
 				if (tmp_read_size != (pkt_size - 4)) continue;
-				fileName[pkt_size - 4 + 1] = 0x00;
+				fileName[pkt_size - 4 + 0] = 0x00;
 				printf(">> 파일 생성 :: %s \n", fileName);
 				fopen_s(&fd, fileName, "wb");
 				break;
@@ -101,10 +101,9 @@ int main(int argc, const char* argv[])
 			const size_t cFileSize = pkt_size - 4;
 			size_t readStack = 0;
 
-
 			while (true)
 			{
-				char buffer[512] = { 0, };
+				char buffer[4096] = { 0, };
 				const int buffer_size = sizeof(buffer) / sizeof(char);
 				int tmp_read_size = 0;
 				
@@ -114,12 +113,19 @@ int main(int argc, const char* argv[])
 					tmp_read_size = recv(client, (char*)buffer, cFileSize - readStack, 0);
 
 				
-				if (tmp_read_size == 0) continue;
+				if (tmp_read_size == 0 || tmp_read_size == -1) continue;
 				else readStack += tmp_read_size;
+
+				//send(client, "1", 1, 0);
+
+				printf(">> [%f]% \n", readStack / (float)cFileSize * 100.0);
+				
 
 				fwrite(buffer, 1, tmp_read_size, fd);
 
 				if (cFileSize == readStack)
+					break;
+				else if (readStack > cFileSize)
 					break;
 			}
 
