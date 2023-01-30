@@ -65,12 +65,13 @@ int main(int argc, const char* argv[])
 		// CreateFile 이라면
 		if (Cmd == PROTOCOL_ID_CREATEFILE)
 		{
-			char* fileName = (char *)malloc(pkt_size - 4);
+			char* fileName = (char *)malloc(pkt_size - 4 + 1);
+			
 			while (true)
 			{
 				int tmp_read_size = recv(client, (char*)fileName, pkt_size - 4, 0);
 				if (tmp_read_size != (pkt_size - 4)) continue;
-
+				fileName[pkt_size - 4 + 1] = 0x00;
 				printf(">> 파일 생성 :: %s \n", fileName);
 				fopen_s(&fd, fileName, "wb");
 				break;
@@ -81,6 +82,8 @@ int main(int argc, const char* argv[])
 		}
 		else if (Cmd == PROTOCOL_ID_WRITEFILE)
 		{
+			
+#if 0
 			char* file_data = (char*)malloc(pkt_size - 4);
 
 			while (true)
@@ -94,6 +97,33 @@ int main(int argc, const char* argv[])
 			}
 
 			delete file_data;
+#else
+			const size_t cFileSize = pkt_size - 4;
+			size_t readStack = 0;
+
+
+			while (true)
+			{
+				char buffer[512] = { 0, };
+				const int buffer_size = sizeof(buffer) / sizeof(char);
+				int tmp_read_size = 0;
+				
+				if (readStack + buffer_size <= cFileSize)
+					tmp_read_size = recv(client, (char *)buffer, buffer_size, 0);
+				else
+					tmp_read_size = recv(client, (char*)buffer, cFileSize - readStack, 0);
+
+				
+				if (tmp_read_size == 0) continue;
+				else readStack += tmp_read_size;
+
+				fwrite(buffer, 1, tmp_read_size, fd);
+
+				if (cFileSize == readStack)
+					break;
+			}
+
+#endif
 		}
 		else if (Cmd == PROTOCOL_ID_CLOSEHANDLE)
 		{

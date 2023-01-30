@@ -354,6 +354,11 @@ BOOL SendFile(const char* src, const char* file_name)
 	// 파일 버퍼 쓰기
 	CFileReader* reader = new CFileReader(512, (char*)src);
 	size_t file_size = reader->FileSize();
+
+	CCommandGenerater WriteFileHeader(PROTOCOL_ID_WRITEFILE, (int)file_size);
+	for (int i = 0; i < sockets.size(); ++i)
+		buffer_writer.Write(sockets[i].first, WriteFileHeader); // 헤더 전송
+
 	while (true)
 	{
 		// 서버 PC 에서 파일을 읽고
@@ -365,11 +370,11 @@ BOOL SendFile(const char* src, const char* file_name)
 			break;
 
 		// 헤더에 명령줄이랑 현재 시점에 읽은 버퍼 크기 넣고 
-		CCommandGenerater write_file(PROTOCOL_ID_WRITEFILE, buffer_size);
+		//CCommandGenerater write_file(PROTOCOL_ID_WRITEFILE, buffer_size);
 		for (int i = 0; i < sockets.size(); ++i)
 		{
 			// 쏜다 !
-			buffer_writer.Write(sockets[i].first, write_file); // 헤더 전송
+			//buffer_writer.Write(sockets[i].first, write_file); // 헤더 전송
 			buffer_writer.Write(sockets[i].first, (char*)file_buf, buffer_size); // 데이터 전송
 		}
 	}
