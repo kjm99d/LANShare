@@ -10,7 +10,7 @@
 
 #include "INISettingLoader.h"
 #include "ProtocolBase.h"
-#include "ProtocolV1.h"
+#include "ProtocolHTTP.h"
 
 #include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
 #include "CLIPacketStruct.h"	// 패킷정의 할 구조체 정보
@@ -162,7 +162,7 @@ void RecvPacket(std::vector< std::pair<SOCKET, SOCKADDR_IN>>& sockets)
 		buf[ret_value] = '\0';
 		//printf("TCP - %s:%d] %s \n", inet_ntoa(sockets[i].second.sin_addr), ntohs(sockets[i].second.sin_port), buf);
 
-		CProtocolBase* protocol = new CProtocolV1();
+		CProtocolBase* protocol = new CProtocolHTTP();
 		protocol->SetMessage(buf);
 		protocol->SetClient(sockets[i].first);
 		if (protocol->Parse() == true)

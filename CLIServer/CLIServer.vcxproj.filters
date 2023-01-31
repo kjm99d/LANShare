@@ -36,7 +36,7 @@
     <ClCompile Include="NBSocketServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ProtocolV1.cpp">
+    <ClCompile Include="ProtocolHTTP.cpp">
       <Filter>소스 파일\ReceiveProtocol</Filter>
     </ClCompile>
     <ClCompile Include="CommandGenerater.cpp">
@@ -65,7 +65,7 @@
     <ClInclude Include="ProtocolBase.h">
       <Filter>헤더 파일\ReceiveProtocol</Filter>
     </ClInclude>
-    <ClInclude Include="ProtocolV1.h">
+    <ClInclude Include="ProtocolHTTP.h">
       <Filter>헤더 파일\ReceiveProtocol</Filter>
     </ClInclude>
     <ClInclude Include="..\CLICommon\CLIPacketStruct.h">

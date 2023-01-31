@@ -14,7 +14,7 @@
 
 using namespace std;
 
-class CProtocolV1 : public CProtocolBase
+class CProtocolHTTP : public CProtocolBase
 {
 private:
 	string protocol;

@@ -1,11 +1,11 @@
-﻿#include "ProtocolV1.h"
+﻿#include "ProtocolHTTP.h"
 
 /**
  * 문자열 형태로 들어온 메세지 멤버 메세지로 지정한다.
  * 
  * \param message 실제 패킷 정보 (패킷의 끝은 NULL로 처리되어야함)
  */
-void CProtocolV1::SetMessage(string message)
+void CProtocolHTTP::SetMessage(string message)
 {
 	this->message = message;
 }
@@ -14,7 +14,7 @@ void CProtocolV1::SetMessage(string message)
  * 멤버변수 message 값을 파싱한다.
  * 
  */
-bool CProtocolV1::Parse()
+bool CProtocolHTTP::Parse()
 {
 	// 메세지가 없으면 [실패]
 	const string& msg = this->message;
@@ -46,7 +46,7 @@ bool CProtocolV1::Parse()
  * 현재 프로토콜에 맞는 이벤트를 실행한다..
  * 
  */
-void CProtocolV1::Start()
+void CProtocolHTTP::Start()
 {
 	if (protocol.find("HTTP") != std::string::npos)
 	{
@@ -62,7 +62,7 @@ void CProtocolV1::Start()
 
 }
 
-const vector<string> CProtocolV1::streamTokenizer(string message, char delimeter)
+const vector<string> CProtocolHTTP::streamTokenizer(string message, char delimeter)
 {
 	vector<string> ret;
 

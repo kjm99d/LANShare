@@ -25,7 +25,7 @@
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NBSocketServer.cpp" />
-    <ClCompile Include="ProtocolV1.cpp" />
+    <ClCompile Include="ProtocolHTTP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CLICommon\CLIPacketStruct.h" />
@@ -38,7 +38,7 @@
     <ClInclude Include="BufferWriter.h" />
     <ClInclude Include="CommandGenerater.h" />
     <ClInclude Include="FileReader.h" />
-    <ClInclude Include="ProtocolV1.h" />
+    <ClInclude Include="ProtocolHTTP.h" />
     <ClInclude Include="SettingLoader.h" />
     <ClInclude Include="NBSocketServer.h" />
     <ClInclude Include="ProtocolBase.h" />
