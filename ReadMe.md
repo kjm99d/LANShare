@@ -14,3 +14,7 @@ LAN(Local Area Network) 토폴로지에 연결된 네트워크상에서 파일�
 
 
 ## Guide
+### v1.0.0
+1. Server 프로그램 실행
+2. Client 프로그램 실행
+3. Server 에서 커맨드를 통한 파일 전송
