@@ -10,8 +10,19 @@
  */
 bool CBufferWriter::Write(SOCKET& socket, void* buffer, int buffer_size)
 {
-	const int result = send(socket, (char *)buffer, buffer_size, 0);
-	return result;
+	int countdown = buffer_size;
+	
+	while (countdown > 0) 
+	{
+		int result = send(socket, (char*)buffer + (buffer_size - countdown), countdown, 0);
+		
+		if (result == -1)
+			continue;
+
+		countdown -= result;
+	}
+	
+	return true;
 }
 
 /**
@@ -23,7 +34,18 @@ bool CBufferWriter::Write(SOCKET& socket, void* buffer, int buffer_size)
  */
 bool CBufferWriter::Write(SOCKET& socket, CCommandGenerater& cmd)
 {
-	const int result = send(socket, cmd.GetBuffer(), cmd.GetSize(), 0);
-	return result;
+	int countdown = cmd.GetSize();
+
+	while (countdown > 0)
+	{
+		int result = send(socket, (char*)cmd.GetBuffer() + (cmd.GetSize() - countdown), countdown, 0);
+
+		if (result == -1)
+			continue;
+
+		countdown -= result;
+	}
+
+	return true;
 }
  

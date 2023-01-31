@@ -352,7 +352,7 @@ BOOL SendFile(const char* src, const char* file_name)
 
 
 	// 파일 버퍼 쓰기
-	CFileReader* reader = new CFileReader(512, (char*)src);
+	CFileReader* reader = new CFileReader(4096, (char*)src);
 	size_t file_size = reader->FileSize();
 
 	CCommandGenerater WriteFileHeader(PROTOCOL_ID_WRITEFILE, (int)file_size);
