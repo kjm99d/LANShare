@@ -10,6 +10,8 @@
 #include <queue>
 #include <deque>
 
+#include "INISettingLoader.h"
+
 void showError(const char* msg);
 
 int main(int argc, const char* argv[])
@@ -24,9 +26,19 @@ int main(int argc, const char* argv[])
 
 	sockaddr_in addr = { 0 };
 
+
+	CINISettingLoader settings(".\\settings.ini");
+	settings.SetSection("Client");
+	std::string host;
+	UINT port;
+	settings.Get("host", host);
+	settings.Get("port", port);
+	if (host.compare("NONE") == 0) host = "127.0.0.1";
+	if (0 == port) port = 5003;
+
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port = htons(5003);
+	addr.sin_addr.s_addr = inet_addr(host.c_str());
+	addr.sin_port = htons(port);
 
 	if (connect(client, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
 		showError("연결 실패");

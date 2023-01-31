@@ -25,15 +25,15 @@
     <Filter Include="헤더 파일\MemoryEngine">
       <UniqueIdentifier>{81ebcd90-94b2-4bf4-aaa1-a31dda2bb27a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Common\SettingLoader">
+      <UniqueIdentifier>{db99680e-b8bf-481e-ac1f-5f7caae9deb3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="NBSocketServer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="INISettingLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ProtocolV1.cpp">
@@ -48,6 +48,9 @@
     <ClCompile Include="FileReader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\CLICommon\INISettingLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -58,9 +61,6 @@
     </ClInclude>
     <ClInclude Include="SettingLoader.h">
       <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="INISettingLoader.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ProtocolBase.h">
       <Filter>헤더 파일\ReceiveProtocol</Filter>
@@ -91,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="..\CLICommon\MemoryPool.h">
       <Filter>헤더 파일\MemoryEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\SettingLoader.h">
+      <Filter>헤더 파일\Common\SettingLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\INISettingLoader.h">
+      <Filter>헤더 파일\Common\SettingLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

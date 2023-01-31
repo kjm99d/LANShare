@@ -67,14 +67,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\CLICommon\INISettingLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PakcetReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CLICommon\CLIPacketStruct.h" />
+    <ClInclude Include="..\CLICommon\INISettingLoader.h" />
     <ClInclude Include="..\CLICommon\MemoryPool.h" />
     <ClInclude Include="..\CLICommon\MemoryStreamPool.h" />
     <ClInclude Include="..\CLICommon\ProtocolID.h" />
+    <ClInclude Include="..\CLICommon\SettingLoader.h" />
     <ClInclude Include="PakcetReader.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

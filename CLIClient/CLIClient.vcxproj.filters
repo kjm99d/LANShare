@@ -19,12 +19,18 @@
     <Filter Include="헤더 파일\Common\MemoryEngine">
       <UniqueIdentifier>{619be752-c863-4fe3-a93f-5931ae535b52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Common\SettingLoader">
+      <UniqueIdentifier>{99f4b202-500a-4b1b-9160-3a53688a4f14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PakcetReader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CLICommon\INISettingLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="..\CLICommon\MemoryStreamPool.h">
       <Filter>헤더 파일\Common\MemoryEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\SettingLoader.h">
+      <Filter>헤더 파일\Common\SettingLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\INISettingLoader.h">
+      <Filter>헤더 파일\Common\SettingLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
