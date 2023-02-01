@@ -1,50 +1,80 @@
 ﻿#include "HTTPServer.h"
 
-void CHTTPServer::Receive(fp_HTTPEvent fp_callback)
+bool CHTTPServer::Receive(fp_HTTPEvent fp_callback)
 {
+	bool ret = false;
 	SOCKET sock;
 	if (true == Accept(sock))
-	{	
-		
-
-		unsigned char buffer[4096] = { 0, };
-		int buffer_size = sizeof(buffer) / sizeof(char);
-
-		int recv_size = 0;
+	{
 		string packet;
-		while ((recv_size = recv(sock, (char*)buffer, buffer_size, 0))) 
+		if (true == SafeRecv(sock, packet))
 		{
-			if (recv_size == -1) 
-				break;
-			packet.append((char*)buffer, recv_size);
+			RequestHeader request_header;
+			if (true == Parse(packet, request_header))
+			{
+
+				const char* str_header = "HTTP/1.0 200 OK\r\n\r\n";
+				const char* str_body = "aaa";
+
+				string res;
+				if (nullptr != fp_callback);
+				fp_callback(sock, request_header.method, request_header.url, res);
+
+				SafeSend(sock, (char*)str_header, strlen(str_header));
+				SafeSend(sock, (char*)res.c_str(), res.size());
+
+				closesocket(sock);
+
+				ret = true;
+			}
 		}
-		RequestHeader request_header;
-		Parse(packet, request_header);
-		
-		if (nullptr != fp_callback);
-			//fp_callback(sock, (unsigned char *)packet.c_str(), packet.size());
 	}
+
+	return ret;
+
 }
 
-bool CHTTPServer::Parse(const string& data,  RequestHeader& ref)
+bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 {
 	// http 아님
 	if (data.find("\r\n\r\n") == string::npos)
 		return false;
 
+	vector<string> container;
+	Split(container, data, "\r\n\r\n");
+	if (container.size() != 2)
+	{
+		return false;
+	}
 
+	ref.payloads = container[1];
+
+	// RequestHeader 영역 파싱
 	vector<string> lines;
-	Split(lines, data, "\r\n");
+	Split(lines, container[0], "\r\n");
+
+	// 요청 기본 정보 파싱
+	vector<string> tokens;
+	Split(tokens, lines[0], " ");
+	if (tokens.size() == 3)
+	{
+		ref.method = tokens[0];
+		ref.url = tokens[1];
+	}
+	else
+	{
+		return false;
+	}
+
 	for (int i = 1; i < lines.size(); ++i)
 	{
 		vector<string> tokens;
 		if (Split(tokens, lines[i], ": "))
-		{
-
-		}
-		
-
+			ref.header.insert({ tokens[0], tokens[1] });
 	}
+
+
+	// RequestBody 영역 파싱
 
 
 	return true;
