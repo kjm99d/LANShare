@@ -4,6 +4,9 @@ LAN(Local Area Network) 토폴로지에 연결된 네트워크상에서 파일�
 
 일반적으로 오프라인 환경에서 사용하기 적합합니다.
 
+![image](/doc/background.jpg)
+
+
 ## Requirements
 1. vcredist
 
