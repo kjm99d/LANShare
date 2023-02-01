@@ -4,25 +4,61 @@ void CHTTPServer::Receive(fp_HTTPEvent fp_callback)
 {
 	SOCKET sock;
 	if (true == Accept(sock))
-	{	
-		
-
+	{
 		unsigned char buffer[4096] = { 0, };
-		int buffer_size = sizeof(buffer) / sizeof(char);
+		const int buffer_size = sizeof(buffer) / sizeof(char);
 
-		int recv_size = 0;
+
 		string packet;
-		while ((recv_size = recv(sock, (char*)buffer, buffer_size, 0))) 
+		int recv_size = -1;
+		while (recv_size == -1)
 		{
-			if (recv_size == -1) 
-				break;
-			packet.append((char*)buffer, recv_size);
-		}
-		RequestHeader request_header;
-		Parse(packet, request_header);
+			recv_size = recv(sock, (char*)buffer, buffer_size, 0);
+ 		}
 		
-		if (nullptr != fp_callback);
+		if (recv_size != SOCKET_ERROR)
+		{
+			packet.append((char*)buffer, recv_size);
+
+#if 0
+
+			while ((recv_size = recv(sock, (char*)buffer, buffer_size, 0)))
+			{
+				if (recv_size == SOCKET_ERROR)
+				{
+					if (WSAGetLastError() != WSAEWOULDBLOCK) {
+						//printf("No Recved Data")
+						break;
+					}
+
+
+				}
+
+				if (recv_size == -1)
+					break;
+				packet.append((char*)buffer, recv_size);
+		}
+#endif
+			RequestHeader request_header;
+			Parse(packet, request_header);
+
+
+			const char* str_header = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nContent-length: 3\r\n\r\n";
+			const char* str_body = "aaa\r\n";
+
+			while (send(sock, str_header, strlen(str_header), 0) == -1);
+			while (send(sock, str_body, strlen(str_body), 0) == -1);
+
+			closesocket(sock);
+			//sock = nullptr;
+
+			if (nullptr != fp_callback);
 			//fp_callback(sock, (unsigned char *)packet.c_str(), packet.size());
+		}
+		else
+		{
+			printf("Sock = [%d] \n", recv_size);
+		}
 	}
 }
 
@@ -32,19 +68,41 @@ bool CHTTPServer::Parse(const string& data,  RequestHeader& ref)
 	if (data.find("\r\n\r\n") == string::npos)
 		return false;
 
+	vector<string> container;
+	Split(container, data, "\r\n\r\n");
+	if (container.size() != 2)
+	{
+		return false;
+	}
 
+	ref.payloads = container[1];
+
+	// RequestHeader 영역 파싱
 	vector<string> lines;
-	Split(lines, data, "\r\n");
+	Split(lines, container[0], "\r\n");
+	
+	// 요청 기본 정보 파싱
+	vector<string> tokens;
+	Split(tokens, lines[0], " ");
+	if (tokens.size() == 3)
+	{
+		ref.method = tokens[0];
+		ref.url = tokens[1];
+	}
+	else
+	{
+		return false;
+	}
+
 	for (int i = 1; i < lines.size(); ++i)
 	{
 		vector<string> tokens;
 		if (Split(tokens, lines[i], ": "))
-		{
-
-		}
-		
-
+			ref.header.insert({tokens[0], tokens[1]});
 	}
+
+
+	// RequestBody 영역 파싱
 
 
 	return true;
