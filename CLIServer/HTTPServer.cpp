@@ -5,64 +5,57 @@ void CHTTPServer::Receive(fp_HTTPEvent fp_callback)
 	SOCKET sock;
 	if (true == Accept(sock))
 	{
-		unsigned char buffer[4096] = { 0, };
+		unsigned char buffer[100] = { 0, };
 		const int buffer_size = sizeof(buffer) / sizeof(char);
 
 
 		string packet;
-		int recv_size = -1;
-		while (recv_size == -1)
+		while (true)
 		{
-			recv_size = recv(sock, (char*)buffer, buffer_size, 0);
- 		}
-		
-		if (recv_size != SOCKET_ERROR)
-		{
-			packet.append((char*)buffer, recv_size);
+			const int recv_size = recv(sock, (char*)buffer, buffer_size, 0);
+			const int err = WSAGetLastError();
+			//printf("Receive Size = [%d] LastError = [%d] \n", recv_size, err);
+
+			if (buffer_size > recv_size && 0 == err)
+				break;
+			if (WSAEWOULDBLOCK == err)
+				continue;
 
 #if 0
-
-			while ((recv_size = recv(sock, (char*)buffer, buffer_size, 0)))
+			if (0 == err)
 			{
-				if (recv_size == SOCKET_ERROR)
-				{
-					if (WSAGetLastError() != WSAEWOULDBLOCK) {
-						//printf("No Recved Data")
-						break;
-					}
-
-
-				}
-
-				if (recv_size == -1)
-					break;
 				packet.append((char*)buffer, recv_size);
-		}
+			}
+			else if (WSAEWOULDBLOCK == err)
+			{
+				if (0 < packet.size())
+					break;
+				else if (SOCKET_ERROR == recv_size)
+					continue;
+			}	
 #endif
-			RequestHeader request_header;
-			Parse(packet, request_header);
-
-
-			const char* str_header = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nContent-length: 3\r\n\r\n";
-			const char* str_body = "aaa\r\n";
-
-			while (send(sock, str_header, strlen(str_header), 0) == -1);
-			while (send(sock, str_body, strlen(str_body), 0) == -1);
-
-			closesocket(sock);
-			//sock = nullptr;
-
-			if (nullptr != fp_callback);
-			//fp_callback(sock, (unsigned char *)packet.c_str(), packet.size());
 		}
-		else
-		{
-			printf("Sock = [%d] \n", recv_size);
-		}
+
+		
+		RequestHeader request_header;
+		Parse(packet, request_header);
+
+		const char* str_header = "HTTP/1.0 200 OK\r\n\r\n";
+		const char* str_body = "aaa";
+
+		while (send(sock, str_header, strlen(str_header), 0) == -1);
+		while (send(sock, str_body, strlen(str_body), 0) == -1);
+
+		closesocket(sock);
+		//sock = nullptr;
+
+		if (nullptr != fp_callback);
+		//fp_callback(sock, (unsigned char *)packet.c_str(), packet.size());
 	}
+
 }
 
-bool CHTTPServer::Parse(const string& data,  RequestHeader& ref)
+bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 {
 	// http 아님
 	if (data.find("\r\n\r\n") == string::npos)
@@ -80,7 +73,7 @@ bool CHTTPServer::Parse(const string& data,  RequestHeader& ref)
 	// RequestHeader 영역 파싱
 	vector<string> lines;
 	Split(lines, container[0], "\r\n");
-	
+
 	// 요청 기본 정보 파싱
 	vector<string> tokens;
 	Split(tokens, lines[0], " ");
@@ -98,7 +91,7 @@ bool CHTTPServer::Parse(const string& data,  RequestHeader& ref)
 	{
 		vector<string> tokens;
 		if (Split(tokens, lines[i], ": "))
-			ref.header.insert({tokens[0], tokens[1]});
+			ref.header.insert({ tokens[0], tokens[1] });
 	}
 
 
