@@ -16,15 +16,15 @@ typedef struct _RequestHeader {
 
 	string payloads;
 } RequestHeader;
-typedef int (*fp_HTTPEvent)(SOCKET sock, string method, string uri);
 
-class CHTTPServer : public CTCPServer
+typedef int (*fp_HTTPEvent)(SOCKET sock, string method, string uri, string& responseBody);
+
+class CHTTPServer : public IServer
 {
 public:
-	void Receive(fp_HTTPEvent fp);
+	bool Receive(fp_HTTPEvent fp);
 
 private:
-	bool GetRequestPacket(SOCKET& ref_socket, std::string& ref);
 	bool Parse(const string& data, RequestHeader& ref);
 	bool Split(vector<string>& ref, string src, std::string delimeter);
 };

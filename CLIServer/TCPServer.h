@@ -22,25 +22,26 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+#include <vector>
+
+using namespace std;
+#pragma hdrstop
+
+#include "Server.h"
+
 typedef int (*fp_TCPEvent)(SOCKET sock);
 
-class CTCPServer
+class CTCPServer : public IServer
 {
 public:
 	CTCPServer();
-	virtual ~CTCPServer();
+	~CTCPServer();
 
-	void SetPort(long port);
-	BOOL Bind();
-	void Clear();
+public:
+	int Receive(fp_TCPEvent cb_callback);
 
-	SOCKET GetListen() { return listen_sock; };
-
-protected:
-	bool Accept(SOCKET& ref_socket);
 
 private:
-	long port;
-	SOCKET listen_sock;
+	vector<SOCKET> clients;
 };
 

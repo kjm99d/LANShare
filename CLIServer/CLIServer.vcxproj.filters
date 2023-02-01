@@ -28,12 +28,15 @@
     <Filter Include="헤더 파일\Common\SettingLoader">
       <UniqueIdentifier>{db99680e-b8bf-481e-ac1f-5f7caae9deb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{255069c1-e998-4928-acb0-dc9aeee2e36c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Network">
+      <UniqueIdentifier>{445aa935-f05d-4fd1-80c2-f6613cb9283f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TCPServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ProtocolHTTP.cpp">
@@ -51,15 +54,18 @@
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
     <ClCompile Include="HTTPServer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPServer.cpp">
+      <Filter>소스 파일\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TCPServer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SettingLoader.h">
@@ -102,7 +108,13 @@
       <Filter>헤더 파일\Common\SettingLoader</Filter>
     </ClInclude>
     <ClInclude Include="HTTPServer.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPServer.h">
+      <Filter>헤더 파일\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

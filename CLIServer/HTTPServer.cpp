@@ -1,60 +1,37 @@
 ﻿#include "HTTPServer.h"
 
-void CHTTPServer::Receive(fp_HTTPEvent fp_callback)
+bool CHTTPServer::Receive(fp_HTTPEvent fp_callback)
 {
+	bool ret = false;
 	SOCKET sock;
 	if (true == Accept(sock))
 	{
-
 		string packet;
-		if (GetRequestPacket(sock, packet))
+		if (true == SafeRecv(sock, packet))
 		{
 			RequestHeader request_header;
-			Parse(packet, request_header);
+			if (true == Parse(packet, request_header))
+			{
 
-			const char* str_header = "HTTP/1.0 200 OK\r\n\r\n";
-			const char* str_body = "aaa";
+				const char* str_header = "HTTP/1.0 200 OK\r\n\r\n";
+				const char* str_body = "aaa";
 
-			while (send(sock, str_header, strlen(str_header), 0) == -1);
-			while (send(sock, str_body, strlen(str_body), 0) == -1);
-			
+				string res;
+				if (nullptr != fp_callback);
+				fp_callback(sock, request_header.method, request_header.url, res);
 
-			closesocket(sock);
+				SafeSend(sock, (char*)str_header, strlen(str_header));
+				SafeSend(sock, (char*)res.c_str(), res.size());
+
+				closesocket(sock);
+
+				ret = true;
+			}
 		}
-		
-
-		if (nullptr != fp_callback);
-		//fp_callback(sock, (unsigned char *)packet.c_str(), packet.size());
 	}
 
-}
+	return ret;
 
-bool CHTTPServer::GetRequestPacket(SOCKET& ref_socket, std::string & ref)
-{
-
-	unsigned char buffer[4096] = { 0, };
-	const int buffer_size = sizeof(buffer) / sizeof(char);
-	int iCountFailure = 0;
-	while (true)
-	{
-		if (iCountFailure == 100)
-			return false;
-
-		const int recv_size = recv(ref_socket, (char*)buffer, buffer_size, 0);
-		const int err = WSAGetLastError();
-
-		//printf("Receive Size = [%d] LastError = [%d] \n", recv_size, err);
-		if (WSAEWOULDBLOCK == err)
-		{
-			Sleep(10);
-			++iCountFailure;
-			continue;
-		}
-
-		ref.append((char*)buffer, recv_size);
-		if (recv_size < buffer_size && 0 == err)
-			return true;
-	}
 }
 
 bool CHTTPServer::Parse(const string& data, RequestHeader& ref)

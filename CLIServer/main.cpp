@@ -83,6 +83,18 @@ BOOL GetCloseHandlePacket(string path, PACKET_CloseHandle& packet);
 
 std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 
+int cb_protocol(SOCKET sock, string method, string uri, string& responseBody)
+{
+	if (method.compare("GET") == 0)
+	{
+		if (uri.compare("/hello") == 0)
+			responseBody = "Hello, Me too";
+		
+	}
+
+	return 0;
+}
+
 int main(int argc, const char* argv[])
 {
 	signal(SIGINT, INThandler);
@@ -106,15 +118,21 @@ int main(int argc, const char* argv[])
 
 	while (keepRunning)
 	{
-#if 0
-		// 패킷을 수신한다
-		SOCKET Sock = tcp.GetListen();
+		const bool isHttp = http.Receive(cb_protocol);
+		if (isHttp)
+		{
+			printf("Http Request ! \n");
+		} 
+		else
+		{
+			SOCKET Sock = tcp.GetListen();
+			tcp.Receive(NULL);
+
+			RecvPacket(sockets);
+			AddClient(sockets, Sock);
+		}
 		
-		RecvPacket(sockets);
-		AddClient(sockets, Sock);
-#else
-		http.Receive(NULL);
-#endif
+
 
 
 	} // END #while_1
