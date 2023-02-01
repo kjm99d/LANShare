@@ -22,22 +22,22 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
-//typedef int (*ProtocolV1)(BYTE packet, int length);
-//typedef int (*ProtocolV2)(BYTE packet, int length);
+typedef int (*fp_TCPEvent)(SOCKET sock);
 
-
-
-class CNBSocketServer
+class CTCPServer
 {
 public:
-	CNBSocketServer();
-	~CNBSocketServer();
+	CTCPServer();
+	virtual ~CTCPServer();
 
 	void SetPort(long port);
 	BOOL Bind();
 	void Clear();
+
 	SOCKET GetListen() { return listen_sock; };
 
+protected:
+	bool Accept(SOCKET& ref_socket);
 
 private:
 	long port;

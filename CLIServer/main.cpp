@@ -1,6 +1,7 @@
 ﻿
 
-#include "NBSocketServer.h"
+#include "TCPServer.h"
+#include "HTTPServer.h"
 
 #include <vector>
 #include <signal.h>
@@ -23,12 +24,6 @@
 #include <string>
 #include <stdlib.h>
 
-
-// ==============
-string fileName;
-string fhash;
-UINT fsize;
-// ==============
 
 
 
@@ -90,43 +85,44 @@ std::vector< std::pair<SOCKET, SOCKADDR_IN>> sockets;
 
 int main(int argc, const char* argv[])
 {
-	printf("%d", sizeof(PACKET_STREAM));
-	// [Ctrl + C] Interrupt
 	signal(SIGINT, INThandler);
 
+	CHTTPServer http;
+	http.SetPort(5004);
+	http.Bind();
 
 	const long nPort = 5003;
-	CNBSocketServer server;
-	server.SetPort(nPort);
-	server.Bind();
+	CTCPServer tcp;
+	tcp.SetPort(nPort);
+	tcp.Bind();
 
-
-
-	std::thread CommandListener = std::thread([] {
-		// 명령어 입력 받기
+	// 명령어 입력 받기
+	std::thread CommandListener = std::thread([] {	
 		while (true) {
 			system("cls"); // 콘솔창 지워라 
 			PrintCommand();
 		}
 		});
 
-	// ===============================================================================
-	// Connection Co-Routine
-	// ===============================================================================
-	int counter = 0;
-
 	while (keepRunning)
 	{
+#if 0
 		// 패킷을 수신한다
-		SOCKET Sock = server.GetListen();
+		SOCKET Sock = tcp.GetListen();
+		
 		RecvPacket(sockets);
 		AddClient(sockets, Sock);
+#else
+		http.Receive(NULL);
+#endif
+
 
 	} // END #while_1
 
 	// ===============================================================================
-	server.Clear();
-
+	http.Clear();
+	tcp.Clear();
+	// ===============================================================================
 	return 0;
 }
 
@@ -299,7 +295,7 @@ int LoadINI()
 void  INThandler(int sig)
 {
 	signal(sig, SIG_IGN);
-	printf("break\n");
+	printf("Ctrl + C \n");
 	keepRunning = 0;
 }
 

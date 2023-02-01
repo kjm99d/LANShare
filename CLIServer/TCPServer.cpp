@@ -1,20 +1,20 @@
-﻿#include "NBSocketServer.h"
+﻿#include "TCPServer.h"
 
 // ================================================== //
-CNBSocketServer::CNBSocketServer() : port(0), listen_sock(0)
+CTCPServer::CTCPServer() : port(0), listen_sock(0)
 {
 }
 
-CNBSocketServer::~CNBSocketServer()
+CTCPServer::~CTCPServer()
 {
 }
 
-void CNBSocketServer::SetPort(long port)
+void CTCPServer::SetPort(long port)
 {
 	this->port = port;
 }
 
-BOOL CNBSocketServer::Bind()
+BOOL CTCPServer::Bind()
 {
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -71,12 +71,26 @@ BOOL CNBSocketServer::Bind()
 	return TRUE;
 }
 
-void CNBSocketServer::Clear()
+void CTCPServer::Clear()
 {
 	closesocket(listen_sock);
 
 	// 윈속 종료
 	WSACleanup();
+}
+
+bool CTCPServer::Accept(SOCKET& ref_socket)
+{
+	int addrlen = sizeof(SOCKADDR_IN);
+	
+	SOCKADDR_IN clientaddr;
+	
+	// accept() - 서버에 접속한 클라이언트와 통신할 수 있도록 새로운 소켓을 생성리턴한다.
+	ref_socket = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
+	
+	if (ref_socket == INVALID_SOCKET)
+		return false;
+	return true;
 }
 
 // ================================================== //

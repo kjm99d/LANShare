@@ -33,7 +33,7 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="NBSocketServer.cpp">
+    <ClCompile Include="TCPServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ProtocolHTTP.cpp">
@@ -51,12 +51,15 @@
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="HTTPServer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="NBSocketServer.h">
+    <ClInclude Include="TCPServer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SettingLoader.h">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="..\CLICommon\INISettingLoader.h">
       <Filter>헤더 파일\Common\SettingLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="HTTPServer.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

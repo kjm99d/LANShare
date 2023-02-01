@@ -21,10 +21,11 @@
   <ItemGroup>
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp" />
     <ClCompile Include="BufferWriter.cpp" />
+    <ClCompile Include="HTTPServer.cpp" />
     <ClCompile Include="CommandGenerater.cpp" />
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="NBSocketServer.cpp" />
+    <ClCompile Include="TCPServer.cpp" />
     <ClCompile Include="ProtocolHTTP.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -36,11 +37,12 @@
     <ClInclude Include="..\CLICommon\ProtocolID.h" />
     <ClInclude Include="..\CLICommon\SettingLoader.h" />
     <ClInclude Include="BufferWriter.h" />
+    <ClInclude Include="HTTPServer.h" />
     <ClInclude Include="CommandGenerater.h" />
     <ClInclude Include="FileReader.h" />
     <ClInclude Include="ProtocolHTTP.h" />
     <ClInclude Include="SettingLoader.h" />
-    <ClInclude Include="NBSocketServer.h" />
+    <ClInclude Include="TCPServer.h" />
     <ClInclude Include="ProtocolBase.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
