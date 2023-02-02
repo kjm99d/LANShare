@@ -18,7 +18,7 @@ bool CHTTPServer::Receive(CTCPServer& tcp, fp_HTTPEvent fp_callback)
 
 				string res;
 				if (nullptr != fp_callback);
-					fp_callback(tcp, sock, request_header.method, request_header.url, res);
+					fp_callback(tcp, sock, request_header.method, request_header.url, request_header.querystring, res);
 
 				SafeSend(sock, (char*)str_header, strlen(str_header));
 				SafeSend(sock, (char*)res.c_str(), res.size());
@@ -59,7 +59,22 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 	if (tokens.size() == 3)
 	{
 		ref.method = tokens[0];
-		ref.url = tokens[1];
+
+		vector<string> vec, vec2;
+		Split(vec, tokens[1], "?");
+		ref.url = vec[0]; // URL
+
+
+		Split(vec2, vec[1], "&");
+		
+		for (auto v : vec2)
+		{
+			vector<string> temp;
+			Split(temp, v, "=");
+			ref.querystring.insert({ temp[0], temp[1] });
+		}
+
+		
 	}
 	else
 	{

@@ -11,14 +11,14 @@ using namespace std;
 typedef struct _RequestHeader {
 	string method;
 	string url;
-	string querystring;
+	map<string, string> querystring;
 	map<string, string> header;
 
 	string payloads;
 } RequestHeader;
 
 // typedef int (*fp_HTTPEvent)(SOCKET sock, string method, string uri, string& responseBody);
-typedef int (*fp_HTTPEvent)(CTCPServer& tcp, SOCKET sock, string method, string uri, string& responseBody);
+typedef int (*fp_HTTPEvent)(CTCPServer& tcp, SOCKET sock, string method, string uri, std::map<string, string> querystring, string& responseBody);
 
 class CHTTPServer : public IServer
 {

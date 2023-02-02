@@ -36,14 +36,15 @@ static volatile int keepRunning = 1;
 void PrintCommand();
 
 // HTTP Callback
-int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, string& responseBody)
+int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, std::map<string, string> querystring, string& responseBody)
 {
 	if (method.compare("GET") == 0)
 	{
-		if (uri.compare("/SendAll") == 0)
+		if (uri.compare("/SendFile") == 0)
 		{
+			if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end())
+				tcp.SendAll(querystring["filepath"].c_str(), querystring["filename"].c_str());
 			
-			tcp.SendAll("C:\\Users\\JungminKim\\Downloads\\Notion Setup 2.0.39.exe", "Notion Setup 2.0.39.exe");
 			responseBody = "Hello, Me too";
 		}
 		else if (uri.compare("/HeartBeat") == 0)
@@ -51,6 +52,10 @@ int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, string&
 			bool is_live;
 			tcp.HeartBeat(responseBody);
 			//responseBody = "Heart Beat";
+		}
+		else if (uri.compare("/echo") == 0)
+		{
+
 		}
 
 	}
