@@ -85,9 +85,16 @@ bool IServer::Accept(SOCKET& ref_socket)
 	
 	SOCKADDR_IN clientaddr;
 	
+	return Accept(ref_socket, clientaddr);
+}
+
+bool IServer::Accept(SOCKET& ref_socket, SOCKADDR_IN& ref_addr_in)
+{
+	int addrlen = sizeof(SOCKADDR_IN);
+
 	// accept() - 서버에 접속한 클라이언트와 통신할 수 있도록 새로운 소켓을 생성리턴한다.
-	ref_socket = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-	
+	ref_socket = accept(listen_sock, (SOCKADDR*)&ref_addr_in, &addrlen);
+
 	if (ref_socket == INVALID_SOCKET)
 		return false;
 	return true;

@@ -63,13 +63,13 @@
     <ClCompile Include="TCPServer.cpp">
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="SettingLoader.h">
-      <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="ProtocolBase.h">
       <Filter>헤더 파일\ReceiveProtocol</Filter>
@@ -115,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="TCPServer.h">
       <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

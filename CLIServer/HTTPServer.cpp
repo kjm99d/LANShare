@@ -18,7 +18,7 @@ bool CHTTPServer::Receive(fp_HTTPEvent fp_callback)
 
 				string res;
 				if (nullptr != fp_callback);
-				fp_callback(sock, request_header.method, request_header.url, res);
+					fp_callback(sock, request_header.method, request_header.url, res);
 
 				SafeSend(sock, (char*)str_header, strlen(str_header));
 				SafeSend(sock, (char*)res.c_str(), res.size());

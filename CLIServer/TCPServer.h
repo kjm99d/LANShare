@@ -27,9 +27,28 @@
 using namespace std;
 #pragma hdrstop
 
+#include "FileReader.h"
+#include "ProtocolID.h"
+#include "BufferWriter.h"
+#include "CommandGenerater.h"
+
 #include "Server.h"
 
+//typedef int (*fp_TCPEvent)(SOCKET sock);
 typedef int (*fp_TCPEvent)(SOCKET sock);
+
+typedef enum {
+	kNone = 0x00,
+	kSendTo,
+	kSendAll,
+} eCallbackHeader;
+
+
+
+typedef struct _CLIENT_INFOMATION {
+	SOCKET SOCK;
+	SOCKADDR_IN ADDR;
+} CLIENT_INFOMATION;
 
 class CTCPServer : public IServer
 {
@@ -38,10 +57,17 @@ public:
 	~CTCPServer();
 
 public:
+	void ShowClient();
+	void AddClient();
 	int Receive(fp_TCPEvent cb_callback);
 
 
+public:
+	void SendTo(const CLIENT_INFOMATION& info);
+	void SendAll(const char* src, const char* file_name);
+
 private:
-	vector<SOCKET> clients;
+	// 클라이언트 스토리지
+	vector<CLIENT_INFOMATION> clients;
 };
 
