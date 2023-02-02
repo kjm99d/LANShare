@@ -50,9 +50,8 @@ typedef struct _CLIENT_INFOMATION {
 	SOCKADDR_IN ADDR;
 
 	string address() { return inet_ntoa(ADDR.sin_addr); }
-
-
 	u_short port() { return ntohs(ADDR.sin_port); }
+
 } CLIENT_INFOMATION;
 
 class CTCPServer : public IServer
@@ -68,10 +67,12 @@ public:
 
 
 public:
-	void SendTo(const CLIENT_INFOMATION& info);
+	void SendTo(string address, const char* src, const char* file_name);
 	void SendAll(const char* src, const char* file_name);
 	void HeartBeat(string& reponsebody);
 
+private:
+	bool FindClientFromAddress(string address, CLIENT_INFOMATION& client);
 private:
 	// 클라이언트 스토리지
 	vector<CLIENT_INFOMATION> clients;

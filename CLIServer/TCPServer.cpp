@@ -15,8 +15,8 @@ void CTCPServer::ShowClient()
 	for (int i = 0; i < clients.size(); ++i)
 	{
 		const int seq = i + 1;
-		const CLIENT_INFOMATION & client = clients[i];
-		
+		const CLIENT_INFOMATION& client = clients[i];
+
 		const char* client_addr = inet_ntoa(client.ADDR.sin_addr);
 		const u_short client_port = ntohs(client.ADDR.sin_port);
 
@@ -35,7 +35,7 @@ void CTCPServer::AddClient()
 		clients.push_back(info);
 	}
 
-	
+
 }
 
 int CTCPServer::Receive(fp_TCPEvent cb_callback)
@@ -51,7 +51,61 @@ int CTCPServer::Receive(fp_TCPEvent cb_callback)
 	return 0;
 }
 
-void CTCPServer::SendAll(const char * src, const char * file_name)
+void CTCPServer::SendTo(string address, const char* src, const char* file_name)
+{
+	CLIENT_INFOMATION client;
+	if (FindClientFromAddress(address, client) == true)
+	{
+		std::string dst = "C:\\LanShare\\";
+		dst += file_name;
+
+		CBufferWriter buffer_writer;
+
+		SOCKET& sock = client.SOCK;
+
+		// 파일 생성
+		CCommandGenerater create_file(PROTOCOL_ID_CREATEFILE, (int)dst.size());
+		buffer_writer.Write(sock, create_file); // 헤더 전송
+		buffer_writer.Write(sock, (char*)dst.c_str(), dst.size()); // 데이터 전송
+
+
+
+		// 파일 버퍼 쓰기
+		CFileReader* reader = new CFileReader(4096, (char*)src);
+		size_t file_size = reader->FileSize();
+
+		CCommandGenerater WriteFileHeader(PROTOCOL_ID_WRITEFILE, (int)file_size);
+		buffer_writer.Write(sock, WriteFileHeader); // 헤더 전송
+
+		while (true)
+		{
+			// 서버 PC 에서 파일을 읽고
+			const char* const file_buf = reader->GetBuffer();
+			const size_t buffer_size = reader->GetBufferSize();
+
+			// 파일이 끝이면 그만 보내라
+			if (buffer_size == 0)
+				break;
+
+
+			SOCKET& sock = client.SOCK;
+			buffer_writer.Write(sock, (char*)file_buf, buffer_size); // 데이터 전송
+
+		}
+
+		delete reader;
+
+		// 파일 핸들 닫기
+		CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
+		const char* const b = close_handle.GetBuffer();
+		const int sz = close_handle.GetSize();
+		send(sock, b, sz, 0);
+
+	}
+
+}
+
+void CTCPServer::SendAll(const char* src, const char* file_name)
 {
 	std::string dst = "C:\\LanShare\\";
 	dst += file_name;
@@ -60,8 +114,8 @@ void CTCPServer::SendAll(const char * src, const char * file_name)
 
 	// 파일 생성
 	CCommandGenerater create_file(PROTOCOL_ID_CREATEFILE, (int)dst.size());
-	
-	for (auto client : clients) 
+
+	for (auto client : clients)
 	{
 		SOCKET& sock = client.SOCK;
 		buffer_writer.Write(sock, create_file); // 헤더 전송
@@ -112,13 +166,13 @@ void CTCPServer::SendAll(const char * src, const char * file_name)
 	}
 }
 
-void CTCPServer::HeartBeat(string & reponsebody)
+void CTCPServer::HeartBeat(string& reponsebody)
 {
-	for(CLIENT_INFOMATION& info : clients)
-	{ 
+	for (CLIENT_INFOMATION& info : clients)
+	{
 		CCommandGenerater cmd(PROTOCOL_ID_HEARTBEAT, 0);
 		CBufferWriter writer;
-		SafeSend(info.SOCK, (char *)cmd.GetBuffer(), cmd.GetSize());
+		SafeSend(info.SOCK, (char*)cmd.GetBuffer(), cmd.GetSize());
 
 		string RECV_BUFFER;
 		SafeRecv(info.SOCK, RECV_BUFFER);
@@ -132,4 +186,18 @@ void CTCPServer::HeartBeat(string & reponsebody)
 		else
 			reponsebody.append("0\r\n");
 	}
+}
+
+bool CTCPServer::FindClientFromAddress(string address, CLIENT_INFOMATION& client)
+{
+	for (int i = 0; i < clients.size(); ++i)
+	{
+		if (clients[i].address().compare(address) == 0)
+		{
+			client = clients[i];
+			return true;
+		}
+	}
+	return false;
+
 }

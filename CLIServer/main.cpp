@@ -40,12 +40,19 @@ int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, std::ma
 {
 	if (method.compare("GET") == 0)
 	{
-		if (uri.compare("/SendFile") == 0)
+		if (uri.compare("/SendAll") == 0)
 		{
 			if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end())
 				tcp.SendAll(querystring["filepath"].c_str(), querystring["filename"].c_str());
 			
-			responseBody = "Hello, Me too";
+			responseBody = "Hello, SendAll";
+		}
+		else if (uri.compare("/SendTo") == 0)
+		{
+			if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end() && querystring.find("address") != querystring.end())
+				tcp.SendTo(querystring["address"].c_str(), querystring["filepath"].c_str(), querystring["filename"].c_str());
+
+			responseBody = "Hello, SendTo";
 		}
 		else if (uri.compare("/HeartBeat") == 0)
 		{
