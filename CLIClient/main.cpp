@@ -158,7 +158,8 @@ int main(int argc, const char* argv[])
 		else if (Cmd == PROTOCOL_ID_HEARTBEAT)
 		{
 			printf(">> LIVE !");
-			send(client, "LIVE\r\n", 7, 0);
+			char result = 0x01;
+			send(client, &result, 1, 0);
 		}
 
 	}

@@ -112,16 +112,24 @@ void CTCPServer::SendAll(const char * src, const char * file_name)
 	}
 }
 
-void CTCPServer::HeartBeat(string & responseBody)
+void CTCPServer::HeartBeat(string & reponsebody)
 {
 	for(CLIENT_INFOMATION& info : clients)
 	{ 
 		CCommandGenerater cmd(PROTOCOL_ID_HEARTBEAT, 0);
 		CBufferWriter writer;
-		//writer.Write(info.SOCK, cmd);
 		SafeSend(info.SOCK, (char *)cmd.GetBuffer(), cmd.GetSize());
-		SafeRecv(info.SOCK, responseBody);
 
-		//SafeRecv()
+		string RECV_BUFFER;
+		SafeRecv(info.SOCK, RECV_BUFFER);
+		reponsebody.append(info.address());
+		reponsebody.append("/");
+		reponsebody.append(std::to_string(info.port()));
+		reponsebody.append("/");
+
+		if (RECV_BUFFER.size() > 0 && RECV_BUFFER[0] == 0x01)
+			reponsebody.append("1\r\n");
+		else
+			reponsebody.append("0\r\n");
 	}
 }

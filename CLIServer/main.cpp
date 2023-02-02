@@ -48,7 +48,7 @@ int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, string&
 		}
 		else if (uri.compare("/HeartBeat") == 0)
 		{
-
+			bool is_live;
 			tcp.HeartBeat(responseBody);
 			//responseBody = "Heart Beat";
 		}

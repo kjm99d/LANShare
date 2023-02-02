@@ -48,6 +48,11 @@ typedef enum {
 typedef struct _CLIENT_INFOMATION {
 	SOCKET SOCK;
 	SOCKADDR_IN ADDR;
+
+	string address() { return inet_ntoa(ADDR.sin_addr); }
+
+
+	u_short port() { return ntohs(ADDR.sin_port); }
 } CLIENT_INFOMATION;
 
 class CTCPServer : public IServer
@@ -65,7 +70,7 @@ public:
 public:
 	void SendTo(const CLIENT_INFOMATION& info);
 	void SendAll(const char* src, const char* file_name);
-	void HeartBeat(string & responseBody);
+	void HeartBeat(string& reponsebody);
 
 private:
 	// 클라이언트 스토리지
