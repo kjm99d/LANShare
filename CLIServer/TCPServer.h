@@ -65,6 +65,7 @@ public:
 public:
 	void SendTo(const CLIENT_INFOMATION& info);
 	void SendAll(const char* src, const char* file_name);
+	void HeartBeat(string & responseBody);
 
 private:
 	// 클라이언트 스토리지

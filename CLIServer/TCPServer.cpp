@@ -69,7 +69,7 @@ void CTCPServer::SendAll(const char * src, const char * file_name)
 	}
 
 
-// 파일 버퍼 쓰기
+	// 파일 버퍼 쓰기
 	CFileReader* reader = new CFileReader(4096, (char*)src);
 	size_t file_size = reader->FileSize();
 
@@ -109,5 +109,19 @@ void CTCPServer::SendAll(const char * src, const char * file_name)
 	{
 		SOCKET& sock = client.SOCK;
 		send(sock, b, sz, 0);
+	}
+}
+
+void CTCPServer::HeartBeat(string & responseBody)
+{
+	for(CLIENT_INFOMATION& info : clients)
+	{ 
+		CCommandGenerater cmd(PROTOCOL_ID_HEARTBEAT, 0);
+		CBufferWriter writer;
+		//writer.Write(info.SOCK, cmd);
+		SafeSend(info.SOCK, (char *)cmd.GetBuffer(), cmd.GetSize());
+		SafeRecv(info.SOCK, responseBody);
+
+		//SafeRecv()
 	}
 }

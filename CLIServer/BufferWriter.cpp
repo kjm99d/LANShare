@@ -39,6 +39,7 @@ bool CBufferWriter::Write(SOCKET& socket, CCommandGenerater& cmd)
 	while (countdown > 0)
 	{
 		int result = send(socket, (char*)cmd.GetBuffer() + (cmd.GetSize() - countdown), countdown, 0);
+		const int err = WSAGetLastError();
 
 		if (result == -1)
 			continue;

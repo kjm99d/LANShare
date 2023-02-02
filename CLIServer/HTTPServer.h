@@ -17,12 +17,13 @@ typedef struct _RequestHeader {
 	string payloads;
 } RequestHeader;
 
-typedef int (*fp_HTTPEvent)(SOCKET sock, string method, string uri, string& responseBody);
+// typedef int (*fp_HTTPEvent)(SOCKET sock, string method, string uri, string& responseBody);
+typedef int (*fp_HTTPEvent)(CTCPServer& tcp, SOCKET sock, string method, string uri, string& responseBody);
 
 class CHTTPServer : public IServer
 {
 public:
-	bool Receive(fp_HTTPEvent fp);
+	bool Receive(CTCPServer& tcp, fp_HTTPEvent fp_callback);
 
 private:
 	bool Parse(const string& data, RequestHeader& ref);

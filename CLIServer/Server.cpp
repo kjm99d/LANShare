@@ -100,15 +100,19 @@ bool IServer::Accept(SOCKET& ref_socket, SOCKADDR_IN& ref_addr_in)
 	return true;
 }
 
-void IServer::SafeSend(SOCKET& sock, char* buffer, int length)
+void IServer::SafeSend(SOCKET& ref_sock, char* buffer, int length)
 {
 	int countdown = length;
 
 	while (countdown > 0)
 	{
-		int result = send(sock, (char*)buffer + (length - countdown), countdown, 0);
+ 		int result = send(ref_sock, (char*)buffer + (length - countdown), countdown, 0);
+		const int err = WSAGetLastError();
 
-		if (result == -1)
+
+		if (err == WSAECONNRESET && result == SOCKET_ERROR)
+			break;
+		if (result == SOCKET_ERROR)
 			continue;
 
 		countdown -= result;
@@ -129,6 +133,8 @@ bool IServer::SafeRecv(SOCKET& ref_sock, std::string& ref_buffer)
 		const int err = WSAGetLastError();
 
 		//printf("Receive Size = [%d] LastError = [%d] \n", recv_size, err);
+		if (err == WSAECONNRESET && recv_size == SOCKET_ERROR)
+			break;
 		if (WSAEWOULDBLOCK == err)
 		{
 			Sleep(10);

@@ -146,14 +146,19 @@ int main(int argc, const char* argv[])
 		else if (Cmd == PROTOCOL_ID_CLOSEHANDLE)
 		{
 			printf(">> 파일 다운로드 완료");
-			
+
 			//char* file_data = (char*)malloc(pkt_size - 4);
 			//int tmp_read_size = recv(client, (char*)file_data, pkt_size - 4, 0);
 
-			fclose(fd); 
+			fclose(fd);
 			fd = nullptr;
 
 			//delete file_data;
+		}
+		else if (Cmd == PROTOCOL_ID_HEARTBEAT)
+		{
+			printf(">> LIVE !");
+			send(client, "LIVE\r\n", 7, 0);
 		}
 
 	}

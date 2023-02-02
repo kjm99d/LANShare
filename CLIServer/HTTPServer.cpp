@@ -1,6 +1,6 @@
 ﻿#include "HTTPServer.h"
 
-bool CHTTPServer::Receive(fp_HTTPEvent fp_callback)
+bool CHTTPServer::Receive(CTCPServer& tcp, fp_HTTPEvent fp_callback)
 {
 	bool ret = false;
 	SOCKET sock;
@@ -18,7 +18,7 @@ bool CHTTPServer::Receive(fp_HTTPEvent fp_callback)
 
 				string res;
 				if (nullptr != fp_callback);
-					fp_callback(sock, request_header.method, request_header.url, res);
+					fp_callback(tcp, sock, request_header.method, request_header.url, res);
 
 				SafeSend(sock, (char*)str_header, strlen(str_header));
 				SafeSend(sock, (char*)res.c_str(), res.size());

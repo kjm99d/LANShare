@@ -36,12 +36,22 @@ static volatile int keepRunning = 1;
 void PrintCommand();
 
 // HTTP Callback
-int cb_protocol(SOCKET sock, string method, string uri, string& responseBody)
+int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, string& responseBody)
 {
 	if (method.compare("GET") == 0)
 	{
-		if (uri.compare("/hello") == 0)
+		if (uri.compare("/SendAll") == 0)
+		{
+			
+			tcp.SendAll("C:\\Users\\JungminKim\\Downloads\\Notion Setup 2.0.39.exe", "Notion Setup 2.0.39.exe");
 			responseBody = "Hello, Me too";
+		}
+		else if (uri.compare("/HeartBeat") == 0)
+		{
+
+			tcp.HeartBeat(responseBody);
+			//responseBody = "Heart Beat";
+		}
 
 	}
 
@@ -69,7 +79,7 @@ int main(int argc, const char* argv[])
 
 	while (keepRunning)
 	{
-		const bool isHttp = http.Receive(cb_protocol);
+		bool isHttp = http.Receive(tcp, cb_protocol);
 		if (isHttp)
 		{
 			printf("Http Request ! \n");

@@ -40,7 +40,7 @@ public:
 protected:
 	bool Accept(SOCKET& ref_socket);
 	bool Accept(SOCKET& ref_socket, SOCKADDR_IN& ref_addr_in);
-	void SafeSend(SOCKET& sock, char* buffer, int length);
+	void SafeSend(SOCKET& ref_sock, char* buffer, int length);
 	bool SafeRecv(SOCKET& ref_sock, std::string& ref_buffer);
 
 private:
