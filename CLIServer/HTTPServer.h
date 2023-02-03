@@ -18,15 +18,17 @@ typedef struct _RequestHeader {
 } RequestHeader;
 
 // typedef int (*fp_HTTPEvent)(SOCKET sock, string method, string uri, string& responseBody);
-typedef int (*fp_HTTPEvent)(CTCPServer& tcp, SOCKET sock, string method, string uri, std::map<string, string> querystring, string& responseBody);
+typedef int (*fp_HTTPGetController)(CTCPServer& tcp, SOCKET sock, string method, string uri, std::map<string, string> querystring, string& responseBody);
 
 class CHTTPServer : public IServer
 {
 public:
-	bool Receive(CTCPServer& tcp, fp_HTTPEvent fp_callback);
+	bool Receive(CTCPServer& tcp, fp_HTTPGetController fp_callback);
 
 private:
 	bool Parse(const string& data, RequestHeader& ref);
 	bool Split(vector<string>& ref, string src, std::string delimeter);
+
+	fp_HTTPGetController fp_GetController;
 };
 
