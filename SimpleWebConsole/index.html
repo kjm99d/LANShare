@@ -18,8 +18,10 @@
             const SendAll = (src_path, dst_filename) => {
                 $.ajax({
                     url: "http://localhost:5004/SendAll",
-                    data: { filepath: src_path, filename: dst_filename },
-                    method: "get",
+                    data: JSON.stringify({ filepath: src_path, filename: dst_filename }),
+                    dataType: "json", 
+                    method: "post",
+                    contentType : "application/json; charset=utf-8",
                     success: function (res) {
 
                     },
@@ -34,7 +36,7 @@
                 $.ajax({
                     url: "http://localhost:5004/SendTo",
                     data: "",
-                    method: "get",
+                    method: "post",
                     success: function (res) {
 
                     },
@@ -51,13 +53,10 @@
 </head>
 
 <body>
-    <form enctype="multipart/form-data">
-        <a>PATH </a><input type="file" id="filepath" /> </br>
-        <a>Target </a><input type="text" /> </br>
-        <a>Filename </a><input type="text" id="filename" /> </br>
-
-    </form>
-
+    <a>PATH </a><input type="text" id="filepath" /> </br>
+    <a>Target </a><input type="text" /> </br>
+    <a>Filename </a><input type="text" id="filename" /> </br>
+    <button id="btnSendAll">SendAll</button>
 
 </body>
 
