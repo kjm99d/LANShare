@@ -30,7 +30,6 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CLICommon\CLIPacketStruct.h" />
     <ClInclude Include="..\CLICommon\Defines.h" />
     <ClInclude Include="..\CLICommon\INISettingLoader.h" />
     <ClInclude Include="..\CLICommon\MemoryPool.h" />
