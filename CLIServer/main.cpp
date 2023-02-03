@@ -1,27 +1,11 @@
-﻿
-
-#include "TCPServer.h"
-#include "HTTPServer.h"
-
-#include <vector>
-#include <signal.h>
+﻿#include <signal.h>
 #include <iostream>
 #include <thread>
-
-
-#include "INISettingLoader.h"
-
-#include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
-#include "CLIPacketStruct.h"	// 패킷정의 할 구조체 정보
-#include "MemoryPool.h"
-#include "MemoryStreamPool.h"
-#include "CommandGenerater.h"
-#include "BufferWriter.h"
-#include "FileReader.h"
-
 #include <string>
 #include <stdlib.h>
 
+#include "TCPServer.h"
+#include "HTTPServer.h"
 #include "Util.h"
 
 CHTTPServer http;
@@ -54,7 +38,6 @@ int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, std::ma
 		}
 		else if (uri.compare("/HeartBeat") == 0)
 		{
-			bool is_live;
 			tcp.HeartBeat(responseBody);
 			//responseBody = "Heart Beat";
 		}
@@ -62,6 +45,10 @@ int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, std::ma
 		{
 
 		}
+
+	}
+	else if (method.compare("POST") == 0)
+	{
 
 	}
 

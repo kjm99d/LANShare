@@ -1,6 +1,6 @@
 ﻿#include "HTTPServer.h"
 
-bool CHTTPServer::Receive(CTCPServer& tcp, fp_HTTPEvent fp_callback)
+bool CHTTPServer::Receive(CTCPServer& tcp, fp_HTTPGetController fp_callback)
 {
 	bool ret = false;
 	SOCKET sock;
@@ -47,13 +47,16 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 		return false;
 	}
 
-	ref.payloads = container[1];
+	// Payloads Parse
+	const string & payloads = container[1];
+
+	//ref.payloads = 
 
 	// RequestHeader 영역 파싱
 	vector<string> lines;
 	Split(lines, container[0], "\r\n");
 
-	// 요청 기본 정보 파싱
+	// Start Line & QueryStrng Parse
 	vector<string> tokens;
 	Split(tokens, lines[0], " ");
 	if (tokens.size() == 3)
@@ -61,18 +64,23 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 		ref.method = tokens[0];
 
 		vector<string> vec, vec2;
-		Split(vec, tokens[1], "?");
-		ref.url = vec[0]; // URL
-
-
-		Split(vec2, vec[1], "&");
-		
-		for (auto v : vec2)
+		if (Split(vec, tokens[1], "?"))
 		{
-			vector<string> temp;
-			Split(temp, v, "=");
-			ref.querystring.insert({ temp[0], temp[1] });
+			ref.url = vec[0]; // URL
+			Split(vec2, vec[1], "&");
+
+			for (auto v : vec2)
+			{
+				vector<string> temp;
+				Split(temp, v, "=");
+				ref.querystring.insert({ temp[0], temp[1] });
+			}
 		}
+		else
+			ref.url = tokens[1];
+
+
+
 
 		
 	}
@@ -81,15 +89,26 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 		return false;
 	}
 
+	// HTTP HeaderParse
 	for (int i = 1; i < lines.size(); ++i)
 	{
 		vector<string> tokens;
-		if (Split(tokens, lines[i], ": "))
+		if (Split(tokens, lines[i], ": ")) 
+		{		
 			ref.header.insert({ tokens[0], tokens[1] });
+		}
+	}
+
+	
+	// RequestBody 영역 파싱
+	if (ref.header["Content-Type"].compare("application/json") == 0)
+	{
+
 	}
 
 
-	// RequestBody 영역 파싱
+	
+	
 
 
 	return true;
