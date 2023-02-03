@@ -17,8 +17,8 @@ RESTAPI 또는 서버프로그램을 통해 각 클라이언트에게 파일공�
 ---
 |URI|Method|Parameter|
 |:---|:---:|:---|
-|/SendAll|GET|QueryString </br>filePath - source file full path</br>filename - saved filename|
-|/SendTo|GET|QueryString </br>address - target client address</br>filePath - source file full path</br>filename - saved filename|
+|/SendAll|GET|QueryString </br>filepath - source file full path</br>filename - saved filename|
+|/SendTo|GET|QueryString </br>address - target client address</br>filepath - source file full path</br>filename - saved filename|
 
 
 ## Requirements
