@@ -1,6 +1,16 @@
 ﻿#include "HTTPServer.h"
 
-bool CHTTPServer::Receive(CTCPServer& tcp, fp_HTTPGetController fp_callback)
+void CHTTPServer::SetController(fp_HTTPGetController fp)
+{
+	this->fp_GetController = fp;
+}
+
+void CHTTPServer::SetController(fp_HTTPPostController fp)
+{
+	this->fp_PostController = fp;
+}
+
+bool CHTTPServer::Receive(CTCPServer& tcp)
 {
 	bool ret = false;
 	SOCKET sock;
@@ -17,8 +27,10 @@ bool CHTTPServer::Receive(CTCPServer& tcp, fp_HTTPGetController fp_callback)
 				const char* str_body = "aaa";
 
 				string res;
-				if (nullptr != fp_callback);
-					fp_callback(tcp, sock, request_header.method, request_header.url, request_header.querystring, res);
+				if (request_header.method.compare("GET") == 0 && fp_GetController != nullptr)
+					fp_GetController(tcp, sock, request_header.url, request_header.querystring, res);
+				else if(request_header.method.compare("POST") == 0 && fp_PostController != nullptr)
+					fp_PostController(tcp, sock, request_header.url, request_header.querystring, request_header.queryPayloads, request_header.jsonPayloads, res);
 
 				SafeSend(sock, (char*)str_header, strlen(str_header));
 				SafeSend(sock, (char*)res.c_str(), res.size());
@@ -36,10 +48,11 @@ bool CHTTPServer::Receive(CTCPServer& tcp, fp_HTTPGetController fp_callback)
 
 bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 {
-	// http 아님
+	// HTTP 아님
 	if (data.find("\r\n\r\n") == string::npos)
 		return false;
 
+	// HTTP 가능성이 있음
 	vector<string> container;
 	Split(container, data, "\r\n\r\n");
 	if (container.size() != 2)
@@ -48,7 +61,6 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 	}
 
 	// Payloads Parse
-	const string & payloads = container[1];
 
 	//ref.payloads = 
 
@@ -78,11 +90,6 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 		}
 		else
 			ref.url = tokens[1];
-
-
-
-
-		
 	}
 	else
 	{
@@ -94,23 +101,33 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 	{
 		vector<string> tokens;
 		if (Split(tokens, lines[i], ": ")) 
-		{		
 			ref.header.insert({ tokens[0], tokens[1] });
+	}
+
+	const string& payloads = container[1];
+	if (ref.method.compare("GET") == 0)
+	{
+		// 얘는 쿼리스트링만 따면 됨 바디보내는거 비표준임.
+	}
+	else if (ref.method.compare("POST") == 0)
+	{
+		if (ref.header["Content-Type"].compare("application/json") == 0) {
+			vector<string> vec;
+			Split(vec, payloads, "&");
+
+			for (auto v : vec)
+			{
+				vector<string> temp;
+				Split(temp, v, "=");
+				ref.queryPayloads.insert({ temp[0], temp[1] });
+			}
+		}
+		else if (ref.header["Content-Type"].compare("application/json") == 0)
+		{
+			// HA.... 살려줘
 		}
 	}
-
 	
-	// RequestBody 영역 파싱
-	if (ref.header["Content-Type"].compare("application/json") == 0)
-	{
-
-	}
-
-
-	
-	
-
-
 	return true;
 }
 

@@ -28,6 +28,12 @@
     <Filter Include="헤더 파일\Network">
       <UniqueIdentifier>{445aa935-f05d-4fd1-80c2-f6613cb9283f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\lib">
+      <UniqueIdentifier>{2123f4af-9970-4352-ab3a-7b280737570c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\lib\jsoncpp">
+      <UniqueIdentifier>{1a5eafbd-b12c-4609-9eb1-5b56c8c049fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,6 +62,15 @@
     </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_reader.cpp">
+      <Filter>소스 파일\lib\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_value.cpp">
+      <Filter>소스 파일\lib\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp">
+      <Filter>소스 파일\lib\jsoncpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
