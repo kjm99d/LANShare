@@ -26,12 +26,10 @@
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
-    <ClCompile Include="ProtocolHTTP.cpp" />
     <ClCompile Include="TCPServer.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CLICommon\CLIPacketStruct.h" />
     <ClInclude Include="..\CLICommon\Defines.h" />
     <ClInclude Include="..\CLICommon\INISettingLoader.h" />
     <ClInclude Include="..\CLICommon\MemoryPool.h" />
@@ -42,9 +40,7 @@
     <ClInclude Include="HTTPServer.h" />
     <ClInclude Include="CommandGenerater.h" />
     <ClInclude Include="FileReader.h" />
-    <ClInclude Include="ProtocolHTTP.h" />
     <ClInclude Include="Server.h" />
-    <ClInclude Include="ProtocolBase.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TCPServer.h" />
     <ClInclude Include="Util.h" />
