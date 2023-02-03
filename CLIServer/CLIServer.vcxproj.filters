@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="소스 파일\ReceiveProtocol">
-      <UniqueIdentifier>{33ca1b0d-ad8f-4e19-b44e-d3e06f3d8f1f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\ReceiveProtocol">
-      <UniqueIdentifier>{c40fb626-a61a-4aff-b28a-dec37216b488}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\Common">
       <UniqueIdentifier>{d0b8405c-282e-4acd-8ed7-2ec280791b80}</UniqueIdentifier>
     </Filter>
@@ -34,13 +28,16 @@
     <Filter Include="헤더 파일\Network">
       <UniqueIdentifier>{445aa935-f05d-4fd1-80c2-f6613cb9283f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\lib">
+      <UniqueIdentifier>{2123f4af-9970-4352-ab3a-7b280737570c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\lib\jsoncpp">
+      <UniqueIdentifier>{1a5eafbd-b12c-4609-9eb1-5b56c8c049fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ProtocolHTTP.cpp">
-      <Filter>소스 파일\ReceiveProtocol</Filter>
     </ClCompile>
     <ClCompile Include="CommandGenerater.cpp">
       <Filter>소스 파일</Filter>
@@ -66,19 +63,19 @@
     <ClCompile Include="Util.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_reader.cpp">
+      <Filter>소스 파일\lib\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_value.cpp">
+      <Filter>소스 파일\lib\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp">
+      <Filter>소스 파일\lib\jsoncpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ProtocolBase.h">
-      <Filter>헤더 파일\ReceiveProtocol</Filter>
-    </ClInclude>
-    <ClInclude Include="ProtocolHTTP.h">
-      <Filter>헤더 파일\ReceiveProtocol</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CLICommon\CLIPacketStruct.h">
-      <Filter>헤더 파일\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\CLICommon\ProtocolID.h">
       <Filter>헤더 파일\Common</Filter>

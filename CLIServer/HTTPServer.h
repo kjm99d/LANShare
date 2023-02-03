@@ -6,6 +6,8 @@
 using namespace std;
 #pragma hdrstop
 
+#include "json/json.h"
+
 #include "TCPServer.h"
 
 typedef struct _RequestHeader {
@@ -14,19 +16,27 @@ typedef struct _RequestHeader {
 	map<string, string> querystring;
 	map<string, string> header;
 
-	string payloads;
+	map<string, string> queryPayloads;
+	Json::Value jsonPayloads;
 } RequestHeader;
 
-// typedef int (*fp_HTTPEvent)(SOCKET sock, string method, string uri, string& responseBody);
-typedef int (*fp_HTTPEvent)(CTCPServer& tcp, SOCKET sock, string method, string uri, std::map<string, string> querystring, string& responseBody);
+typedef int (*fp_HTTPGetController)(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, string& responseBody);
+typedef int (*fp_HTTPPostController)(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, string& responseBody);
 
 class CHTTPServer : public IServer
 {
 public:
-	bool Receive(CTCPServer& tcp, fp_HTTPEvent fp_callback);
+	void SetController(fp_HTTPGetController fp);
+	void SetController(fp_HTTPPostController fp);
+
+	bool Receive(CTCPServer& tcp);
 
 private:
 	bool Parse(const string& data, RequestHeader& ref);
 	bool Split(vector<string>& ref, string src, std::string delimeter);
+	
+
+	fp_HTTPGetController fp_GetController;
+	fp_HTTPPostController fp_PostController;
 };
 

@@ -1,29 +1,11 @@
-﻿
-
-#include "TCPServer.h"
-#include "HTTPServer.h"
-
-#include <vector>
-#include <signal.h>
+﻿#include <signal.h>
 #include <iostream>
 #include <thread>
-
-
-#include "INISettingLoader.h"
-#include "ProtocolBase.h"
-#include "ProtocolHTTP.h"
-
-#include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
-#include "CLIPacketStruct.h"	// 패킷정의 할 구조체 정보
-#include "MemoryPool.h"
-#include "MemoryStreamPool.h"
-#include "CommandGenerater.h"
-#include "BufferWriter.h"
-#include "FileReader.h"
-
 #include <string>
 #include <stdlib.h>
 
+#include "TCPServer.h"
+#include "HTTPServer.h"
 #include "Util.h"
 
 CHTTPServer http;
@@ -36,36 +18,36 @@ static volatile int keepRunning = 1;
 void PrintCommand();
 
 // HTTP Callback
-int cb_protocol(CTCPServer& tcp, SOCKET sock, string method, string uri, std::map<string, string> querystring, string& responseBody)
+int GetController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, string& responseBody)
 {
-	if (method.compare("GET") == 0)
+	if (uri.compare("/SendAll") == 0)
 	{
-		if (uri.compare("/SendAll") == 0)
-		{
-			if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end())
-				tcp.SendAll(querystring["filepath"].c_str(), querystring["filename"].c_str());
-			
-			responseBody = "Hello, SendAll";
-		}
-		else if (uri.compare("/SendTo") == 0)
-		{
-			if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end() && querystring.find("address") != querystring.end())
-				tcp.SendTo(querystring["address"].c_str(), querystring["filepath"].c_str(), querystring["filename"].c_str());
+		if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end())
+			tcp.SendAll(querystring["filepath"].c_str(), querystring["filename"].c_str());
 
-			responseBody = "Hello, SendTo";
-		}
-		else if (uri.compare("/HeartBeat") == 0)
-		{
-			bool is_live;
-			tcp.HeartBeat(responseBody);
-			//responseBody = "Heart Beat";
-		}
-		else if (uri.compare("/echo") == 0)
-		{
+		responseBody = "Hello, SendAll";
+	}
+	else if (uri.compare("/SendTo") == 0)
+	{
+		if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end() && querystring.find("address") != querystring.end())
+			tcp.SendTo(querystring["address"].c_str(), querystring["filepath"].c_str(), querystring["filename"].c_str());
 
-		}
+		responseBody = "Hello, SendTo";
+	}
+	else if (uri.compare("/HeartBeat") == 0)
+	{
+		tcp.HeartBeat(responseBody);
+		//responseBody = "Heart Beat";
+	}
+	else if (uri.compare("/echo") == 0)
+	{
 
 	}
+	return 0;
+}
+
+int PostController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, string& responseBody)
+{
 
 	return 0;
 }
@@ -77,9 +59,13 @@ int main(int argc, const char* argv[])
 	http.SetPort(5004);
 	http.Bind();
 
+	http.SetController(GetController);
+	http.SetController(PostController);
+
 	const long nPort = 5003;
 	tcp.SetPort(nPort);
 	tcp.Bind();
+
 
 	// 명령어 입력 받기
 	std::thread CommandListener = std::thread([] {
@@ -91,7 +77,7 @@ int main(int argc, const char* argv[])
 
 	while (keepRunning)
 	{
-		bool isHttp = http.Receive(tcp, cb_protocol);
+		bool isHttp = http.Receive(tcp);
 		if (isHttp)
 		{
 			printf("Http Request ! \n");
@@ -163,11 +149,11 @@ void PrintCommand()
 		int nPosLastEscape = 0;
 		for (nPosLastEscape = strlen(szPath) - 1; szPath[nPosLastEscape] != '\\'; --nPosLastEscape);
 		const char* fileName = szPath + nPosLastEscape;
-		
+
 		tcp.SendAll(szPath, fileName);
 		printf(">> %s \n", szPath);
 
-		
+
 	}
 	break;
 	case 3:

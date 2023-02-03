@@ -5,7 +5,6 @@
 #pragma comment (lib , "ws2_32.lib")
 
 #include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
-#include "CLIPacketStruct.h"	// 패킷정의 할 구조체 정보
 
 #include <queue>
 #include <deque>
