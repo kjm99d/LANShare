@@ -20,17 +20,25 @@ void PrintCommand();
 // HTTP Callback
 int GetController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, string& responseBody)
 {
+
+	return 0;
+}
+
+int PostController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, string& responseBody)
+{
 	if (uri.compare("/SendAll") == 0)
 	{
-		if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end())
-			tcp.SendAll(querystring["filepath"].c_str(), querystring["filename"].c_str());
+		Json::Value filepath = jsonPayloads["filepath"];
+		Json::Value filename = jsonPayloads["filename"];
+		if (filepath.isNull() == false && filename.isNull() == false)
+			tcp.SendAll(filepath.asString().c_str(), filename.asString().c_str());
 
 		responseBody = "Hello, SendAll";
 	}
 	else if (uri.compare("/SendTo") == 0)
 	{
-		if (querystring.find("filepath") != querystring.end() && querystring.find("filename") != querystring.end() && querystring.find("address") != querystring.end())
-			tcp.SendTo(querystring["address"].c_str(), querystring["filepath"].c_str(), querystring["filename"].c_str());
+		if (queryPayloads.find("filepath") != queryPayloads.end() && queryPayloads.find("filename") != queryPayloads.end() && queryPayloads.find("address") != queryPayloads.end())
+			tcp.SendTo(queryPayloads["address"].c_str(), queryPayloads["filepath"].c_str(), queryPayloads["filename"].c_str());
 
 		responseBody = "Hello, SendTo";
 	}
@@ -43,11 +51,6 @@ int GetController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, str
 	{
 
 	}
-	return 0;
-}
-
-int PostController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, string& responseBody)
-{
 
 	return 0;
 }

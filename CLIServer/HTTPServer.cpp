@@ -23,7 +23,11 @@ bool CHTTPServer::Receive(CTCPServer& tcp)
 			if (true == Parse(packet, request_header))
 			{
 
-				const char* str_header = "HTTP/1.0 200 OK\r\n\r\n";
+				const char* str_header = "HTTP/1.1 200 OK\r\n";
+				//const char* str_header2 = "Access-Control-Allow-Origin: *\r\n";
+				const char* str_header2 = "Access-Control-Allow-Headers: *\r\n";
+				//const char* str_header2 = "Access-Control-Allow-Origin: *\r\n";
+				const char* str_header3 = "Access-Control-Allow-Origin: *\r\n\r\n";
 				const char* str_body = "aaa";
 
 				string res;
@@ -33,6 +37,8 @@ bool CHTTPServer::Receive(CTCPServer& tcp)
 					fp_PostController(tcp, sock, request_header.url, request_header.querystring, request_header.queryPayloads, request_header.jsonPayloads, res);
 
 				SafeSend(sock, (char*)str_header, strlen(str_header));
+				SafeSend(sock, (char*)str_header2, strlen(str_header2));
+				SafeSend(sock, (char*)str_header3, strlen(str_header3));
 				SafeSend(sock, (char*)res.c_str(), res.size());
 
 				closesocket(sock);
@@ -104,14 +110,15 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 			ref.header.insert({ tokens[0], tokens[1] });
 	}
 
-	const string& payloads = container[1];
+	string& payloads = container[1];
 	if (ref.method.compare("GET") == 0)
 	{
 		// 얘는 쿼리스트링만 따면 됨 바디보내는거 비표준임.
 	}
 	else if (ref.method.compare("POST") == 0)
 	{
-		if (ref.header["Content-Type"].compare("application/json") == 0) {
+		if (ref.header["Content-Type"].find("application/x-www-form-urlencoded") != string::npos)
+		{
 			vector<string> vec;
 			Split(vec, payloads, "&");
 
@@ -122,9 +129,39 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 				ref.queryPayloads.insert({ temp[0], temp[1] });
 			}
 		}
-		else if (ref.header["Content-Type"].compare("application/json") == 0)
+		else if (ref.header["Content-Type"].find("application/json") != string::npos)
 		{
 			// HA.... 살려줘
+			// const std::string rawJson = R"({"Age": 20, "Name": "colin"})";
+#if 1
+			std::string whitespaces("\r\n");
+			while (true) {
+				std::size_t found = payloads.find(whitespaces);
+				if (found == std::string::npos)
+					break;
+				
+				payloads.erase(found, 2);
+			}
+#endif
+			const auto rawJsonLength = static_cast<int>(payloads.length());
+
+			constexpr bool shouldUseOldWay = false;
+			JSONCPP_STRING err;
+			Json::Value root;
+
+			if (shouldUseOldWay) {
+				Json::Reader reader;
+				reader.parse(payloads, root);
+			}
+			else {
+				Json::CharReaderBuilder builder;
+				const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+				if (!reader->parse(payloads.c_str(), payloads.c_str() + rawJsonLength, &ref.jsonPayloads,
+					&err)) {
+					
+					
+				}
+			}
 		}
 	}
 	

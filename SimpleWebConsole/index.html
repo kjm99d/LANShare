@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>LANShare Simple WebConsole</title>
+
+    <script type="text/javascript" src="./js/jquery-3.6.3.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const onClickSendAllButton = () => {
+
+                const strFileSrc = $("#filepath").val();
+                const strSaveFileName = $("#filename").val();
+                console.log(strFileSrc, strSaveFileName)
+                SendAll(strFileSrc, strSaveFileName);
+            };
+
+            const SendAll = (src_path, dst_filename) => {
+                $.ajax({
+                    url: "http://localhost:5004/SendAll",
+                    data: JSON.stringify({ filepath: src_path, filename: dst_filename }),
+                    dataType: "json", 
+                    method: "post",
+                    contentType : "application/json; charset=utf-8",
+                    success: function (res) {
+
+                    },
+                    error: function (xhr, status, error) {
+
+                    }
+                });
+            };
+
+
+            const SendTo = (target, src_path, dst_filename) => {
+                $.ajax({
+                    url: "http://localhost:5004/SendTo",
+                    data: "",
+                    method: "post",
+                    success: function (res) {
+
+                    },
+                    error: function (xhr, status, error) {
+
+                    }
+                });
+            };
+
+            // SetEvent
+            $("#btnSendAll").on("click", onClickSendAllButton);
+        });
+    </script>
+</head>
+
+<body>
+    <a>PATH </a><input type="text" id="filepath" /> </br>
+    <a>Target </a><input type="text" /> </br>
+    <a>Filename </a><input type="text" id="filename" /> </br>
+    <button id="btnSendAll">SendAll</button>
+
+</body>
+
+</html>
