@@ -15,10 +15,10 @@ RESTAPI 또는 서버프로그램을 통해 각 클라이언트에게 파일공�
 
 ### Supported REST API List
 ---
-|URI|Method|Parameter|
-|:---|:---:|:---|
-|/SendAll|GET|QueryString </br>filepath - source file full path</br>filename - saved filename|
-|/SendTo|GET|QueryString </br>address - target client address</br>filepath - source file full path</br>filename - saved filename|
+|URI|Method|QueryString|Content-Type|Body|
+|:---|:---:|:---|:---|:---|
+|/SendAll|GET||JSON|filepath - source file full path</br>filename - saved filename|
+|/SendTo|GET||JSON|address - target client address</br>filepath - source file full path</br>filename - saved filename|
 
 
 ## Requirements
