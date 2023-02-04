@@ -18,13 +18,13 @@ static volatile int keepRunning = 1;
 void PrintCommand();
 
 // HTTP Callback
-int GetController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, string& responseBody)
+string GetController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring)
 {
 
 	return 0;
 }
 
-int PostController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, string& responseBody)
+string PostController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads)
 {
 	if (uri.compare("/SendAll") == 0)
 	{
@@ -32,19 +32,23 @@ int PostController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, st
 		Json::Value filename = jsonPayloads["filename"];
 		if (filepath.isNull() == false && filename.isNull() == false)
 			tcp.SendAll(filepath.asString().c_str(), filename.asString().c_str());
+		
+		// Feature : 
+		// JSON 객체로 만들어서 뱉어주고
+		// 밖에서는 인터페이스로 받아오고
 
-		responseBody = "Hello, SendAll";
+		return "Hello, SendAll";
 	}
 	else if (uri.compare("/SendTo") == 0)
 	{
 		if (queryPayloads.find("filepath") != queryPayloads.end() && queryPayloads.find("filename") != queryPayloads.end() && queryPayloads.find("address") != queryPayloads.end())
 			tcp.SendTo(queryPayloads["address"].c_str(), queryPayloads["filepath"].c_str(), queryPayloads["filename"].c_str());
 
-		responseBody = "Hello, SendTo";
+		return "Hello, SendTo";
 	}
 	else if (uri.compare("/HeartBeat") == 0)
 	{
-		tcp.HeartBeat(responseBody);
+		//tcp.HeartBeat(responseBody);
 		//responseBody = "Heart Beat";
 	}
 	else if (uri.compare("/echo") == 0)
@@ -80,6 +84,7 @@ int main(int argc, const char* argv[])
 
 	while (keepRunning)
 	{
+		// CoWork 될 타입을 매개변수로 주고 Callback을 호출한다.
 		bool isHttp = http.Receive(tcp);
 		if (isHttp)
 		{
@@ -155,8 +160,6 @@ void PrintCommand()
 
 		tcp.SendAll(szPath, fileName);
 		printf(">> %s \n", szPath);
-
-
 	}
 	break;
 	case 3:

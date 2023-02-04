@@ -10,6 +10,11 @@ void CHTTPServer::SetController(fp_HTTPPostController fp)
 	this->fp_PostController = fp;
 }
 
+void CHTTPServer::SetCORS(string value)
+{
+	this->cors = value;
+}
+
 bool CHTTPServer::Receive(CTCPServer& tcp)
 {
 	bool ret = false;
@@ -24,22 +29,21 @@ bool CHTTPServer::Receive(CTCPServer& tcp)
 			{
 
 				const char* str_header = "HTTP/1.1 200 OK\r\n";
-				//const char* str_header2 = "Access-Control-Allow-Origin: *\r\n";
+				// CORS 헤더
 				const char* str_header2 = "Access-Control-Allow-Headers: *\r\n";
-				//const char* str_header2 = "Access-Control-Allow-Origin: *\r\n";
 				const char* str_header3 = "Access-Control-Allow-Origin: *\r\n\r\n";
 				const char* str_body = "aaa";
 
-				string res;
+				string strResponseBody;
 				if (request_header.method.compare("GET") == 0 && fp_GetController != nullptr)
-					fp_GetController(tcp, sock, request_header.url, request_header.querystring, res);
+					strResponseBody = fp_GetController(tcp, sock, request_header.url, request_header.querystring);
 				else if(request_header.method.compare("POST") == 0 && fp_PostController != nullptr)
-					fp_PostController(tcp, sock, request_header.url, request_header.querystring, request_header.queryPayloads, request_header.jsonPayloads, res);
+					strResponseBody = fp_PostController(tcp, sock, request_header.url, request_header.querystring, request_header.queryPayloads, request_header.jsonPayloads);
 
 				SafeSend(sock, (char*)str_header, strlen(str_header));
 				SafeSend(sock, (char*)str_header2, strlen(str_header2));
 				SafeSend(sock, (char*)str_header3, strlen(str_header3));
-				SafeSend(sock, (char*)res.c_str(), res.size());
+				SafeSend(sock, (char*)strResponseBody.c_str(), strResponseBody.size());
 
 				closesocket(sock);
 
