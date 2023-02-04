@@ -34,6 +34,12 @@
     <Filter Include="소스 파일\lib\jsoncpp">
       <UniqueIdentifier>{1a5eafbd-b12c-4609-9eb1-5b56c8c049fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Network\HTTPResponse">
+      <UniqueIdentifier>{cb7e173b-6301-4c16-bd71-7207316664bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Network\HTTPResponse">
+      <UniqueIdentifier>{8e051b4f-9da8-406e-b1a8-a818fee2f263}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>소스 파일\lib\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="HTTPJsonResponse.cpp">
+      <Filter>소스 파일\Network\HTTPResponse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +124,12 @@
     </ClInclude>
     <ClInclude Include="Util.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="HTTPJsonResponse.h">
+      <Filter>헤더 파일\Network\HTTPResponse</Filter>
+    </ClInclude>
+    <ClInclude Include="HTTPResponse.h">
+      <Filter>헤더 파일\Network\HTTPResponse</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
