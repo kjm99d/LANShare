@@ -13,7 +13,7 @@ RESTAPI를 통해 서버에 연결된 클라이언트 상태를 조회합니다.
 RESTAPI 또는 서버프로그램을 통해 각 클라이언트에게 파일공유, 메세지 전달 등을 수행할 수 있습니다.
 
 
-### Supported REST API List
+## Supported REST API List
 ---
 |URI|Method|QueryString|Content-Type|Body|
 |:---|:---:|:---|:---|:---|
@@ -22,7 +22,6 @@ RESTAPI 또는 서버프로그램을 통해 각 클라이언트에게 파일공�
 
 
 ## Requirements
----
 1. vcredist
 
    - https://learn.microsoft.com/ko-KR/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022
@@ -31,9 +30,17 @@ RESTAPI 또는 서버프로그램을 통해 각 클라이언트에게 파일공�
    - ...
 
 
-## Guide
----
+## User GUIDE
 ### v1.0.0
 1. Server 프로그램 실행
 2. Client 프로그램 실행
 3. Server 에서 커맨드를 통한 파일 전송
+
+
+## Build GUIDE
+아래 과정을 통해, 소스코드와 서브모듈을 업데이트합니다.
+```bash
+git clone https://github.com/kjm99d/LANShare
+cd LANShare
+git submodule --init --recursive
+```
