@@ -17,7 +17,7 @@ static volatile int keepRunning = 1;
 
 void PrintCommand();
 
-IHTTPResponse* GetControllerV2(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
+IHTTPResponse* GetControllerV2(CTCPServer& tcp, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
 {
 	if (uri.compare("/SendTo") == 0)
 	{
@@ -30,13 +30,13 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, SOCKET sock, string uri, std::ma
 }
 
 // HTTP Callback
-string GetController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring)
+string GetController(CTCPServer& tcp,string uri, std::map<string, string> querystring)
 {
 
 	return 0;
 }
 
-string PostController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads)
+string PostController(CTCPServer& tcp, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads)
 {
 	if (uri.compare("/SendAll") == 0)
 	{

@@ -27,11 +27,11 @@ typedef struct _RequestHeader {
 
 
 // V2 지원 콜백 함수 원형
-typedef IHTTPResponse * (*fp_HTTPGetControllerV2)(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
+typedef IHTTPResponse * (*fp_HTTPGetControllerV2)(CTCPServer& tcp, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
 
 // V1 지원 콜백 함수 원형
-typedef string (*fp_HTTPGetController)(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring);
-typedef string (*fp_HTTPPostController)(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads);
+typedef string (*fp_HTTPGetController)(CTCPServer& tcp, string uri, std::map<string, string> querystring);
+typedef string (*fp_HTTPPostController)(CTCPServer& tcp, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads);
 
 class ResponseDispatcher
 {
@@ -43,9 +43,10 @@ public:
 	~ResponseDispatcher() { delete response; response = nullptr; };
 
 public:
-	IHTTPResponse * JSON(Json::Value json)
+	IHTTPResponse* JSON(Json::Value json, string cors = "")
 	{
 		response = new CHTTPJsonResponse(json);
+		response->SetCORS(cors);
 		return response;
 	}
 
@@ -60,11 +61,14 @@ public:
 	void SetController(fp_HTTPGetController		fp);
 	void SetController(fp_HTTPPostController	fp);
 	void SetController(fp_HTTPGetControllerV2	fp);
-	void SetCORS(string value);
 
 public:
 	bool Receive(CTCPServer& tcp);
 	bool ReceiveV2(CTCPServer& tcp);
+
+private:
+	string TcpCallbackSelectorFromV1(CTCPServer& tcp);
+	IHTTPResponse* TcpCallbackSelectorFromV2(CTCPServer& tcp);
 
 private:
 	bool Parse(const string& data, RequestHeader& ref);
@@ -76,7 +80,8 @@ private:
 	fp_HTTPPostController	fp_PostController;
 
 private:
-	string cors;
+	SOCKET m_client; // 현재 소켓
+	RequestHeader header; // 헤더
 
 private:
 	ResponseDispatcher dispatcher;

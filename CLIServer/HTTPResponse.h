@@ -21,7 +21,16 @@ public:
 
 	void SetHttpVersion(string version) { m_httpVersion = version; }
 	void SetStatusCode(int code) { m_statusCode = code; }
+	void SetCORS(string value) { m_cors = value; }
+
+	string GetCORSHeader() {
+		string header;
+
+		return header;
+	}
+
 protected:
+	string m_cors;
 	string m_httpVersion;
 	int m_statusCode;
 	string m_contentType;

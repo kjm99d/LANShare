@@ -15,20 +15,15 @@ void CHTTPServer::SetController(fp_HTTPGetControllerV2 fp)
 	this->fp_GetControllerV2 = fp;
 }
 
-void CHTTPServer::SetCORS(string value)
-{
-	this->cors = value;
-}
 
 bool CHTTPServer::Receive(CTCPServer& tcp)
 {
 
 	bool ret = false;
-	SOCKET sock;
-	if (true == Accept(sock))
+	if (true == Accept(m_client))
 	{
 		string packet;
-		if (true == SafeRecv(sock, packet))
+		if (true == SafeRecv(m_client, packet))
 		{
 			RequestHeader request_header;
 			if (true == Parse(packet, request_header))
@@ -40,21 +35,19 @@ bool CHTTPServer::Receive(CTCPServer& tcp)
 				const char* str_header3 = "Access-Control-Allow-Origin: *\r\n\r\n";
 				const char* str_body = "aaa";
 
-				IHTTPResponse* response = nullptr;
-				string strResponseBody;
-				if (request_header.method.compare("GET") == 0 && fp_GetController != nullptr)
-					strResponseBody = fp_GetController(tcp, sock, request_header.url, request_header.querystring);
-				else if(request_header.method.compare("POST") == 0 && fp_PostController != nullptr)
-					strResponseBody = fp_PostController(tcp, sock, request_header.url, request_header.querystring, request_header.queryPayloads, request_header.jsonPayloads);
+				
+				string strResponseBody = TcpCallbackSelectorFromV1(tcp);
+				if (strResponseBody.size() > 0)
+				{
+					SafeSend(m_client, (char*)str_header, strlen(str_header));
+					SafeSend(m_client, (char*)str_header2, strlen(str_header2));
+					SafeSend(m_client, (char*)str_header3, strlen(str_header3));
+					SafeSend(m_client, (char*)strResponseBody.c_str(), strResponseBody.size());
 
-				SafeSend(sock, (char*)str_header, strlen(str_header));
-				SafeSend(sock, (char*)str_header2, strlen(str_header2));
-				SafeSend(sock, (char*)str_header3, strlen(str_header3));
-				SafeSend(sock, (char*)strResponseBody.c_str(), strResponseBody.size());
+					closesocket(m_client);
 
-				closesocket(sock);
-
-				ret = true;
+					ret = true;
+				}
 			}
 		}
 	}
@@ -67,11 +60,11 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 {
 
 	bool ret = false;
-	SOCKET sock;
-	if (true == Accept(sock))
+	
+	if (true == Accept(m_client))
 	{
 		string packet;
-		if (true == SafeRecv(sock, packet))
+		if (true == SafeRecv(m_client, packet))
 		{
 			RequestHeader request_header;
 			if (true == Parse(packet, request_header))
@@ -82,36 +75,51 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 				const char* str_header2 = "Access-Control-Allow-Headers: *\r\n";
 				const char* str_header3 = "Access-Control-Allow-Origin: *\r\n\r\n";
 
-				/*
-				* ResponseDispatcher 를 만들어서 걔가 IHTTPResponse 구현체를 반환해주면 될 것 같다.
-				*/
-				// 여기로 받아와서 얘기 가져와서 다 뱉어주면 될 것 같음.
-				IHTTPResponse* response = nullptr;
-				ResponseDispatcher dispatcher; // 얘를 레퍼런스로 넘겨서 이 객체에서 특정함수로 반환해주게 해서 그걸 받아서 ... 응응 .. 얘가 지 알아서 소멸자 호출하게해서 메모리릭 안생기게 풍풍! 푱 !
+				IHTTPResponse* response = TcpCallbackSelectorFromV2(tcp);
+				ResponseDispatcher dispatcher;
 				
-				// (CTCPServer & tcp, SOCKET sock, string uri, std::map<string, string> querystring, ResponseDispatcher & dispatcher);
-				if (request_header.method.compare("GET") == 0 && fp_GetControllerV2 != nullptr)
-					response = fp_GetControllerV2(tcp, sock, request_header.url, request_header.querystring, dispatcher);
-				//else if (request_header.method.compare("POST") == 0 && fp_PostController != nullptr)
-				//	strResponseBody = fp_PostController(tcp, sock, request_header.url, request_header.querystring, request_header.queryPayloads, request_header.jsonPayloads);
+				if (nullptr != response) 
+				{
+					//SafeSend(sock, (char*)str_header, strlen(str_header));
+					response->SetHttpVersion("HTTP/1.1");
+					response->SetStatusCode(200);
+					SafeSend(m_client, (char*)response->GetStartLine().c_str(), response->GetStartLine().size());
+					SafeSend(m_client, (char*)str_header2, strlen(str_header2));
+					SafeSend(m_client, (char*)str_header3, strlen(str_header3));
+					SafeSend(m_client, (char*)response->GetResponseBody().c_str(), response->GetResponseBody().size());
 
-				//SafeSend(sock, (char*)str_header, strlen(str_header));
-				response->SetHttpVersion("HTTP/1.1");
-				response->SetStatusCode(200);
-				SafeSend(sock, (char*)response->GetStartLine().c_str(), response->GetStartLine().size());
-				SafeSend(sock, (char*)str_header2, strlen(str_header2));
-				SafeSend(sock, (char*)str_header3, strlen(str_header3));
-				SafeSend(sock, (char*)response->GetResponseBody().c_str(), response->GetResponseBody().size());
+					closesocket(m_client);
 
-				closesocket(sock);
-
-				ret = true;
+					ret = true;
+				}
 			}
 		}
 	}
 
 	return ret;
 
+}
+
+string CHTTPServer::TcpCallbackSelectorFromV1(CTCPServer& tcp)
+{
+	string response;
+	if (header.method.compare("GET") == 0 && fp_GetController != nullptr)
+		response = fp_GetController(tcp,  header.url, header.querystring);
+	else if (header.method.compare("POST") == 0 && fp_PostController != nullptr)
+		response = fp_PostController(tcp,  header.url, header.querystring, header.queryPayloads, header.jsonPayloads);
+	// else 404Page
+
+	return response;
+}
+
+IHTTPResponse* CHTTPServer::TcpCallbackSelectorFromV2(CTCPServer& tcp)
+{
+	IHTTPResponse* response = nullptr;
+	if (header.method.compare("GET") == 0 && fp_GetControllerV2 != nullptr)
+		response = fp_GetControllerV2(tcp,  header.url, header.querystring, dispatcher);
+	// else 404Page
+
+	return response;
 }
 
 bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
