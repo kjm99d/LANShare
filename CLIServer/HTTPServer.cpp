@@ -25,8 +25,7 @@ bool CHTTPServer::Receive(CTCPServer& tcp)
 		string packet;
 		if (true == SafeRecv(m_client, packet))
 		{
-			RequestHeader request_header;
-			if (true == Parse(packet, request_header))
+			if (true == Parse(packet, header))
 			{
 
 				const char* str_header = "HTTP/1.1 200 OK\r\n";
@@ -58,38 +57,43 @@ bool CHTTPServer::Receive(CTCPServer& tcp)
 
 bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 {
-
 	bool ret = false;
 	
 	if (true == Accept(m_client))
 	{
 		string packet;
-		if (true == SafeRecv(m_client, packet))
+		if (true == SafeRecv(m_client, packet))    
 		{
-			RequestHeader request_header;
-			if (true == Parse(packet, request_header))
+			if (true == Parse(packet , header))
 			{
-
-				const char* str_header = "HTTP/1.1 200 OK\r\n";
-				// CORS 헤더
-				const char* str_header2 = "Access-Control-Allow-Headers: *\r\n";
-				const char* str_header3 = "Access-Control-Allow-Origin: *\r\n\r\n";
-
 				IHTTPResponse* response = TcpCallbackSelectorFromV2(tcp);
+				response->SetHttpVersion(header.version);
+
 				ResponseDispatcher dispatcher;
-				
 				if (nullptr != response) 
 				{
-					//SafeSend(sock, (char*)str_header, strlen(str_header));
-					response->SetHttpVersion("HTTP/1.1");
-					response->SetStatusCode(200);
+#if 1
+					string cors = response->GetCORSHeader();
+					//const char* str_header = "HTTP/1.1 200 OK\r\n";
 					SafeSend(m_client, (char*)response->GetStartLine().c_str(), response->GetStartLine().size());
+					SafeSend(m_client, (char*)cors.c_str(), cors.size());
+					SafeSend(m_client, (char*)"\r\n", strlen("\r\n"));
+					SafeSend(m_client, (char*)response->GetResponseBody().c_str(), response->GetResponseBody().size());
+
+					
+#else
+					const char* str_header = "HTTP/1.1 200 OK\r\n";
+					// CORS 헤더
+					const char* str_header2 = "Access-Control-Allow-Headers: *\r\n";
+					const char* str_header3 = "Access-Control-Allow-Origin: *\r\n\r\n";
+					SafeSend(m_client, (char*)str_header, strlen(str_header));
 					SafeSend(m_client, (char*)str_header2, strlen(str_header2));
 					SafeSend(m_client, (char*)str_header3, strlen(str_header3));
 					SafeSend(m_client, (char*)response->GetResponseBody().c_str(), response->GetResponseBody().size());
 
-					closesocket(m_client);
 
+#endif
+					closesocket(m_client);
 					ret = true;
 				}
 			}
@@ -166,6 +170,7 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 		}
 		else
 			ref.url = tokens[1];
+		ref.version = tokens[2];
 	}
 	else
 	{

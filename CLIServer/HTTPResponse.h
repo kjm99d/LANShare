@@ -15,7 +15,9 @@ public:
 	string GetStartLine()
 	{
 		std::ostringstream oss;
+
 		oss << m_httpVersion << " " << m_statusCode << " " << "OK" << "\r\n";
+
 		return oss.str();
 	}
 
@@ -24,9 +26,20 @@ public:
 	void SetCORS(string value) { m_cors = value; }
 
 	string GetCORSHeader() {
-		string header;
+		/*
+		* Access-Control-Allow-Headers: *\r\n
+		* Access-Control-Allow-Origin: *\r\n\r\n
+		*/
+		std::ostringstream oss;
 
-		return header;
+		if (m_cors.size() > 0) 
+		{
+			oss << "Access-Control-Allow-Headers: " << m_cors << "\r\n";
+			oss << "Access-Control-Allow-Origin: " << m_cors << "\r\n";
+			
+		}
+
+  		return oss.str();
 	}
 
 protected:

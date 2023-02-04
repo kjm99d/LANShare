@@ -25,7 +25,7 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, string uri, std::map<string, str
 		Json::Value json;
 		json["a"] = "hello";
 
-		return dispatcher.JSON(json);
+		return dispatcher.JSON(200, json);
 	}
 }
 

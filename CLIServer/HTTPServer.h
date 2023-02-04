@@ -16,6 +16,7 @@ using namespace std;
 class ResponseDispatcher;
 
 typedef struct _RequestHeader {
+	string version;
 	string method;
 	string url;
 	map<string, string> querystring;
@@ -43,10 +44,11 @@ public:
 	~ResponseDispatcher() { delete response; response = nullptr; };
 
 public:
-	IHTTPResponse* JSON(Json::Value json, string cors = "")
+	IHTTPResponse* JSON(int statusCode, Json::Value json, string cors = "")
 	{
 		response = new CHTTPJsonResponse(json);
 		response->SetCORS(cors);
+		response->SetStatusCode(statusCode);
 		return response;
 	}
 
