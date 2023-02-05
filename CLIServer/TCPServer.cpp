@@ -188,6 +188,16 @@ void CTCPServer::HeartBeat(string& reponsebody)
 	}
 }
 
+void CTCPServer::Echo(string msg)
+{
+	for (CLIENT_INFOMATION& info : clients)
+	{
+		CCommandGenerater cmd(PROTOCOL_ID_ECHO, msg.size());
+		SafeSend(info.SOCK, (char*)cmd.GetBuffer(), cmd.GetSize());
+		SafeSend(info.SOCK, (char*)msg.c_str(), msg.size());
+	}
+}
+
 bool CTCPServer::FindClientFromAddress(string address, CLIENT_INFOMATION& client)
 {
 	for (int i = 0; i < clients.size(); ++i)

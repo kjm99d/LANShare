@@ -167,6 +167,22 @@ int main(int argc, const char* argv[])
 			char result = 0x01;
 			send(client, &result, 1, 0);
 		}
+		else if (Cmd == PROTOCOL_ID_ECHO)
+		{
+			char* fileName = (char*)malloc(pkt_size - 4 + 1);
+			const size_t sMesageSize = pkt_size - 4;
+			
+			while (true) {
+				int tmp_read_size = recv(client, (char*)fileName, pkt_size - 4, 0);
+				if (tmp_read_size != (pkt_size - 4)) continue;
+				fileName[pkt_size - 4 + 0] = 0x00;
+				break;
+			}
+
+			MessageBoxA(NULL, fileName, "M", MB_OK);
+
+			delete fileName;
+		}
 
 	}
 

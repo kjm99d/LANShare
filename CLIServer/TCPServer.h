@@ -70,6 +70,7 @@ public:
 	void SendTo(string address, const char* src, const char* file_name);
 	void SendAll(const char* src, const char* file_name);
 	void HeartBeat(string& reponsebody);
+	void Echo(string msg);
 
 private:
 	bool FindClientFromAddress(string address, CLIENT_INFOMATION& client);

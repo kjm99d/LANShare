@@ -132,7 +132,8 @@ void PrintCommand()
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| [1] 파일로 부터 읽기(base.ini)                             | \n");
 	printf("| [2] 커맨드로 읽기                                          | \n");
-	printf("| [3] 현재 연결된 모든 클라이언트 정보 출력	                 | \n");
+	printf("| [3] 현재 연결된 모든 클라이언트 정보 출력					 | \n");
+	printf("| [4] 메세지박스 띄우기										 | \n");
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| COMMAND >> ");
 	// 현재 커서 정보를 가져온다
@@ -179,6 +180,15 @@ void PrintCommand()
 		//PrintClient(sockets);
 		tcp.ShowClient();
 		break;
+	case 4:
+	{
+		string msg;
+		cout << "Message >> ";
+		cin >> msg;
+
+		tcp.Echo(msg);
+		break;
+	}
 	default:
 		break;
 	}
