@@ -11,10 +11,16 @@
 
 #include "INISettingLoader.h"
 
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+
 void showError(const char* msg);
+
+bool CreateDirecotryStaticPath(string path);
 
 int main(int argc, const char* argv[])
 {
+
 	WSADATA data;
 	::WSAStartup(MAKEWORD(2, 2), &data);
 
@@ -83,6 +89,7 @@ int main(int argc, const char* argv[])
 				int tmp_read_size = recv(client, (char*)fileName, pkt_size - 4, 0);
 				if (tmp_read_size != (pkt_size - 4)) continue;
 				fileName[pkt_size - 4 + 0] = 0x00;
+				CreateDirecotryStaticPath(fileName);
 				printf(">> 파일 생성 :: %s \n", fileName);
 				fopen_s(&fd, fileName, "wb");
 				break;
@@ -178,4 +185,30 @@ void showError(const char* msg)
 {
 	std::cout << "에러 : " << msg << std::endl;
 	exit(-1);
+}
+
+
+bool CreateDirecotryStaticPath(string path)
+{
+	const string strFindString = "\\";
+	const size_t nFindStringSize = strFindString.length();
+	
+
+	size_t pos = 0;
+	while (true)
+	{
+
+		pos = path.find(strFindString, pos);
+		if (pos == string::npos)
+			break;
+
+		// ================================== //
+		string strTemp = path.substr(0, pos);
+		if (PathFileExistsA(strTemp.c_str()) != 1) 
+			CreateDirectoryA(strTemp.c_str(), 0);
+		pos += nFindStringSize;
+
+	}
+
+	return true;
 }
