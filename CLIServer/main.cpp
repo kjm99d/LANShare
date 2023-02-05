@@ -3,6 +3,8 @@
 #include <thread>
 #include <string>
 #include <stdlib.h>
+#include <iostream>
+#include <istream>
 
 #include "TCPServer.h"
 #include "HTTPServer.h"
@@ -145,7 +147,8 @@ void PrintCommand()
 	printf("| ---------------------------------------------------------- | \n");
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
 
-	scanf_s("%d", &menu_num);
+	//scanf_s(" %d", &menu_num);
+	cin >> menu_num;
 	Cur.X = 0;
 	Cur.Y += 2;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
@@ -184,7 +187,9 @@ void PrintCommand()
 	{
 		string msg;
 		cout << "Message >> ";
-		cin >> msg;
+		cin.get();
+		getline(cin, msg);
+		//cin.getline(msg, 1024);
 
 		tcp.Echo(msg);
 		break;
