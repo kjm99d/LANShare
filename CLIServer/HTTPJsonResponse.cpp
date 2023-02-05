@@ -3,6 +3,7 @@
 CHTTPJsonResponse::CHTTPJsonResponse(Json::Value body)
 {
 	this->body = body;
+    this->m_contentType = "application/json";
 }
 
 string CHTTPJsonResponse::GetResponseBody()

@@ -28,7 +28,8 @@ typedef struct _RequestHeader {
 
 
 // V2 지원 콜백 함수 원형
-typedef IHTTPResponse * (*fp_HTTPGetControllerV2)(CTCPServer& tcp, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
+typedef IHTTPResponse* (*fp_HTTPGetControllerV2)(CTCPServer& tcp, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
+typedef IHTTPResponse * (*fp_HTTPPostControllerV2)(CTCPServer& tcp, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, ResponseDispatcher& dispatcher);
 
 // V1 지원 콜백 함수 원형
 typedef string (*fp_HTTPGetController)(CTCPServer& tcp, string uri, std::map<string, string> querystring);
@@ -60,9 +61,13 @@ private:
 class CHTTPServer : public IServer
 {
 public:
+	// V1 Spec
 	void SetController(fp_HTTPGetController		fp);
 	void SetController(fp_HTTPPostController	fp);
+
+	// V2 Sepc
 	void SetController(fp_HTTPGetControllerV2	fp);
+	void SetController(fp_HTTPPostControllerV2	fp);
 
 public:
 	bool Receive(CTCPServer& tcp);
@@ -75,11 +80,13 @@ private:
 private:
 	bool Parse(const string& data, RequestHeader& ref);
 	bool Split(vector<string>& ref, string src, std::string delimeter);
+	bool isHttp();
 	
 
 	fp_HTTPGetController	fp_GetController;
 	fp_HTTPGetControllerV2	fp_GetControllerV2;
 	fp_HTTPPostController	fp_PostController;
+	fp_HTTPPostControllerV2	fp_PostControllerV2;
 
 private:
 	SOCKET m_client; // 현재 소켓
