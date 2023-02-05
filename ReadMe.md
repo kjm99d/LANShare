@@ -44,3 +44,7 @@ git clone https://github.com/kjm99d/LANShare
 cd LANShare
 git submodule --init --recursive
 ```
+
+
+## Wiki
+[Wiki Link](https://github.com/kjm99d/LANShare/wiki)
