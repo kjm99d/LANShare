@@ -14,6 +14,7 @@ using namespace std;
 #include "TCPServer.h"
 
 class ResponseDispatcher;
+class CHTTPServer;
 
 typedef struct _RequestHeader {
 	string version;
