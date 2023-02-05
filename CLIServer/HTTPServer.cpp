@@ -10,50 +10,107 @@ void CHTTPServer::SetController(fp_HTTPPostController fp)
 	this->fp_PostController = fp;
 }
 
-void CHTTPServer::SetCORS(string value)
+void CHTTPServer::SetController(fp_HTTPGetControllerV2 fp)
 {
-	this->cors = value;
+	this->fp_GetControllerV2 = fp;
 }
+
+void CHTTPServer::SetController(fp_HTTPPostControllerV2 fp)
+{
+	this->fp_PostControllerV2 = fp;
+}
+
 
 bool CHTTPServer::Receive(CTCPServer& tcp)
 {
+
 	bool ret = false;
-	SOCKET sock;
-	if (true == Accept(sock))
+
+	if (isHttp())
 	{
-		string packet;
-		if (true == SafeRecv(sock, packet))
+		const char* str_header = "HTTP/1.1 200 OK\r\n";
+		// CORS 헤더
+		const char* str_header2 = "Access-Control-Allow-Headers: *\r\n";
+		const char* str_header3 = "Access-Control-Allow-Origin: *\r\n\r\n";
+		const char* str_body = "aaa";
+
+
+		string strResponseBody = TcpCallbackSelectorFromV1(tcp);
+		if (strResponseBody.size() > 0)
 		{
-			RequestHeader request_header;
-			if (true == Parse(packet, request_header))
-			{
+			SafeSend(m_client, (char*)str_header, strlen(str_header));
+			SafeSend(m_client, (char*)str_header2, strlen(str_header2));
+			SafeSend(m_client, (char*)str_header3, strlen(str_header3));
+			SafeSend(m_client, (char*)strResponseBody.c_str(), strResponseBody.size());
 
-				const char* str_header = "HTTP/1.1 200 OK\r\n";
-				// CORS 헤더
-				const char* str_header2 = "Access-Control-Allow-Headers: *\r\n";
-				const char* str_header3 = "Access-Control-Allow-Origin: *\r\n\r\n";
-				const char* str_body = "aaa";
+			closesocket(m_client);
 
-				string strResponseBody;
-				if (request_header.method.compare("GET") == 0 && fp_GetController != nullptr)
-					strResponseBody = fp_GetController(tcp, sock, request_header.url, request_header.querystring);
-				else if(request_header.method.compare("POST") == 0 && fp_PostController != nullptr)
-					strResponseBody = fp_PostController(tcp, sock, request_header.url, request_header.querystring, request_header.queryPayloads, request_header.jsonPayloads);
-
-				SafeSend(sock, (char*)str_header, strlen(str_header));
-				SafeSend(sock, (char*)str_header2, strlen(str_header2));
-				SafeSend(sock, (char*)str_header3, strlen(str_header3));
-				SafeSend(sock, (char*)strResponseBody.c_str(), strResponseBody.size());
-
-				closesocket(sock);
-
-				ret = true;
-			}
+			ret = true;
 		}
 	}
 
 	return ret;
 
+}
+
+bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
+{
+	bool ret = false;
+
+	if (isHttp())
+	{
+		IHTTPResponse* response = TcpCallbackSelectorFromV2(tcp);
+		response->SetHttpVersion(header.version);
+
+		ResponseDispatcher dispatcher;
+		if (nullptr != response)
+		{
+			string cors = response->GetCORSHeader();
+			//const char* str_header = "HTTP/1.1 200 OK\r\n";
+			SafeSend(m_client, (char*)response->GetStartLine().c_str(), response->GetStartLine().size());
+			SafeSend(m_client, (char*)response->GetContentTypeHeader().c_str(), response->GetContentTypeHeader().size());
+			SafeSend(m_client, (char*)response->GetCORSHeader().c_str(), response->GetCORSHeader().size());
+			SafeSend(m_client, (char*)"\r\n", strlen("\r\n"));
+			SafeSend(m_client, (char*)response->GetResponseBody().c_str(), response->GetResponseBody().size());
+			closesocket(m_client);
+			ret = true;
+		}
+	}
+
+	return ret;
+
+}
+
+string CHTTPServer::TcpCallbackSelectorFromV1(CTCPServer& tcp)
+{
+	string response;
+	if (header.method.compare("GET") == 0 && fp_GetController != nullptr)
+		response = fp_GetController(tcp,  header.url, header.querystring);
+	else if (header.method.compare("POST") == 0 && fp_PostController != nullptr)
+		response = fp_PostController(tcp,  header.url, header.querystring, header.queryPayloads, header.jsonPayloads);
+	// else 404Page
+
+	return response;
+}
+
+IHTTPResponse* CHTTPServer::TcpCallbackSelectorFromV2(CTCPServer& tcp)
+{
+	const string& method = header.method;
+	const string& url = header.url;
+	const map<string, string>& querystring = header.querystring;
+	const map<string, string>& queryPayloads = header.queryPayloads;
+	const Json::Value& jsonPayloads = header.jsonPayloads;
+	
+	
+
+	IHTTPResponse* response = nullptr;
+	if (method.compare("GET") == 0 && fp_GetControllerV2 != nullptr)
+		response = fp_GetControllerV2(tcp, url, querystring, dispatcher);
+	else if (method.compare("POST") == 0 && fp_PostControllerV2 != nullptr)
+		response = fp_PostControllerV2(tcp, url, querystring, queryPayloads, jsonPayloads, dispatcher);
+	// else 404Page
+
+	return response;
 }
 
 bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
@@ -100,6 +157,7 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 		}
 		else
 			ref.url = tokens[1];
+		ref.version = tokens[2];
 	}
 	else
 	{
@@ -195,6 +253,25 @@ bool CHTTPServer::Split(vector<string>& ref, string src, std::string delimeter)
 	if (token.size() > 0) ref.push_back(src);
 
 	const bool ret = ref.size() > 0;
+	return ret;
+}
+
+bool CHTTPServer::isHttp()
+{
+	bool ret = false;
+
+	if (true == Accept(m_client))
+	{
+		string packet;
+		if (true == SafeRecv(m_client, packet))
+		{
+			if (true == Parse(packet, header))
+			{
+				ret = true;
+			}
+		}
+	}
+
 	return ret;
 }
 

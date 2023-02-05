@@ -17,14 +17,26 @@ static volatile int keepRunning = 1;
 
 void PrintCommand();
 
+IHTTPResponse* GetControllerV2(CTCPServer& tcp, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
+{
+	if (uri.compare("/SendTo") == 0)
+	{
+	
+		Json::Value json;
+		json["a"] = "hello";
+
+		return dispatcher.JSON(200, json);
+	}
+}
+
 // HTTP Callback
-string GetController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring)
+string GetController(CTCPServer& tcp,string uri, std::map<string, string> querystring)
 {
 
 	return 0;
 }
 
-string PostController(CTCPServer& tcp, SOCKET sock, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads)
+string PostController(CTCPServer& tcp, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads)
 {
 	if (uri.compare("/SendAll") == 0)
 	{
@@ -68,6 +80,7 @@ int main(int argc, const char* argv[])
 
 	http.SetController(GetController);
 	http.SetController(PostController);
+	http.SetController(GetControllerV2);
 
 	const long nPort = 5003;
 	tcp.SetPort(nPort);
@@ -85,7 +98,7 @@ int main(int argc, const char* argv[])
 	while (keepRunning)
 	{
 		// CoWork 될 타입을 매개변수로 주고 Callback을 호출한다.
-		bool isHttp = http.Receive(tcp);
+		bool isHttp = http.ReceiveV2(tcp);
 		if (isHttp)
 		{
 			printf("Http Request ! \n");
