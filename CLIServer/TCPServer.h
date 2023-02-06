@@ -70,10 +70,10 @@ public:
 	void SendTo(string address, const char* src, const char* file_name);
 	void SendAll(const char* src, const char* file_name);
 	void HeartBeat(string& reponsebody);
-	void Echo(string msg);
-
+	void Echo(string msg, vector<CLIENT_INFOMATION> targets = {});
 private:
 	bool FindClientFromAddress(string address, CLIENT_INFOMATION& client);
+
 private:
 	// 클라이언트 스토리지
 	vector<CLIENT_INFOMATION> clients;

@@ -166,6 +166,15 @@ void CTCPServer::SendAll(const char* src, const char* file_name)
 	}
 }
 
+// ============================================================================================================ //
+// 커맨드 관련 정의 함수 목록
+// ============================================================================================================ //
+
+/**
+ * \brief 연결되어 있는 모든 클라이언트에게 테스트 메세지를 보내고, 클라이언트 상태 정보를 전달 받는다.
+ *
+ * \param reponsebody - 요청 정보를 전달 받을 파라미터
+ */
 void CTCPServer::HeartBeat(string& reponsebody)
 {
 	for (CLIENT_INFOMATION& info : clients)
@@ -188,14 +197,24 @@ void CTCPServer::HeartBeat(string& reponsebody)
 	}
 }
 
-void CTCPServer::Echo(string msg)
+/**
+ * \brief 지정된 클라이언트에게 메세지박스를 보여준다.
+ * 
+ * \param msg - 보내고자 하는 메세지 내용
+ * \param targets - 기본값은 {}, 메세지를 전달받을 특정 클라이언트 리스트
+ */
+void CTCPServer::Echo(string msg, vector<CLIENT_INFOMATION> targets)
 {
-	for (CLIENT_INFOMATION& info : clients)
+	vector<CLIENT_INFOMATION>& target_clients = (targets.size() == 0) ? clients : targets;
+
+
+	for (CLIENT_INFOMATION& info : target_clients)
 	{
 		CCommandGenerater cmd(PROTOCOL_ID_ECHO, msg.size());
 		SafeSend(info.SOCK, (char*)cmd.GetBuffer(), cmd.GetSize());
 		SafeSend(info.SOCK, (char*)msg.c_str(), msg.size());
 	}
+
 }
 
 bool CTCPServer::FindClientFromAddress(string address, CLIENT_INFOMATION& client)

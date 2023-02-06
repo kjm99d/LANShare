@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+#include <sstream>
 
 using namespace std;
 #pragma hdrstop

@@ -29,6 +29,26 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, string uri, std::map<string, str
 
 		return dispatcher.JSON(200, json);
 	}
+	else if (uri.compare("/ResponseFromText") == 0)
+	{
+
+		string text = "";
+		text += "<!DOCTYPE html>\n";
+		text += "<head><title>hello</title></head>\n";
+		text += "<body><h1>world</h1></body>\n";
+
+
+		return dispatcher.Text(200, text);
+	}
+	else
+	{
+		// Favicon.ico 같은 것들을 여기서 처리를 해주던가
+		// 404 처리를 하던가 해야함
+		string text = "";
+
+		return dispatcher.Text(404, text);
+
+	}
 }
 
 // HTTP Callback
