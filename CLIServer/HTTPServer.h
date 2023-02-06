@@ -10,6 +10,7 @@ using namespace std;
 #pragma hdrstop
 
 #include "HTTPJsonResponse.h"
+#include "HTTPTextResponse.h"
 #include "HTTPResponse.h"
 #include "TCPServer.h"
 
@@ -46,9 +47,34 @@ public:
 	~ResponseDispatcher() { delete response; response = nullptr; };
 
 public:
+	/**
+	 * Response Header 정보에 Content-Type을 application/json 타입으로 응답하는 함수.
+	 * 
+	 * \param statusCode - 상태코드
+	 * \param json - JSON 객체
+	 * \param cors - CORS 정보, EX) *, http://~
+	 * 
+	 * \return 
+	 */
 	IHTTPResponse* JSON(int statusCode, Json::Value json, string cors = "")
 	{
 		response = new CHTTPJsonResponse(json);
+		response->SetCORS(cors);
+		response->SetStatusCode(statusCode);
+		return response;
+	}
+
+	/**
+	 * Response Header 정보에 Content-Type을 text/html 타입으로 응답하는 함수..
+	 * 
+	 * \param statusCode - 상태코드
+	 * \param json - string 객체
+	 * \param cors - CORS 정보, EX) *, http://~
+	 * \return 
+	 */
+	IHTTPResponse* Text(int statusCode, string text, string cors = "")
+	{
+		response = new CHTTPTextResponse(text);
 		response->SetCORS(cors);
 		response->SetStatusCode(statusCode);
 		return response;
@@ -61,6 +87,8 @@ private:
 
 class CHTTPServer : public IServer
 {
+public:
+	CHTTPServer();
 public:
 	// V1 Spec
 	void SetController(fp_HTTPGetController		fp);
@@ -85,8 +113,9 @@ private:
 	
 
 	fp_HTTPGetController	fp_GetController;
-	fp_HTTPGetControllerV2	fp_GetControllerV2;
 	fp_HTTPPostController	fp_PostController;
+
+	fp_HTTPGetControllerV2	fp_GetControllerV2;
 	fp_HTTPPostControllerV2	fp_PostControllerV2;
 
 private:

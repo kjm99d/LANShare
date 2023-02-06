@@ -81,6 +81,9 @@
     <ClCompile Include="HTTPJsonResponse.cpp">
       <Filter>소스 파일\Network\HTTPResponse</Filter>
     </ClCompile>
+    <ClCompile Include="HTTPTextResponse.cpp">
+      <Filter>소스 파일\Network\HTTPResponse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -129,6 +132,9 @@
       <Filter>헤더 파일\Network\HTTPResponse</Filter>
     </ClInclude>
     <ClInclude Include="HTTPResponse.h">
+      <Filter>헤더 파일\Network\HTTPResponse</Filter>
+    </ClInclude>
+    <ClInclude Include="HTTPTextResponse.h">
       <Filter>헤더 파일\Network\HTTPResponse</Filter>
     </ClInclude>
   </ItemGroup>
