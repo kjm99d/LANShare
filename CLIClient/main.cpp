@@ -1,8 +1,5 @@
 ﻿
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-#include <WinSock2.h>
-#include <iostream>
-#pragma comment (lib , "ws2_32.lib")
+#include "TCPClient.h"
 
 #include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
 
