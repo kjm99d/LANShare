@@ -22,18 +22,6 @@
     <Filter Include="헤더 파일\Common\SettingLoader">
       <UniqueIdentifier>{99f4b202-500a-4b1b-9160-3a53688a4f14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\lib">
-      <UniqueIdentifier>{33564d2e-3e6a-4884-b252-19d7c9521a91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\lib\jsoncpp">
-      <UniqueIdentifier>{198689c6-c1ce-49f8-a7a6-8f2d7820f876}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Network">
-      <UniqueIdentifier>{a5daec65-0690-4169-b8a9-b331b32d2a13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Network">
-      <UniqueIdentifier>{4d699162-410e-4fc4-bbf6-19d4031afc84}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -44,18 +32,6 @@
     </ClCompile>
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_reader.cpp">
-      <Filter>소스 파일\lib\jsoncpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_value.cpp">
-      <Filter>소스 파일\lib\jsoncpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp">
-      <Filter>소스 파일\lib\jsoncpp</Filter>
-    </ClCompile>
-    <ClCompile Include="TCPClient.cpp">
-      <Filter>소스 파일\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,9 +58,6 @@
     </ClInclude>
     <ClInclude Include="..\CLICommon\INISettingLoader.h">
       <Filter>헤더 파일\Common\SettingLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="TCPClient.h">
-      <Filter>헤더 파일\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
