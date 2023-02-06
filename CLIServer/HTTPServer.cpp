@@ -1,5 +1,15 @@
 ﻿#include "HTTPServer.h"
 
+CHTTPServer::CHTTPServer()
+{
+	fp_GetController = nullptr;
+	fp_PostController = nullptr;
+
+	fp_GetControllerV2 = nullptr;
+	fp_PostControllerV2 = nullptr;
+
+}
+
 void CHTTPServer::SetController(fp_HTTPGetController fp)
 {
 	this->fp_GetController = fp;
@@ -60,20 +70,23 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 	if (isHttp())
 	{
 		IHTTPResponse* response = TcpCallbackSelectorFromV2(tcp);
-		response->SetHttpVersion(header.version);
-
-		ResponseDispatcher dispatcher;
-		if (nullptr != response)
+		if (response)
 		{
-			string cors = response->GetCORSHeader();
-			//const char* str_header = "HTTP/1.1 200 OK\r\n";
-			SafeSend(m_client, (char*)response->GetStartLine().c_str(), response->GetStartLine().size());
-			SafeSend(m_client, (char*)response->GetContentTypeHeader().c_str(), response->GetContentTypeHeader().size());
-			SafeSend(m_client, (char*)response->GetCORSHeader().c_str(), response->GetCORSHeader().size());
-			SafeSend(m_client, (char*)"\r\n", strlen("\r\n"));
-			SafeSend(m_client, (char*)response->GetResponseBody().c_str(), response->GetResponseBody().size());
-			closesocket(m_client);
-			ret = true;
+			response->SetHttpVersion(header.version);
+
+			ResponseDispatcher dispatcher;
+			if (nullptr != response)
+			{
+				string cors = response->GetCORSHeader();
+				//const char* str_header = "HTTP/1.1 200 OK\r\n";
+				SafeSend(m_client, (char*)response->GetStartLine().c_str(), response->GetStartLine().size());
+				SafeSend(m_client, (char*)response->GetContentTypeHeader().c_str(), response->GetContentTypeHeader().size());
+				SafeSend(m_client, (char*)response->GetCORSHeader().c_str(), response->GetCORSHeader().size());
+				SafeSend(m_client, (char*)"\r\n", strlen("\r\n"));
+				SafeSend(m_client, (char*)response->GetResponseBody().c_str(), response->GetResponseBody().size());
+				closesocket(m_client);
+				ret = true;
+			}
 		}
 	}
 
