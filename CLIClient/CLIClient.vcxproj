@@ -68,8 +68,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp" />
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_reader.cpp" />
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_value.cpp" />
+    <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PakcetReader.cpp" />
+    <ClCompile Include="TCPClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CLICommon\CLIPacketStruct.h" />
@@ -80,6 +84,7 @@
     <ClInclude Include="..\CLICommon\SettingLoader.h" />
     <ClInclude Include="PakcetReader.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="TCPClient.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CLIClient.rc" />
@@ -289,7 +294,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)lib\jsoncpp\include;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -298,7 +303,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)lib\jsoncpp\include;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -307,7 +312,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)lib\jsoncpp\include;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -316,7 +321,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)lib\jsoncpp\include;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

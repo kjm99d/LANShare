@@ -1,37 +1,19 @@
 ﻿
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-#include <WinSock2.h>
-#include <iostream>
-#pragma comment (lib , "ws2_32.lib")
+#include "TCPClient.h"
 
 #include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
-
-#include <queue>
-#include <deque>
 
 #include "INISettingLoader.h"
 
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
-void showError(const char* msg);
 
 bool CreateDirecotryStaticPath(string path);
 
 int main(int argc, const char* argv[])
 {
-
-	WSADATA data;
-	::WSAStartup(MAKEWORD(2, 2), &data);
-
-	SOCKET client = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-	if (client == INVALID_SOCKET)
-		showError("클라이언트 생성 실패");
-
-	sockaddr_in addr = { 0 };
-
-
+	// 연결할 소켓 서버 주소와 포트 가져오기
 	CINISettingLoader settings(".\\settings.ini");
 	settings.SetSection("Client");
 	std::string host;
@@ -41,26 +23,14 @@ int main(int argc, const char* argv[])
 	if (host.compare("NONE") == 0) host = "127.0.0.1";
 	if (0 == port) port = 5003;
 
-	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr(host.c_str());
-	addr.sin_port = htons(port);
+	// 연결하기
+	CTCPClient connecter(host, port);
+	connecter.Connect();
 
-	if (connect(client, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
-		showError("연결 실패");
-
-	u_long nonBlockingMode = 1;
-
-	ioctlsocket(client, FIONBIO, &nonBlockingMode); // sock을 논블로킹 모드로 설정
-
-
-	unsigned long long count = 0;
-
-	static FILE* fd = nullptr;
-	static std::queue<char> q;
-
-
+	FILE* fd = nullptr;
 
 	while (true) {
+		SOCKET client = connecter.GetSock();
 		unsigned char buffer[512] = { 0, };
 		const int read_size = recv(client, (char*)buffer, 8, 0);
 
@@ -186,23 +156,10 @@ int main(int argc, const char* argv[])
 
 	}
 
-	printf("%d \n", count);
-
-
-
-	closesocket(client);
-	::WSACleanup();
+	connecter.Close();
 
 	return 0;
 }
-
-
-void showError(const char* msg)
-{
-	std::cout << "에러 : " << msg << std::endl;
-	exit(-1);
-}
-
 
 bool CreateDirecotryStaticPath(string path)
 {
