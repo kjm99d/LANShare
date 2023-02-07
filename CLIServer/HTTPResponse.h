@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include <string>
 #include <sstream>
-
-using namespace std;
 #pragma hdrstop
 
 class IHTTPResponse
@@ -11,9 +9,9 @@ public:
 	virtual ~IHTTPResponse() {};
 
 public:
-	virtual string GetResponseBody() = 0;
+	virtual std::string GetResponseBody() = 0;
 
-	string GetStartLine()
+	std::string GetStartLine()
 	{
 		std::ostringstream oss;
 
@@ -22,11 +20,11 @@ public:
 		return oss.str();
 	}
 
-	void SetHttpVersion(string version) { m_httpVersion = version; }
+	void SetHttpVersion(std::string version) { m_httpVersion = version; }
 	void SetStatusCode(int code) { m_statusCode = code; }
-	void SetCORS(string value) { m_cors = value; }
+	void SetCORS(std::string value) { m_cors = value; }
 
-	string GetCORSHeader() 
+	std::string GetCORSHeader() 
 	{
 		/*
 		* Access-Control-Allow-Headers: *\r\n
@@ -44,7 +42,7 @@ public:
   		return oss.str();
 	}
 
-	string GetContentTypeHeader()
+	std::string GetContentTypeHeader()
 	{
 		std::ostringstream oss;
 
@@ -57,10 +55,10 @@ public:
 	}
 
 protected:
-	string m_cors;
-	string m_httpVersion;
+	std::string m_cors;
+	std::string m_httpVersion;
 	int m_statusCode;
-	string m_contentType;
+	std::string m_contentType;
 	
 
 };

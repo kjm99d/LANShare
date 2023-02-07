@@ -1,12 +1,12 @@
 ﻿#include "HTTPTextResponse.h"
 
-CHTTPTextResponse::CHTTPTextResponse(string body)
+CHTTPTextResponse::CHTTPTextResponse(std::string body)
 {
 	this->body = body;
 	this->m_contentType = "text/html";
 }
 
-string CHTTPTextResponse::GetResponseBody()
+std::string CHTTPTextResponse::GetResponseBody()
 {
 	return body;
 }

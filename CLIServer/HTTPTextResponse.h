@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include <string>
-
-using namespace std;
 #pragma hdrstop
 
 #include "HTTPResponse.h"
@@ -10,11 +8,11 @@ using namespace std;
 class CHTTPTextResponse : public IHTTPResponse
 {
 public:
-	CHTTPTextResponse(string body);
+	CHTTPTextResponse(std::string body);
 public:
-	string GetResponseBody();
+	std::string GetResponseBody();
 
 private:
-	string body;
+	std::string body;
 };
 

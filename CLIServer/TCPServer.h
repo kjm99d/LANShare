@@ -23,8 +23,6 @@
 #pragma comment(lib, "ws2_32.lib")
 
 #include <vector>
-
-using namespace std;
 #pragma hdrstop
 
 #include "FileReader.h"
@@ -49,7 +47,7 @@ typedef struct _CLIENT_INFOMATION {
 	SOCKET SOCK;
 	SOCKADDR_IN ADDR;
 
-	string address() { return inet_ntoa(ADDR.sin_addr); }
+	std::string address() { return inet_ntoa(ADDR.sin_addr); }
 	u_short port() { return ntohs(ADDR.sin_port); }
 
 } CLIENT_INFOMATION;
@@ -67,12 +65,12 @@ public:
 
 
 public:
-	void SendTo(string address, const char* src, const char* file_name);
+	void SendTo(std::string address, const char* src, const char* file_name);
 	void SendAll(const char* src, const char* file_name);
-	void HeartBeat(string& reponsebody);
-	void Echo(string msg, vector<CLIENT_INFOMATION> targets = {});
+	void HeartBeat(std::string & reponsebody);
+	void Echo(std::string msg, vector<CLIENT_INFOMATION> targets = {});
 private:
-	bool FindClientFromAddress(string address, CLIENT_INFOMATION& client);
+	bool FindClientFromAddress(std::string address, CLIENT_INFOMATION& client);
 
 private:
 	// 클라이언트 스토리지

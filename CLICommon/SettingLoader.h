@@ -6,13 +6,13 @@
  * \author jungmin.kim
  * \date   January 2023
  *********************************************************************/
-#include <string>
-using namespace std;
+#include <string >
+
 
 class ISettingLoader 
 {
 protected:
-	virtual bool Get(string key, UINT& dest) = 0;
-	virtual bool Get(string key, string& dest) = 0;
-	virtual bool Set(string key, string value) = 0;
+	virtual bool Get( std::string  key, UINT& dest) = 0;
+	virtual bool Get( std::string  key,  std::string & dest) = 0;
+	virtual bool Set( std::string  key,  std::string  value) = 0;
 };

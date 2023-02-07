@@ -243,7 +243,7 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 	return true;
 }
 
-bool CHTTPServer::Split(vector<string>& ref, string src, std::string delimeter)
+bool CHTTPServer::Split(vector<string>& ref, std::string src, std::string delimeter)
 {
 #if 0
 	stringstream stream(src);

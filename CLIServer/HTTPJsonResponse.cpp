@@ -6,7 +6,7 @@ CHTTPJsonResponse::CHTTPJsonResponse(Json::Value body)
     this->m_contentType = "application/json";
 }
 
-string CHTTPJsonResponse::GetResponseBody()
+std::string CHTTPJsonResponse::GetResponseBody()
 {
     Json::StreamWriterBuilder builder;
     const std::string json_file = Json::writeString(builder, body);

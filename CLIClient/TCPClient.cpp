@@ -3,7 +3,7 @@
 // ================================================================================ //
 // 생성자/소멸자
 // ================================================================================ //
-CTCPClient::CTCPClient(string address, int port) : m_socket(0), m_address(address), m_port(port)
+CTCPClient::CTCPClient(std::string address, int port) : m_socket(0), m_address(address), m_port(port)
 {
 }
 

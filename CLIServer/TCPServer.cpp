@@ -51,12 +51,12 @@ int CTCPServer::Receive(fp_TCPEvent cb_callback)
 	return 0;
 }
 
-void CTCPServer::SendTo(string address, const char* src, const char* file_name)
+void CTCPServer::SendTo(std::string  address, const char* src, const char* file_name)
 {
 	CLIENT_INFOMATION client;
 	if (FindClientFromAddress(address, client) == true)
 	{
-		std::string dst = "C:\\LanShare\\";
+		std::string  dst = "C:\\LanShare\\";
 		dst += file_name;
 
 		CBufferWriter buffer_writer;
@@ -107,7 +107,7 @@ void CTCPServer::SendTo(string address, const char* src, const char* file_name)
 
 void CTCPServer::SendAll(const char* src, const char* file_name)
 {
-	std::string dst = "C:\\LanShare\\";
+	std::string  dst = "C:\\LanShare\\";
 	dst += file_name;
 
 	CBufferWriter buffer_writer;
@@ -175,7 +175,7 @@ void CTCPServer::SendAll(const char* src, const char* file_name)
  *
  * \param reponsebody - 요청 정보를 전달 받을 파라미터
  */
-void CTCPServer::HeartBeat(string& reponsebody)
+void CTCPServer::HeartBeat(std::string & reponsebody)
 {
 	for (CLIENT_INFOMATION& info : clients)
 	{
@@ -183,11 +183,11 @@ void CTCPServer::HeartBeat(string& reponsebody)
 		CBufferWriter writer;
 		SafeSend(info.SOCK, (char*)cmd.GetBuffer(), cmd.GetSize());
 
-		string RECV_BUFFER;
+		std::string  RECV_BUFFER;
 		SafeRecv(info.SOCK, RECV_BUFFER);
 		reponsebody.append(info.address());
 		reponsebody.append("/");
-		reponsebody.append(std::to_string(info.port()));
+		reponsebody.append(std::to_string (info.port()));
 		reponsebody.append("/");
 
 		if (RECV_BUFFER.size() > 0 && RECV_BUFFER[0] == 0x01)
@@ -203,7 +203,7 @@ void CTCPServer::HeartBeat(string& reponsebody)
  * \param msg - 보내고자 하는 메세지 내용
  * \param targets - 기본값은 {}, 메세지를 전달받을 특정 클라이언트 리스트
  */
-void CTCPServer::Echo(string msg, vector<CLIENT_INFOMATION> targets)
+void CTCPServer::Echo(std::string  msg, vector<CLIENT_INFOMATION> targets)
 {
 	vector<CLIENT_INFOMATION>& target_clients = (targets.size() == 0) ? clients : targets;
 
@@ -217,7 +217,7 @@ void CTCPServer::Echo(string msg, vector<CLIENT_INFOMATION> targets)
 
 }
 
-bool CTCPServer::FindClientFromAddress(string address, CLIENT_INFOMATION& client)
+bool CTCPServer::FindClientFromAddress(std::string  address, CLIENT_INFOMATION& client)
 {
 	for (int i = 0; i < clients.size(); ++i)
 	{
