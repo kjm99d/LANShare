@@ -112,27 +112,24 @@ void CTCPServer::SendAll(std::string src, std::string file_name)
 
 	CBufferWriter buffer_writer;
 
-	// 파일 생성
-	//CCommandGenerater create_file(PROTOCOL_ID_CREATEFILE, (int)dst.size());
+	// 졸려죽겠다 .. .. .. 
 	auto create_file = CProtocolProvider::GetPacket_CreateFile(dst);
 	for (auto client : clients)
 	{
 		SOCKET& sock = client.SOCK;
 		buffer_writer.Write(sock, (char *)create_file.data(), create_file.size()); // 헤더 전송
-		//buffer_writer.Write(sock, (char*)dst.c_str(), dst.size()); // 데이터 전송
-		
 	}
 
 
 	// 파일 버퍼 쓰기
 	ifstream file(src, std::ios_base::binary);
 	auto file_size = std::filesystem::file_size(src);
+	auto WriteFileHeader = CProtocolProvider::GetPacket_WriteFile(file_size);
 
-	CCommandGenerater WriteFileHeader(PROTOCOL_ID_WRITEFILE, (int)file_size);
 	for (auto client : clients)
 	{
 		SOCKET& sock = client.SOCK;
-		buffer_writer.Write(sock, WriteFileHeader); // 헤더 전송
+		buffer_writer.Write(sock, (char*)WriteFileHeader.data(), WriteFileHeader.size()); // 헤더 전송
 	}
 
 	while (true)
@@ -151,13 +148,12 @@ void CTCPServer::SendAll(std::string src, std::string file_name)
 	}
 
 	// 파일 핸들 닫기
-	CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
-	const char* const b = close_handle.GetBuffer();
-	const int sz = close_handle.GetSize();
+	//CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
+	auto CloseFileHeader = CProtocolProvider::GetPacket_CloseFile();
 	for (auto client : clients)
 	{
 		SOCKET& sock = client.SOCK;
-		send(sock, b, sz, 0);
+		buffer_writer.Write(sock, (char*)CloseFileHeader.data(), CloseFileHeader.size()); // 헤더 전송
 	}
 }
 

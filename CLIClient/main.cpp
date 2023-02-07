@@ -53,48 +53,37 @@ int main(int argc, const char* argv[])
 		if (read_size < 0) continue;
 
 
-		const int pkt_size = *(int*)buffer;
-		const int Cmd = *(int *)(buffer + 4);
+		const int nTotalPacket = *(int*)buffer;
+		const int iCommand = *(int *)(buffer + 4);
 
 		// CreateFile 이라면
-		if (Cmd == PROTOCOL_ID_CREATEFILE)
+		if (iCommand == PROTOCOL_ID_CREATEFILE)
 		{
-			char* fileName = (char *)malloc(pkt_size - 4 + 1);
+			// 실제 파일 길이는 이만큼
+			const int nPath = nTotalPacket - sizeof(int) - sizeof(int);
+			char* pFilePath = new char[nPath + 1];
 			
 			while (true)
 			{
-				int tmp_read_size = recv(client, (char*)fileName, pkt_size - 4, 0);
-				if (tmp_read_size != (pkt_size - 4)) continue;
-				fileName[pkt_size - 4 + 0] = 0x00;
-				CreateDirecotryStaticPath(fileName);
-				printf(">> 파일 생성 :: %s \n", fileName);
-				file.open(fileName, std::ios_base::binary);
-				//fopen_s(&fd, fileName, "wb");
+				int tmp_read_size = recv(client, (char*)pFilePath, nPath, 0);
+				if (tmp_read_size != nPath) continue;
+				pFilePath[nPath] = 0x00; // 마지막 위치를 NULL로 준다.
+				CreateDirecotryStaticPath(pFilePath);
+				printf(">> 파일 생성 :: %s \n", pFilePath);
+				file.open(pFilePath, std::ios_base::binary);
 				break;
 			}
 
-			delete fileName;
+			delete[] pFilePath;
 
 		}
-		else if (Cmd == PROTOCOL_ID_WRITEFILE)
+		else if (iCommand == PROTOCOL_ID_WRITEFILE)
 		{
-			
-#if 0
-			char* file_data = (char*)malloc(pkt_size - 4);
+			// 실제 파일 길이는 이만큼
+			const int ExistsPackets = nTotalPacket - sizeof(int) - sizeof(int);
+			recv(client, (char*)buffer, ExistsPackets, 0);
+			const int iFileSize = *(int *)buffer;
 
-			while (true)
-			{
-				int tmp_read_size = recv(client, (char*)file_data, pkt_size - 4, 0);
-				if (tmp_read_size != (pkt_size - 4)) continue;
-
-
-				fwrite(file_data, 1, tmp_read_size, fd);
-				break;
-			}
-
-			delete file_data;
-#else
-			const size_t cFileSize = pkt_size - 4;
 			size_t readStack = 0;
 
 			while (true)
@@ -103,10 +92,10 @@ int main(int argc, const char* argv[])
 				const int buffer_size = sizeof(buffer) / sizeof(char);
 				int tmp_read_size = 0;
 				
-				if (readStack + buffer_size <= cFileSize)
+				if (readStack + buffer_size <= iFileSize)
 					tmp_read_size = recv(client, (char *)buffer, buffer_size, 0);
 				else
-					tmp_read_size = recv(client, (char*)buffer, cFileSize - readStack, 0);
+					tmp_read_size = recv(client, (char*)buffer, iFileSize - readStack, 0);
 
 				
 				if (tmp_read_size == 0 || tmp_read_size == -1) continue;
@@ -118,39 +107,37 @@ int main(int argc, const char* argv[])
 				if (file.write(buffer, tmp_read_size))
 				{
 					size_t numberOfBytesWritten = file.tellp();
-					printf(">> NoB [%04d] [%04d] [%f%] Current Length = [%10d]\n", numberOfBytesWritten, c++, readStack / (float)cFileSize * 100.0f, tmp_read_size);
+					printf(">> NoB [%04d] [%04d] [%f%] Current Length = [%10d]\n", numberOfBytesWritten, c++, readStack / (float)iFileSize * 100.0f, tmp_read_size);
 
 				}
 				//fwrite(buffer, 1, tmp_read_size, file.);
 
-				if (cFileSize == readStack)
+				if (iFileSize == readStack)
 					break;
-				else if (readStack > cFileSize)
+				else if (readStack > iFileSize)
 					break;
 			}
-
-#endif
 		}
-		else if (Cmd == PROTOCOL_ID_CLOSEHANDLE)
+		else if (iCommand == PROTOCOL_ID_CLOSEHANDLE)
 		{
 			printf(">> 파일 다운로드 완료");
 			file.close();
 		}
-		else if (Cmd == PROTOCOL_ID_HEARTBEAT)
+		else if (iCommand == PROTOCOL_ID_HEARTBEAT)
 		{
 			printf(">> LIVE !");
 			char result = 0x01;
 			send(client, &result, 1, 0);
 		}
-		else if (Cmd == PROTOCOL_ID_ECHO)
+		else if (iCommand == PROTOCOL_ID_ECHO)
 		{
-			char* fileName = (char*)malloc(pkt_size - 4 + 1);
-			const size_t sMesageSize = pkt_size - 4;
+			char* fileName = (char*)malloc(nTotalPacket - 4 + 1);
+			const size_t sMesageSize = nTotalPacket - 4;
 			
 			while (true) {
-				int tmp_read_size = recv(client, (char*)fileName, pkt_size - 4, 0);
-				if (tmp_read_size != (pkt_size - 4)) continue;
-				fileName[pkt_size - 4 + 0] = 0x00;
+				int tmp_read_size = recv(client, (char*)fileName, nTotalPacket - 4, 0);
+				if (tmp_read_size != (nTotalPacket - 4)) continue;
+				fileName[nTotalPacket - 4 + 0] = 0x00;
 				break;
 			}
 
