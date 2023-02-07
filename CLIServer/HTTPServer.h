@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
-using namespace std;
+//using namespace std;
 
 
 #include <json/json.h>
@@ -30,12 +30,12 @@ typedef struct _RequestHeader {
 
 
 // V2 지원 콜백 함수 원형
-typedef IHTTPResponse* (*fp_HTTPGetControllerV2)(CTCPServer& tcp, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
-typedef IHTTPResponse * (*fp_HTTPPostControllerV2)(CTCPServer& tcp, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, ResponseDispatcher& dispatcher);
+typedef IHTTPResponse* (*fp_HTTPGetControllerV2)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
+typedef IHTTPResponse * (*fp_HTTPPostControllerV2)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, ResponseDispatcher& dispatcher);
 
 // V1 지원 콜백 함수 원형
-typedef string (*fp_HTTPGetController)(CTCPServer& tcp, string uri, std::map<string, string> querystring);
-typedef string (*fp_HTTPPostController)(CTCPServer& tcp, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads);
+typedef std::string (*fp_HTTPGetController)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring);
+typedef std::string (*fp_HTTPPostController)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads);
 
 class ResponseDispatcher
 {
@@ -56,7 +56,7 @@ public:
 	 * 
 	 * \return 
 	 */
-	IHTTPResponse* JSON(int statusCode, Json::Value json, string cors = "")
+	IHTTPResponse* JSON(int statusCode, Json::Value json, std::string cors = "")
 	{
 		response = new CHTTPJsonResponse(json);
 		response->SetCORS(cors);
@@ -68,11 +68,11 @@ public:
 	 * Response Header 정보에 Content-Type을 text/html 타입으로 응답하는 함수..
 	 * 
 	 * \param statusCode - 상태코드
-	 * \param json - string 객체
+	 * \param json - std::string 객체
 	 * \param cors - CORS 정보, EX) *, http://~
 	 * \return 
 	 */
-	IHTTPResponse* Text(int statusCode, string text, string cors = "")
+	IHTTPResponse* Text(int statusCode, std::string text, std::string cors = "")
 	{
 		response = new CHTTPTextResponse(text);
 		response->SetCORS(cors);
@@ -108,7 +108,7 @@ private:
 
 private:
 	bool Parse(const string& data, RequestHeader& ref);
-	bool Split(vector<string>& ref, string src, std::string delimeter);
+	bool Split(vector<string>& ref, std::string src, std::string delimeter);
 	bool isHttp();
 	
 

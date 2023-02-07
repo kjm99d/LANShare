@@ -30,7 +30,14 @@ void CHTTPServer::SetController(fp_HTTPPostControllerV2 fp)
 	this->fp_PostControllerV2 = fp;
 }
 
-
+/**
+ * ControllerV1 방식에서 사용한 코드. 
+ * 하지만, 현재는 가능하면 사용하지 않는다.
+ * 
+ * 
+ * \param tcp
+ * \return 
+ */
 bool CHTTPServer::Receive(CTCPServer& tcp)
 {
 
@@ -77,14 +84,16 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 			ResponseDispatcher dispatcher;
 			if (nullptr != response)
 			{
-				string cors = response->GetCORSHeader();
+				const std::string & cors = response->GetCORSHeader();
 				//const char* str_header = "HTTP/1.1 200 OK\r\n";
-				SafeSend(m_client, (char*)response->GetStartLine().c_str(), response->GetStartLine().size());
-				SafeSend(m_client, (char*)response->GetContentTypeHeader().c_str(), response->GetContentTypeHeader().size());
-				SafeSend(m_client, (char*)response->GetCORSHeader().c_str(), response->GetCORSHeader().size());
-				SafeSend(m_client, (char*)"\r\n", strlen("\r\n"));
-				SafeSend(m_client, (char*)response->GetResponseBody().c_str(), response->GetResponseBody().size());
+				SafeSend(m_client, response->GetStartLine());
+				SafeSend(m_client, response->GetContentTypeHeader());
+				SafeSend(m_client, response->GetCORSHeader().c_str());
+				SafeSend(m_client, (char*)"\r\n", strlen("\r\n")); // 개행인데 ?
+				SafeSend(m_client, response->GetResponseBody());
+
 				closesocket(m_client);
+
 				ret = true;
 			}
 		}
@@ -243,7 +252,7 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 	return true;
 }
 
-bool CHTTPServer::Split(vector<string>& ref, string src, std::string delimeter)
+bool CHTTPServer::Split(vector<string>& ref, std::string src, std::string delimeter)
 {
 #if 0
 	stringstream stream(src);

@@ -9,7 +9,10 @@
 #pragma comment(lib, "shlwapi.lib")
 
 
-bool CreateDirecotryStaticPath(string path);
+#include <fstream>
+
+
+bool CreateDirecotryStaticPath(std::string path);
 
 int main(int argc, const char* argv[])
 {
@@ -27,7 +30,11 @@ int main(int argc, const char* argv[])
 	CTCPClient connecter(host, port);
 	connecter.Connect();
 
+	/*
 	FILE* fd = nullptr;
+	*/
+	std::ofstream file;
+
 
 	while (true) {
 		SOCKET client = connecter.GetSock();
@@ -61,7 +68,8 @@ int main(int argc, const char* argv[])
 				fileName[pkt_size - 4 + 0] = 0x00;
 				CreateDirecotryStaticPath(fileName);
 				printf(">> 파일 생성 :: %s \n", fileName);
-				fopen_s(&fd, fileName, "wb");
+				file.open(fileName, std::ios_base::binary);
+				//fopen_s(&fd, fileName, "wb");
 				break;
 			}
 
@@ -105,11 +113,15 @@ int main(int argc, const char* argv[])
 				else readStack += tmp_read_size;
 
 				//send(client, "1", 1, 0);
-
-				printf(">> [%f]% \n", readStack / (float)cFileSize * 100.0);
+				static int c = 1;
 				
+				if (file.write(buffer, tmp_read_size))
+				{
+					size_t numberOfBytesWritten = file.tellp();
+					printf(">> NoB [%04d] [%04d] [%f%] Current Length = [%10d]\n", numberOfBytesWritten, c++, readStack / (float)cFileSize * 100.0f, tmp_read_size);
 
-				fwrite(buffer, 1, tmp_read_size, fd);
+				}
+				//fwrite(buffer, 1, tmp_read_size, file.);
 
 				if (cFileSize == readStack)
 					break;
@@ -122,14 +134,7 @@ int main(int argc, const char* argv[])
 		else if (Cmd == PROTOCOL_ID_CLOSEHANDLE)
 		{
 			printf(">> 파일 다운로드 완료");
-
-			//char* file_data = (char*)malloc(pkt_size - 4);
-			//int tmp_read_size = recv(client, (char*)file_data, pkt_size - 4, 0);
-
-			fclose(fd);
-			fd = nullptr;
-
-			//delete file_data;
+			file.close();
 		}
 		else if (Cmd == PROTOCOL_ID_HEARTBEAT)
 		{
@@ -161,9 +166,9 @@ int main(int argc, const char* argv[])
 	return 0;
 }
 
-bool CreateDirecotryStaticPath(string path)
+bool CreateDirecotryStaticPath(std::string path)
 {
-	const string strFindString = "\\";
+	const std::string strFindString = "\\";
 	const size_t nFindStringSize = strFindString.length();
 	
 
@@ -172,11 +177,11 @@ bool CreateDirecotryStaticPath(string path)
 	{
 
 		pos = path.find(strFindString, pos);
-		if (pos == string::npos)
+		if (pos == std::string::npos)
 			break;
 
 		// ================================== //
-		string strTemp = path.substr(0, pos);
+		std::string strTemp = path.substr(0, pos);
 		if (PathFileExistsA(strTemp.c_str()) != 1) 
 			CreateDirectoryA(strTemp.c_str(), 0);
 		pos += nFindStringSize;

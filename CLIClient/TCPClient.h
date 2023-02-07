@@ -5,7 +5,7 @@
 
 #include <string>
 
-using namespace std;
+
 
 #pragma hdrstop
 
@@ -16,7 +16,7 @@ class CTCPClient
 {
 public:
 	CTCPClient() = delete;
-	CTCPClient(string address, int port);
+	CTCPClient(std::string address, int port);
 	virtual ~CTCPClient();
 
 public:
@@ -34,7 +34,7 @@ private:
 	bool SafeRecv(std::string& ref_buffer);
 
 private:
-	string m_address;
+	std::string m_address;
 	int m_port;
 
 	SOCKET m_socket;

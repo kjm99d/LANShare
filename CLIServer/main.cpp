@@ -19,11 +19,10 @@ static volatile int keepRunning = 1;
 
 void PrintCommand();
 
-IHTTPResponse* GetControllerV2(CTCPServer& tcp, string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
+IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
 {
 	if (uri.compare("/SendTo") == 0)
 	{
-	
 		Json::Value json;
 		json["a"] = "hello";
 
@@ -32,7 +31,7 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, string uri, std::map<string, str
 	else if (uri.compare("/ResponseFromText") == 0)
 	{
 
-		string text = "";
+		std::string text = "";
 		text += "<!DOCTYPE html>\n";
 		text += "<head><title>hello</title></head>\n";
 		text += "<body><h1>world</h1></body>\n";
@@ -44,7 +43,7 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, string uri, std::map<string, str
 	{
 		// Favicon.ico 같은 것들을 여기서 처리를 해주던가
 		// 404 처리를 하던가 해야함
-		string text = "";
+		std::string text = "";
 
 		return dispatcher.Text(404, text);
 
@@ -52,13 +51,13 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, string uri, std::map<string, str
 }
 
 // HTTP Callback
-string GetController(CTCPServer& tcp,string uri, std::map<string, string> querystring)
+std::string GetController(CTCPServer& tcp,std::string uri, std::map<string, string> querystring)
 {
 
 	return 0;
 }
 
-string PostController(CTCPServer& tcp, string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads)
+std::string PostController(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads)
 {
 	if (uri.compare("/SendAll") == 0)
 	{
@@ -104,7 +103,7 @@ int main(int argc, const char* argv[])
 	http.SetController(PostController);
 	http.SetController(GetControllerV2);
 
-	const long nPort = 5003;
+	constexpr long nPort = 5003;
 	tcp.SetPort(nPort);
 	tcp.Bind();
 
@@ -205,7 +204,7 @@ void PrintCommand()
 		break;
 	case 4:
 	{
-		string msg;
+		std::string msg;
 		cout << "Message >> ";
 		cin.get();
 		getline(cin, msg);

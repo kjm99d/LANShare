@@ -9,7 +9,7 @@ class CHTTPJsonResponse : public IHTTPResponse
 public:
 	CHTTPJsonResponse(Json::Value body);
 public:
-	string GetResponseBody();
+	std::string GetResponseBody();
 
 private:
 	Json::Value body;

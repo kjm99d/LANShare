@@ -119,11 +119,35 @@ void IServer::SafeSend(SOCKET& ref_sock, char* buffer, int length)
 	}
 }
 
+void IServer::SafeSend(SOCKET& ref_sock, const std::string & buffer)
+{
+	// Safe Code : SafeSend(ref_sock, (char *)buffer.c_str(), buffer.size());
+
+	int countdown = buffer.length();
+
+	while (countdown > 0)
+	{
+		int result = send(ref_sock, (char*)buffer.c_str() + (buffer.length() - countdown), countdown, 0);
+		const int err = WSAGetLastError();
+
+
+		if (err == WSAECONNRESET && result == SOCKET_ERROR)
+			break;
+		if (result == SOCKET_ERROR)
+			continue;
+
+		countdown -= result;
+	}
+
+}
+
 bool IServer::SafeRecv(SOCKET& ref_sock, std::string& ref_buffer)
 {
 	unsigned char buffer[4096] = { 0, };
-	const int buffer_size = sizeof(buffer) / sizeof(char);
+	const size_t buffer_size = sizeof(buffer) / sizeof(unsigned char);
+
 	int iCountFailure = 0;
+
 	while (true)
 	{
 		if (iCountFailure == 100)

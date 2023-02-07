@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <string>
 #include <Windows.h>
-using namespace std;
 
 #include "SettingLoader.h"
 
@@ -11,20 +10,20 @@ using namespace std;
 class CINISettingLoader : public ISettingLoader
 {
 public:
-	CINISettingLoader(string ini_path) { m_ini_path = ini_path; };
+	CINISettingLoader(std::string ini_path) { m_ini_path = ini_path; };
 	~CINISettingLoader() {} ;
 	
 
 public:
-	void SetSection(string section) { m_section = section; };
+	void SetSection(std::string section) { m_section = section; };
 
-	bool Get(string key, UINT& dest)	override;
-	bool Get(string key, string& dest)	override;
-	bool Set(string key, string value)	override;
+	bool Get(std::string key, UINT& dest)	override;
+	bool Get(std::string key, std::string& dest)	override;
+	bool Set(std::string key, std::string value)	override;
 
 
 private:
-	string m_section;
-	string m_ini_path;
+	std::string m_section;
+	std::string m_ini_path;
 };
 
