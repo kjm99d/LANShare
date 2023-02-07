@@ -30,6 +30,7 @@
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="HTTPTextResponse.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ProtocolProvider.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="TCPServer.cpp" />
     <ClCompile Include="Util.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="CommandGenerater.h" />
     <ClInclude Include="FileReader.h" />
     <ClInclude Include="HTTPTextResponse.h" />
+    <ClInclude Include="ProtocolProvider.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TCPServer.h" />

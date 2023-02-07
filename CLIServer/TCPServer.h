@@ -35,7 +35,12 @@
 #include <fstream>
 #include <filesystem>
 
-//typedef int (*fp_TCPEvent)(SOCKET sock);
+#include "ProtocolProvider.h"
+
+
+class CTCPServer;
+
+
 typedef int (*fp_TCPEvent)(SOCKET sock);
 
 typedef enum {
