@@ -23,7 +23,6 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string
 {
 	if (uri.compare("/SendTo") == 0)
 	{
-	
 		Json::Value json;
 		json["a"] = "hello";
 
@@ -104,7 +103,7 @@ int main(int argc, const char* argv[])
 	http.SetController(PostController);
 	http.SetController(GetControllerV2);
 
-	const long nPort = 5003;
+	constexpr long nPort = 5003;
 	tcp.SetPort(nPort);
 	tcp.Bind();
 

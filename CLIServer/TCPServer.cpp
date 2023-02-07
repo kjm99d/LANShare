@@ -105,7 +105,7 @@ void CTCPServer::SendTo(std::string  address, const char* src, const char* file_
 
 }
 
-void CTCPServer::SendAll(const char* src, const char* file_name)
+void CTCPServer::SendAll(std::string src, std::string file_name)
 {
 	std::string  dst = "C:\\LanShare\\";
 	dst += file_name;
@@ -124,8 +124,12 @@ void CTCPServer::SendAll(const char* src, const char* file_name)
 
 
 	// 파일 버퍼 쓰기
-	CFileReader* reader = new CFileReader(4096, (char*)src);
-	size_t file_size = reader->FileSize();
+
+	ifstream file(src, std::ios_base::binary);
+	auto file_size = std::filesystem::file_size(src);
+
+	//CFileReader* reader = new CFileReader(4096, (char*)src.c_str());
+	//size_t file_size = reader->FileSize();
 
 	CCommandGenerater WriteFileHeader(PROTOCOL_ID_WRITEFILE, (int)file_size);
 	for (auto client : clients)
@@ -136,22 +140,18 @@ void CTCPServer::SendAll(const char* src, const char* file_name)
 
 	while (true)
 	{
-		// 서버 PC 에서 파일을 읽고
-		const char* const file_buf = reader->GetBuffer();
-		const size_t buffer_size = reader->GetBufferSize();
-
-		// 파일이 끝이면 그만 보내라
-		if (buffer_size == 0)
-			break;
+		unsigned char buffer[4096] = { 0, };
+		std::streamsize gcount = file.read((char *)buffer, 4096).gcount();
 
 		for (auto client : clients)
 		{
 			SOCKET& sock = client.SOCK;
-			buffer_writer.Write(sock, (char*)file_buf, buffer_size); // 데이터 전송
+			buffer_writer.Write(sock, (char*)buffer, gcount); // 데이터 전송
 		}
-	}
 
-	delete reader;
+		if (file.eof())
+			break;
+	}
 
 	// 파일 핸들 닫기
 	CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);

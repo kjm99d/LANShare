@@ -32,6 +32,9 @@
 
 #include "Server.h"
 
+#include <fstream>
+#include <filesystem>
+
 //typedef int (*fp_TCPEvent)(SOCKET sock);
 typedef int (*fp_TCPEvent)(SOCKET sock);
 
@@ -66,7 +69,7 @@ public:
 
 public:
 	void SendTo(std::string address, const char* src, const char* file_name);
-	void SendAll(const char* src, const char* file_name);
+	void SendAll(std::string src, std::string file_name);
 	void HeartBeat(std::string & reponsebody);
 	void Echo(std::string msg, vector<CLIENT_INFOMATION> targets = {});
 private:
