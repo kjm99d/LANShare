@@ -84,6 +84,9 @@
     <ClCompile Include="HTTPTextResponse.cpp">
       <Filter>소스 파일\Network\HTTPResponse</Filter>
     </ClCompile>
+    <ClCompile Include="ProtocolProvider.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="HTTPTextResponse.h">
       <Filter>헤더 파일\Network\HTTPResponse</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolProvider.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
