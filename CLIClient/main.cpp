@@ -30,9 +30,6 @@ int main(int argc, const char* argv[])
 	CTCPClient connecter(host, port);
 	connecter.Connect();
 
-	/*
-	FILE* fd = nullptr;
-	*/
 	std::ofstream file;
 
 
@@ -40,8 +37,16 @@ int main(int argc, const char* argv[])
 		SOCKET client = connecter.GetSock();
 		unsigned char buffer[512] = { 0, };
 		const int read_size = recv(client, (char*)buffer, sizeof(uintmax_t) + sizeof(int), 0);
+		const int err = WSAGetLastError();
 
-
+		// 호스트 연결이 종료된 경우
+		if (err == WSAECONNRESET || err == WSAENOTCONN)
+		{
+			connecter.Close();
+			connecter.Connect();
+			continue;
+		}
+		
 		if (read_size == 0) {
 			break;
 		}
@@ -100,14 +105,11 @@ int main(int argc, const char* argv[])
 				
 				if (tmp_read_size == 0 || tmp_read_size == -1) continue;
 				else readStack += tmp_read_size;
-
-				//send(client, "1", 1, 0);
-				static int c = 1;
 				
 				if (file.write(buffer, tmp_read_size))
 				{
 					size_t numberOfBytesWritten = file.tellp();
-					printf(">> NoB [%04d] [%04d] [%f%] Current Length = [%10d]\n", numberOfBytesWritten, c++, readStack / (float)iFileSize * 100.0f, tmp_read_size);
+					printf(">>[%f%] Current Length = [%10d]\n", readStack / (float)iFileSize * 100.0f, tmp_read_size);
 
 				}
 				//fwrite(buffer, 1, tmp_read_size, file.);
@@ -132,7 +134,7 @@ int main(int argc, const char* argv[])
 		else if (iCommand == PROTOCOL_ID_ECHO)
 		{
 			// 실제 파일 길이는 이만큼
-			const int nMessage = nTotalPacket - sizeof(int) - sizeof(int);
+			const int nMessage = nTotalPacket - sizeof(uintmax_t) - sizeof(int);
 			char* pMessage = new char[nMessage + 1];
 
 			while (true)

@@ -151,10 +151,9 @@ void PrintCommand()
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| ---------------------- Command Box ----------------------- | \n");
 	printf("| ---------------------------------------------------------- | \n");
-	printf("| [1] 파일로 부터 읽기(base.ini)                             | \n");
-	printf("| [2] 커맨드로 읽기                                          | \n");
-	printf("| [3] 현재 연결된 모든 클라이언트 정보 출력					 | \n");
-	printf("| [4] 메세지박스 띄우기										 | \n");
+	printf("| [1] 다이얼로그로 읽기                                      | \n");
+	printf("| [2] 현재 연결된 모든 클라이언트 정보 출력                  | \n");
+	printf("| [3] 에코 메세지 전송하기                                   | \n");
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| COMMAND >> ");
 	// 현재 커서 정보를 가져온다
@@ -178,15 +177,6 @@ void PrintCommand()
 	switch (menu_num)
 	{
 	case 1:
-
-		Cur.X = 0;
-		Cur.Y += 2;
-		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Cur);
-
-		//LoadINI(); 
-		break;
-
-	case 2:
 	{
 		if (Util::OpenFileDialog(szPath, MAX_PATH) == TRUE)
 		{
@@ -200,11 +190,11 @@ void PrintCommand()
 		}
 	}
 	break;
-	case 3:
+	case 2:
 		//PrintClient(sockets);
 		tcp.ShowClient();
 		break;
-	case 4:
+	case 3:
 	{
 		std::string msg;
 		cout << "Message >> ";
