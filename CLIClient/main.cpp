@@ -10,7 +10,7 @@
 
 
 #include <fstream>
-
+#include <stdint.h>
 
 bool CreateDirecotryStaticPath(std::string path);
 
@@ -39,7 +39,7 @@ int main(int argc, const char* argv[])
 	while (true) {
 		SOCKET client = connecter.GetSock();
 		unsigned char buffer[512] = { 0, };
-		const int read_size = recv(client, (char*)buffer, 8, 0);
+		const int read_size = recv(client, (char*)buffer, sizeof(uintmax_t) + sizeof(int), 0);
 
 
 		if (read_size == 0) {
@@ -53,14 +53,14 @@ int main(int argc, const char* argv[])
 		if (read_size < 0) continue;
 
 
-		const int nTotalPacket = *(int*)buffer;
-		const int iCommand = *(int *)(buffer + 4);
+		const uintmax_t nTotalPacket = *(uintmax_t*)buffer;
+		const int iCommand = *(int *)(buffer + sizeof(uintmax_t));
 
 		// CreateFile 이라면
 		if (iCommand == PROTOCOL_ID_CREATEFILE)
 		{
 			// 실제 파일 길이는 이만큼
-			const int nPath = nTotalPacket - sizeof(int) - sizeof(int);
+			const int nPath = nTotalPacket - sizeof(uintmax_t) - sizeof(int);
 			char* pFilePath = new char[nPath + 1];
 			
 			while (true)
@@ -80,7 +80,7 @@ int main(int argc, const char* argv[])
 		else if (iCommand == PROTOCOL_ID_WRITEFILE)
 		{
 			// 실제 파일 길이는 이만큼
-			const int ExistsPackets = nTotalPacket - sizeof(int) - sizeof(int);
+			const int ExistsPackets = nTotalPacket - sizeof(uintmax_t) - sizeof(int);
 			recv(client, (char*)buffer, ExistsPackets, 0);
 			const int iFileSize = *(int *)buffer;
 
