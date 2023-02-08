@@ -14,8 +14,7 @@ public:
 	static std::vector<unsigned char> GetPacket_CreateFile(std::string filepath);
 	static std::vector<unsigned char> GetPacket_WriteFile(unsigned long long filesize);
 	static std::vector<unsigned char> GetPacket_CloseFile();
-
-private:
-	static void FillProtocol(std::vector<unsigned char> & vector, const int iProtocolId);
+	static std::vector<unsigned char> GetPacket_HeaderBeat();
+	static std::vector<unsigned char> GetPacket_Echo(std::string message);
 };
 

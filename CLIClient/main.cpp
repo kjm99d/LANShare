@@ -131,19 +131,22 @@ int main(int argc, const char* argv[])
 		}
 		else if (iCommand == PROTOCOL_ID_ECHO)
 		{
-			char* fileName = (char*)malloc(nTotalPacket - 4 + 1);
-			const size_t sMesageSize = nTotalPacket - 4;
-			
-			while (true) {
-				int tmp_read_size = recv(client, (char*)fileName, nTotalPacket - 4, 0);
-				if (tmp_read_size != (nTotalPacket - 4)) continue;
-				fileName[nTotalPacket - 4 + 0] = 0x00;
+			// 실제 파일 길이는 이만큼
+			const int nMessage = nTotalPacket - sizeof(int) - sizeof(int);
+			char* pMessage = new char[nMessage + 1];
+
+			while (true)
+			{
+				int tmp_read_size = recv(client, (char*)pMessage, nMessage, 0);
+				if (tmp_read_size != nMessage) continue;
+				pMessage[nMessage] = 0x00; // 마지막 위치를 NULL로 준다.
+
 				break;
 			}
 
-			MessageBoxA(NULL, fileName, "M", MB_OK);
+			MessageBoxA(NULL, pMessage, "", MB_OK);
 
-			delete fileName;
+			delete[] pMessage;
 		}
 
 	}
