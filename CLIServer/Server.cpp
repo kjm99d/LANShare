@@ -131,7 +131,7 @@ void IServer::SafeSend(SOCKET& ref_sock, const std::string & buffer)
 		const int err = WSAGetLastError();
 
 
-		if (err == WSAECONNRESET && result == SOCKET_ERROR)
+		if ((err == WSAECONNRESET && result == SOCKET_ERROR) || (err == WSAECONNABORTED && result == SOCKET_ERROR))
 			break;
 		if (result == SOCKET_ERROR)
 			continue;
