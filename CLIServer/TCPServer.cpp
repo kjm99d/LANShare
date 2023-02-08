@@ -40,8 +40,6 @@ void CTCPServer::AddClient()
 
 int CTCPServer::Receive(fp_TCPEvent cb_callback)
 {
-
-
 	// 콜백 함수 
 	if (cb_callback)
 	{
@@ -53,56 +51,40 @@ int CTCPServer::Receive(fp_TCPEvent cb_callback)
 
 void CTCPServer::SendTo(std::string  address, const char* src, const char* file_name)
 {
+
 	CLIENT_INFOMATION client;
 	if (FindClientFromAddress(address, client) == true)
 	{
-		std::string  dst = "C:\\LanShare\\";
+
+		std::string  dst = "C:\\LanShare";
 		dst += file_name;
 
-		CBufferWriter buffer_writer;
-
-		SOCKET& sock = client.SOCK;
-
-		// 파일 생성
-		CCommandGenerater create_file(PROTOCOL_ID_CREATEFILE, (int)dst.size());
-		buffer_writer.Write(sock, create_file); // 헤더 전송
-		buffer_writer.Write(sock, (char*)dst.c_str(), dst.size()); // 데이터 전송
-
+		// 파일 생성하기
+		auto create_file = CProtocolProvider::GetPacket_CreateFile(dst);
+		SafeSend(client.SOCK, (char*)create_file.data(), create_file.size());
 
 
 		// 파일 버퍼 쓰기
-		CFileReader* reader = new CFileReader(4096, (char*)src);
-		size_t file_size = reader->FileSize();
+		ifstream file(src, std::ios_base::binary);
+		auto file_size = std::filesystem::file_size(src);
+		auto WriteFileHeader = CProtocolProvider::GetPacket_WriteFile(file_size);
+		SafeSend(client.SOCK, (char*)WriteFileHeader.data(), WriteFileHeader.size());
 
-		CCommandGenerater WriteFileHeader(PROTOCOL_ID_WRITEFILE, (int)file_size);
-		buffer_writer.Write(sock, WriteFileHeader); // 헤더 전송
 
+		unsigned char buffer[4096] = { 0, };
 		while (true)
 		{
-			// 서버 PC 에서 파일을 읽고
-			const char* const file_buf = reader->GetBuffer();
-			const size_t buffer_size = reader->GetBufferSize();
+			std::streamsize gcount = file.read((char*)buffer, 4096).gcount();
+			SafeSend(client.SOCK, (char*)buffer, gcount);
 
-			// 파일이 끝이면 그만 보내라
-			if (buffer_size == 0)
-				break;
-
-
-			SOCKET& sock = client.SOCK;
-			buffer_writer.Write(sock, (char*)file_buf, buffer_size); // 데이터 전송
-
+			if (file.eof()) break;
 		}
 
-		delete reader;
-
 		// 파일 핸들 닫기
-		CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
-		const char* const b = close_handle.GetBuffer();
-		const int sz = close_handle.GetSize();
-		send(sock, b, sz, 0);
+		auto CloseFileHeader = CProtocolProvider::GetPacket_CloseFile();
+		SafeSend(client.SOCK, (char*)CloseFileHeader.data(), CloseFileHeader.size());
 
 	}
-
 }
 
 void CTCPServer::SendAll(std::string src, std::string file_name)
@@ -110,51 +92,35 @@ void CTCPServer::SendAll(std::string src, std::string file_name)
 	std::string  dst = "C:\\LanShare";
 	dst += file_name;
 
-	CBufferWriter buffer_writer;
-
-	// 졸려죽겠다 .. .. .. 
+	// 파일 생성하기
 	auto create_file = CProtocolProvider::GetPacket_CreateFile(dst);
 	for (auto client : clients)
-	{
-		SOCKET& sock = client.SOCK;
-		buffer_writer.Write(sock, (char *)create_file.data(), create_file.size()); // 헤더 전송
-	}
-
+		SafeSend(client.SOCK, (char *)create_file.data(), create_file.size());
+	
 
 	// 파일 버퍼 쓰기
 	ifstream file(src, std::ios_base::binary);
 	auto file_size = std::filesystem::file_size(src);
 	auto WriteFileHeader = CProtocolProvider::GetPacket_WriteFile(file_size);
-
 	for (auto client : clients)
-	{
-		SOCKET& sock = client.SOCK;
-		buffer_writer.Write(sock, (char*)WriteFileHeader.data(), WriteFileHeader.size()); // 헤더 전송
-	}
+		SafeSend(client.SOCK, (char*)WriteFileHeader.data(), WriteFileHeader.size());
 
+
+	unsigned char buffer[4096] = { 0, };
 	while (true)
 	{
-		unsigned char buffer[4096] = { 0, };
 		std::streamsize gcount = file.read((char *)buffer, 4096).gcount();
 
 		for (auto client : clients)
-		{
-			SOCKET& sock = client.SOCK;
-			buffer_writer.Write(sock, (char*)buffer, gcount); // 데이터 전송
-		}
+			SafeSend(client.SOCK, (char*)buffer, gcount);
 
-		if (file.eof())
-			break;
+		if (file.eof()) break;
 	}
 
 	// 파일 핸들 닫기
-	//CCommandGenerater close_handle(PROTOCOL_ID_CLOSEHANDLE, 0);
 	auto CloseFileHeader = CProtocolProvider::GetPacket_CloseFile();
 	for (auto client : clients)
-	{
-		SOCKET& sock = client.SOCK;
-		buffer_writer.Write(sock, (char*)CloseFileHeader.data(), CloseFileHeader.size()); // 헤더 전송
-	}
+		SafeSend(client.SOCK, (char*)CloseFileHeader.data(), CloseFileHeader.size());
 }
 
 // ============================================================================================================ //
@@ -168,12 +134,13 @@ void CTCPServer::SendAll(std::string src, std::string file_name)
  */
 void CTCPServer::HeartBeat(std::string & reponsebody)
 {
+	auto HeaderBeat = CProtocolProvider::GetPacket_HeaderBeat();
+
 	for (CLIENT_INFOMATION& info : clients)
 	{
-		CCommandGenerater cmd(PROTOCOL_ID_HEARTBEAT, 0);
-		CBufferWriter writer;
-		SafeSend(info.SOCK, (char*)cmd.GetBuffer(), cmd.GetSize());
+		SafeSend(info.SOCK, (char*)HeaderBeat.data(), HeaderBeat.size());
 
+		// == Recv 영역 == //
 		std::string  RECV_BUFFER;
 		SafeRecv(info.SOCK, RECV_BUFFER);
 		reponsebody.append(info.address());
@@ -186,6 +153,7 @@ void CTCPServer::HeartBeat(std::string & reponsebody)
 		else
 			reponsebody.append("0\r\n");
 	}
+
 }
 
 /**
@@ -196,15 +164,11 @@ void CTCPServer::HeartBeat(std::string & reponsebody)
  */
 void CTCPServer::Echo(std::string  msg, vector<CLIENT_INFOMATION> targets)
 {
+	auto Echo = CProtocolProvider::GetPacket_Echo(msg);
 	vector<CLIENT_INFOMATION>& target_clients = (targets.size() == 0) ? clients : targets;
 
-
 	for (CLIENT_INFOMATION& info : target_clients)
-	{
-		CCommandGenerater cmd(PROTOCOL_ID_ECHO, msg.size());
-		SafeSend(info.SOCK, (char*)cmd.GetBuffer(), cmd.GetSize());
-		SafeSend(info.SOCK, (char*)msg.c_str(), msg.size());
-	}
+		SafeSend(info.SOCK, (char*)Echo.data(), Echo.size());
 
 }
 

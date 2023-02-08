@@ -57,8 +57,36 @@ std::vector<unsigned char> CProtocolProvider::GetPacket_CloseFile()
     return packet;
 }
 
-void CProtocolProvider::FillProtocol(std::vector<unsigned char> & vector, const int iProtocolId)
+std::vector<unsigned char> CProtocolProvider::GetPacket_HeaderBeat()
 {
-    std::copy((unsigned char*)&iProtocolId, ((unsigned char*)&iProtocolId) + sizeof(iProtocolId), vector.begin());
+    std::vector<unsigned char> packet(sizeof(int) + sizeof(int));
 
+    const int nTotalPacket = packet.size();
+    std::copy((unsigned char*)&nTotalPacket, ((unsigned char*)&nTotalPacket) + sizeof(int), packet.begin());
+
+
+    constexpr int iProtocolId = PROTOCOL_ID_HEARTBEAT;
+    std::copy((unsigned char*)&iProtocolId, ((unsigned char*)&iProtocolId) + sizeof(int), packet.begin() + sizeof(int));
+
+    return packet;
+}
+
+std::vector<unsigned char> CProtocolProvider::GetPacket_Echo(std::string message)
+{
+    // =========================== //     4       //    4      //   EX)28 // ====================
+       // 전체길이 + 커맨드           //전체길이공간 //커맨드공간 // 데이터공간 ====================
+    std::vector<unsigned char> packet(sizeof(int) + sizeof(int) + message.size());
+
+    //FillProtocol(packet, PROTOCOL_ID_CREATEFILE);
+
+    const int nTotalPacket = packet.size();
+    std::copy((unsigned char*)&nTotalPacket, ((unsigned char*)&nTotalPacket) + sizeof(int), packet.begin());
+
+
+    constexpr int iProtocolId = PROTOCOL_ID_ECHO;
+    std::copy((unsigned char*)&iProtocolId, ((unsigned char*)&iProtocolId) + sizeof(int), packet.begin() + sizeof(int));
+
+    std::copy(message.begin(), message.end(), packet.begin() + sizeof(int) + sizeof(int));
+
+    return packet;
 }
