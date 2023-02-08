@@ -7,6 +7,7 @@
 #pragma hdrstop
 
 #include "ProtocolID.h"
+#include "ProtocolChain.h"
 
 class CProtocolProvider
 {

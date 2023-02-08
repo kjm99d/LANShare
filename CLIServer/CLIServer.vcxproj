@@ -43,6 +43,7 @@
     <ClInclude Include="HTTPResponse.h" />
     <ClInclude Include="HTTPServer.h" />
     <ClInclude Include="HTTPTextResponse.h" />
+    <ClInclude Include="ProtocolChain.h" />
     <ClInclude Include="ProtocolProvider.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="resource.h" />
