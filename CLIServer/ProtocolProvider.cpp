@@ -8,10 +8,9 @@ std::vector<unsigned char> CProtocolProvider::GetPacket_CreateFile(std::string f
     return packet;
 }
 
-std::vector<unsigned char> CProtocolProvider::GetPacket_WriteFile(unsigned long long filesize)
+std::vector<unsigned char> CProtocolProvider::GetPacket_WriteFile(uintmax_t filesize)
 {
-    const int iFileSize = filesize;
-    const std::vector<unsigned char>& packet = CProtocolChain(PROTOCOL_ID_WRITEFILE).SetData(iFileSize).Build();
+    const std::vector<unsigned char>& packet = CProtocolChain(PROTOCOL_ID_WRITEFILE).SetData(filesize).Build();
     
     return packet;
 }
