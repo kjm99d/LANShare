@@ -30,9 +30,6 @@ int main(int argc, const char* argv[])
 	CTCPClient connecter(host, port);
 	connecter.Connect();
 
-	/*
-	FILE* fd = nullptr;
-	*/
 	std::ofstream file;
 
 
@@ -100,14 +97,11 @@ int main(int argc, const char* argv[])
 				
 				if (tmp_read_size == 0 || tmp_read_size == -1) continue;
 				else readStack += tmp_read_size;
-
-				//send(client, "1", 1, 0);
-				static int c = 1;
 				
 				if (file.write(buffer, tmp_read_size))
 				{
 					size_t numberOfBytesWritten = file.tellp();
-					printf(">> NoB [%04d] [%04d] [%f%] Current Length = [%10d]\n", numberOfBytesWritten, c++, readStack / (float)iFileSize * 100.0f, tmp_read_size);
+					printf(">>[%f%] Current Length = [%10d]\n", readStack / (float)iFileSize * 100.0f, tmp_read_size);
 
 				}
 				//fwrite(buffer, 1, tmp_read_size, file.);

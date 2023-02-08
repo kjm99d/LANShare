@@ -16,9 +16,6 @@
     <Filter Include="헤더 파일\Common">
       <UniqueIdentifier>{d0b8405c-282e-4acd-8ed7-2ec280791b80}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\MemoryEngine">
-      <UniqueIdentifier>{81ebcd90-94b2-4bf4-aaa1-a31dda2bb27a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\Common\SettingLoader">
       <UniqueIdentifier>{db99680e-b8bf-481e-ac1f-5f7caae9deb3}</UniqueIdentifier>
     </Filter>
@@ -88,12 +85,6 @@
     </ClInclude>
     <ClInclude Include="..\CLICommon\Defines.h">
       <Filter>헤더 파일\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CLICommon\MemoryStreamPool.h">
-      <Filter>헤더 파일\MemoryEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CLICommon\MemoryPool.h">
-      <Filter>헤더 파일\MemoryEngine</Filter>
     </ClInclude>
     <ClInclude Include="..\CLICommon\SettingLoader.h">
       <Filter>헤더 파일\Common\SettingLoader</Filter>
