@@ -37,8 +37,16 @@ int main(int argc, const char* argv[])
 		SOCKET client = connecter.GetSock();
 		unsigned char buffer[512] = { 0, };
 		const int read_size = recv(client, (char*)buffer, sizeof(uintmax_t) + sizeof(int), 0);
+		const int err = WSAGetLastError();
 
-
+		// 호스트 연결이 종료된 경우
+		if (err == WSAECONNRESET || err == WSAENOTCONN)
+		{
+			connecter.Close();
+			connecter.Connect();
+			continue;
+		}
+		
 		if (read_size == 0) {
 			break;
 		}
@@ -126,7 +134,7 @@ int main(int argc, const char* argv[])
 		else if (iCommand == PROTOCOL_ID_ECHO)
 		{
 			// 실제 파일 길이는 이만큼
-			const int nMessage = nTotalPacket - sizeof(int) - sizeof(int);
+			const int nMessage = nTotalPacket - sizeof(uintmax_t) - sizeof(int);
 			char* pMessage = new char[nMessage + 1];
 
 			while (true)
