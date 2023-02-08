@@ -45,15 +45,6 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CommandGenerater.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="BufferWriter.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="FileReader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -98,15 +89,6 @@
     <ClInclude Include="..\CLICommon\Defines.h">
       <Filter>헤더 파일\Common</Filter>
     </ClInclude>
-    <ClInclude Include="CommandGenerater.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="BufferWriter.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="FileReader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\CLICommon\MemoryStreamPool.h">
       <Filter>헤더 파일\MemoryEngine</Filter>
     </ClInclude>
@@ -142,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="ProtocolProvider.h">
       <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolChain.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -188,14 +188,16 @@ void PrintCommand()
 
 	case 2:
 	{
-		Util::OpenFileDialog(szPath, MAX_PATH);
-		// 경로에서 파일 이름만 가져온다.
-		int nPosLastEscape = 0;
-		for (nPosLastEscape = strlen(szPath) - 1; szPath[nPosLastEscape] != '\\'; --nPosLastEscape);
-		const char* fileName = szPath + nPosLastEscape;
+		if (Util::OpenFileDialog(szPath, MAX_PATH) == TRUE)
+		{
+			// 경로에서 파일 이름만 가져온다.
+			int nPosLastEscape = 0;
+			for (nPosLastEscape = strlen(szPath) - 1; szPath[nPosLastEscape] != '\\'; --nPosLastEscape);
+			const char* fileName = szPath + nPosLastEscape;
 
-		tcp.SendAll(szPath, fileName);
-		printf(">> %s \n", szPath);
+			tcp.SendAll(szPath, fileName);
+			printf(">> %s \n", szPath);
+		}
 	}
 	break;
 	case 3:

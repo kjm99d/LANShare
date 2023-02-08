@@ -23,11 +23,8 @@
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_reader.cpp" />
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_value.cpp" />
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp" />
-    <ClCompile Include="BufferWriter.cpp" />
     <ClCompile Include="HTTPJsonResponse.cpp" />
     <ClCompile Include="HTTPServer.cpp" />
-    <ClCompile Include="CommandGenerater.cpp" />
-    <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="HTTPTextResponse.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ProtocolProvider.cpp" />
@@ -42,13 +39,11 @@
     <ClInclude Include="..\CLICommon\MemoryStreamPool.h" />
     <ClInclude Include="..\CLICommon\ProtocolID.h" />
     <ClInclude Include="..\CLICommon\SettingLoader.h" />
-    <ClInclude Include="BufferWriter.h" />
     <ClInclude Include="HTTPJsonResponse.h" />
     <ClInclude Include="HTTPResponse.h" />
     <ClInclude Include="HTTPServer.h" />
-    <ClInclude Include="CommandGenerater.h" />
-    <ClInclude Include="FileReader.h" />
     <ClInclude Include="HTTPTextResponse.h" />
+    <ClInclude Include="ProtocolChain.h" />
     <ClInclude Include="ProtocolProvider.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="resource.h" />

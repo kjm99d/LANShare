@@ -4,6 +4,10 @@
 
 #include <Windows.h>
 
+
+#include <fstream>
+#include <filesystem>
+
 #ifdef SetPort
 #undef SetPort
 #endif
@@ -25,16 +29,8 @@
 #include <vector>
 #pragma hdrstop
 
-#include "FileReader.h"
 #include "ProtocolID.h"
-#include "BufferWriter.h"
-#include "CommandGenerater.h"
-
 #include "Server.h"
-
-#include <fstream>
-#include <filesystem>
-
 #include "ProtocolProvider.h"
 
 
