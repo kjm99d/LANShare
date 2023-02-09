@@ -134,26 +134,46 @@ void CTCPServer::SendAll(std::string src, std::string file_name)
  */
 void CTCPServer::HeartBeat(std::string & reponsebody)
 {
+	
+	const Json::Value items = HeartBeat();
+
+	for (auto item : items)
+	{
+		reponsebody += item["address"].asString();
+		reponsebody += "/";
+		reponsebody += item["status"].asString();
+		reponsebody += "\n";
+	}
+
+	//Json::FastWriter writer;
+	//reponsebody = writer.write(items);
+
+}
+
+Json::Value CTCPServer::HeartBeat()
+{
+	Json::Value result;
+
 	auto HeaderBeat = CProtocolProvider::GetPacket_HeaderBeat();
 
 	for (CLIENT_INFOMATION& info : clients)
 	{
+		// 패킷 보내고 
 		SafeSend(info.SOCK, (char*)HeaderBeat.data(), HeaderBeat.size());
 
-		// == Recv 영역 == //
+		Json::Value item;
+		item["address"] = info.address();
+		item["status"] = false;
 		std::string  RECV_BUFFER;
-		SafeRecv(info.SOCK, RECV_BUFFER);
-		reponsebody.append(info.address());
-		reponsebody.append("/");
-		reponsebody.append(std::to_string (info.port()));
-		reponsebody.append("/");
+		if (TRUE == SafeRecv(info.SOCK, RECV_BUFFER)) { // 패킷을 수신하고
+			if (RECV_BUFFER.size() > 0 && RECV_BUFFER[0] == 0x01)
+				item["status"] = true;
+		}
 
-		if (RECV_BUFFER.size() > 0 && RECV_BUFFER[0] == 0x01)
-			reponsebody.append("1\r\n");
-		else
-			reponsebody.append("0\r\n");
+		result.append(item);
 	}
 
+	return result;
 }
 
 /**

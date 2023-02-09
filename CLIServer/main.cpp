@@ -39,6 +39,10 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string
 
 		return dispatcher.Text(200, text);
 	}
+	else if (uri.compare("/HeartBeat") == 0)
+	{
+		return dispatcher.JSON(200, tcp.HeartBeat(), "*");
+	}
 	else
 	{
 		// Favicon.ico 같은 것들을 여기서 처리를 해주던가
@@ -153,7 +157,8 @@ void PrintCommand()
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| [1] 다이얼로그로 읽기                                      | \n");
 	printf("| [2] 현재 연결된 모든 클라이언트 정보 출력                  | \n");
-	printf("| [3] 에코 메세지 전송하기                                   | \n");
+	printf("| [3] 클라이언트 상태 확인하기                               | \n");
+	printf("| [4] 에코 메세지 전송하기                                   | \n");
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| COMMAND >> ");
 	// 현재 커서 정보를 가져온다
@@ -191,10 +196,17 @@ void PrintCommand()
 	}
 	break;
 	case 2:
-		//PrintClient(sockets);
 		tcp.ShowClient();
 		break;
+
 	case 3:
+	{
+		std::string body;
+		tcp.HeartBeat(body);
+		std::cout << body << std::endl;
+	}
+		break;
+	case 4:
 	{
 		std::string msg;
 		cout << "Message >> ";

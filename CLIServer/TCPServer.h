@@ -1,12 +1,11 @@
 ﻿#pragma once
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <WinSock2.h>
-
 #include <Windows.h>
 
-
-#include <fstream>
 #include <filesystem>
+#include <fstream>
+#include <vector>
 
 #ifdef SetPort
 #undef SetPort
@@ -26,12 +25,13 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
-#include <vector>
+#include <json/json.h>
 #pragma hdrstop
 
 #include "ProtocolID.h"
 #include "Server.h"
 #include "ProtocolProvider.h"
+
 
 
 class CTCPServer;
@@ -72,6 +72,7 @@ public:
 	void SendTo(std::string address, const char* src, const char* file_name);
 	void SendAll(std::string src, std::string file_name);
 	void HeartBeat(std::string & reponsebody);
+	Json::Value HeartBeat();
 	void Echo(std::string msg, vector<CLIENT_INFOMATION> targets = {});
 private:
 	bool FindClientFromAddress(std::string address, CLIENT_INFOMATION& client);

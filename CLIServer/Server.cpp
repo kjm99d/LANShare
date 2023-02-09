@@ -171,6 +171,7 @@ bool IServer::SafeRecv(SOCKET& ref_sock, std::string& ref_buffer)
 			return true;
 	}
 
+	return false;
 	
 }
 
