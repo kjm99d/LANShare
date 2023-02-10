@@ -14,9 +14,12 @@
 
 bool CreateDirecotryStaticPath(std::string path);
 void HideThisWindow();
+void SetStartupProgram();
 
 int main(int argc, const char* argv[])
 {
+	SetStartupProgram();
+
 	// 연결할 소켓 서버 주소와 포트 가져오기
 	CINISettingLoader settings(".\\settings.ini");
 	settings.SetSection("Client");
@@ -187,4 +190,32 @@ void HideThisWindow()
 	HWND hWnd = GetConsoleWindow();
 
 	ShowWindow(hWnd, SW_HIDE);
+}
+
+void SetStartupProgram()
+{
+	TCHAR lpPath[MAX_PATH] = { 0, };
+	GetModuleFileName(NULL, lpPath, MAX_PATH);
+
+	LPCWSTR lpStartup = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+
+	LONG lResult;
+	WCHAR buffer[100];
+	HKEY hKey;
+	DWORD dwDesc;
+	
+
+
+	// 레지스트리 열고
+	RegOpenKeyEx(HKEY_LOCAL_MACHINE, lpStartup, 0, KEY_ALL_ACCESS, &hKey);
+
+	// Set Registry Key & Value
+	lResult = RegCreateKeyEx(HKEY_LOCAL_MACHINE, lpStartup, 0, buffer, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDesc);
+	if (lResult == ERROR_SUCCESS)
+	{
+		RegSetValueEx(hKey, L"LANShareClient", 0, REG_SZ, (BYTE*)lpPath, lstrlenW(lpPath) * sizeof(WCHAR));
+	}
+
+	//레지스트리 닫고
+	RegCloseKey(hKey);
 }
