@@ -13,12 +13,18 @@
 #include <stdint.h>
 
 bool CreateDirecotryStaticPath(std::string path);
+void HideThisWindow();
 
 int main(int argc, const char* argv[])
 {
 	// 연결할 소켓 서버 주소와 포트 가져오기
 	CINISettingLoader settings(".\\settings.ini");
 	settings.SetSection("Client");
+	UINT win_type;
+	settings.Get("WIN_TYPE", win_type);
+	if (win_type == 1)
+		HideThisWindow();
+
 	std::string host;
 	UINT port;
 	settings.Get("host", host);
@@ -34,18 +40,11 @@ int main(int argc, const char* argv[])
 
 
 	while (true) {
-		SOCKET client = connecter.GetSock();
+		const SOCKET& client = connecter.m_socket;
 		unsigned char buffer[512] = { 0, };
 		const int read_size = recv(client, (char*)buffer, sizeof(uintmax_t) + sizeof(int), 0);
-		const int err = WSAGetLastError();
-
-		// 호스트 연결이 종료된 경우
-		if (err == WSAECONNRESET || err == WSAENOTCONN)
-		{
-			connecter.Close();
-			connecter.Connect();
-			continue;
-		}
+		
+		connecter.ReConnect();
 		
 		if (read_size == 0) {
 			break;
@@ -181,4 +180,11 @@ bool CreateDirecotryStaticPath(std::string path)
 	}
 
 	return true;
+}
+
+void HideThisWindow()
+{
+	HWND hWnd = GetConsoleWindow();
+
+	ShowWindow(hWnd, SW_HIDE);
 }

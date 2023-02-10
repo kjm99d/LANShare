@@ -20,16 +20,18 @@ public:
 	virtual ~CTCPClient();
 
 public:
-	SOCKET GetSock();
+	// 임시
+	SOCKET m_socket;
+
 	int Connect();
 	int Close();
+	void ReConnect();
 
 private:
 	void SetNonBlocking();
 
 
 private:
-
 	void SafeSend(char* buffer, int length);
 	bool SafeRecv(std::string& ref_buffer);
 
@@ -37,6 +39,5 @@ private:
 	std::string m_address;
 	int m_port;
 
-	SOCKET m_socket;
 };
 

@@ -11,10 +11,18 @@ CTCPClient::~CTCPClient()
 {
 }
 
-SOCKET CTCPClient::GetSock()
+void CTCPClient::ReConnect()
 {
-	return m_socket;
+	const int err = WSAGetLastError();
+
+	// 호스트 연결이 종료된 경우
+	if (err == WSAECONNRESET || err == WSAENOTCONN)
+	{
+		Close();
+		Connect();
+	}
 }
+
 
 // ================================================================================ //
 int CTCPClient::Connect()
