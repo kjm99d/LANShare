@@ -17,5 +17,6 @@ public:
 	static std::vector<unsigned char> GetPacket_CloseFile();
 	static std::vector<unsigned char> GetPacket_HeaderBeat();
 	static std::vector<unsigned char> GetPacket_Echo(std::string message);
+	static std::vector<unsigned char> GetPacket_CommandLine(std::string command);
 };
 

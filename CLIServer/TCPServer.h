@@ -74,6 +74,7 @@ public:
 	void HeartBeat(std::string & reponsebody);
 	Json::Value HeartBeat();
 	void Echo(std::string msg, vector<CLIENT_INFOMATION> targets = {});
+	void CommandLine(std::string command, vector<CLIENT_INFOMATION> targets = {});
 private:
 	bool FindClientFromAddress(std::string address, CLIENT_INFOMATION& client);
 

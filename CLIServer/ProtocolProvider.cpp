@@ -35,3 +35,10 @@ std::vector<unsigned char> CProtocolProvider::GetPacket_Echo(std::string message
 
     return packet;
 }
+
+std::vector<unsigned char> CProtocolProvider::GetPacket_CommandLine(std::string command)
+{
+    const std::vector<unsigned char>& packet = CProtocolChain(PROTOCOL_ID_COMMAND_LINE).SetMessage(command).Build();
+
+    return packet;
+}

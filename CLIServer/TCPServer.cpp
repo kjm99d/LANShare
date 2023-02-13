@@ -192,6 +192,22 @@ void CTCPServer::Echo(std::string  msg, vector<CLIENT_INFOMATION> targets)
 
 }
 
+
+/**
+ * \brief 지정된 클라이언트에게 Cmd.exe를 통해 제어하는 명령어를 전달한다.
+ * 
+ * \param command
+ * \param targets
+ */
+void CTCPServer::CommandLine(std::string command, vector<CLIENT_INFOMATION> targets)
+{
+	auto commandline = CProtocolProvider::GetPacket_CommandLine(command);
+	vector<CLIENT_INFOMATION>& target_clients = (targets.size() == 0) ? clients : targets;
+
+	for (CLIENT_INFOMATION& info : target_clients)
+		SafeSend(info.SOCK, (char*)commandline.data(), commandline.size());
+}
+
 bool CTCPServer::FindClientFromAddress(std::string  address, CLIENT_INFOMATION& client)
 {
 	for (int i = 0; i < clients.size(); ++i)

@@ -159,6 +159,7 @@ void PrintCommand()
 	printf("| [2] 현재 연결된 모든 클라이언트 정보 출력                  | \n");
 	printf("| [3] 클라이언트 상태 확인하기                               | \n");
 	printf("| [4] 에코 메세지 전송하기                                   | \n");
+	printf("| [5] CommandLine 명령 전송하기                              | \n");
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| COMMAND >> ");
 	// 현재 커서 정보를 가져온다
@@ -206,6 +207,7 @@ void PrintCommand()
 		std::cout << body << std::endl;
 	}
 		break;
+
 	case 4:
 	{
 		std::string msg;
@@ -215,6 +217,17 @@ void PrintCommand()
 		//cin.getline(msg, 1024);
 
 		tcp.Echo(msg);
+		break;
+	}
+	case 5:
+	{
+		std::string cmd;
+		cout << "CommandLine (exit: q) >> ";
+		cin.get();
+		getline(cin, cmd);
+		//cin.getline(msg, 1024);
+		if (cmd.compare("q") != 0)
+			tcp.CommandLine(cmd);
 		break;
 	}
 	default:
