@@ -1,4 +1,5 @@
 ﻿#include "TCPClient.h"
+#include <iostream>
 
 // ================================================================================ //
 // 생성자/소멸자
@@ -25,19 +26,22 @@ void CTCPClient::ReConnect()
 
 void CTCPClient::Receive()
 {
+	std::ofstream file;
+
 	while (true)
 	{
 		uintmax_t length = 0;
 		// 헤더를 읽고
 		const int HeaderType = ReadHeader(length);
 		if (0 == HeaderType) continue;
+		std::cout << std::endl << "HeaderType : " << HeaderType << std::endl;
 
 		// 헤더가 유효하다면
 		// 실제 데이터의 크기를 구한다.
 		const uintmax_t data_length = (length - sizeof(length) - sizeof(HeaderType));
 		if (0 >= data_length) continue;
 
-		std::ofstream file;
+		
 
 		// 데이터가 유효한 경우
 		if (HeaderType == PROTOCOL_ID_CREATEFILE)
@@ -54,6 +58,11 @@ void CTCPClient::Receive()
 				//CreateDirecotryStaticPath(pFilePath);
 				printf(">> 파일 생성 :: %s \n", pFilePath);
 				file.open(pFilePath, std::ios_base::binary);
+
+				if (file.is_open() == false)
+				{
+					file.open(pFilePath, std::ios_base::binary);
+				}
 				break;
 			}
 
@@ -164,7 +173,7 @@ int CTCPClient::ReadHeader(uintmax_t& ref_length)
 	// 헤더에서 패킷의 길이 구하기
 	// 길이가 0이하인 경우 헤더가 없는 것으로 판단한다
 	const uintmax_t PacketLength = *(uintmax_t *)buffer;
-	if (0 >= PacketLength ) return 0;
+	 if (0 >= read_size) return 0;
 
 	// 헤더가 있을 경우
 	// 헤더에서 타입을 구한다
