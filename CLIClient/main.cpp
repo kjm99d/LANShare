@@ -39,6 +39,9 @@ int main(int argc, const char* argv[])
 	CTCPClient connecter(host, port);
 	connecter.Connect();
 
+
+#if 0
+
 	std::ofstream file;
 
 
@@ -175,6 +178,10 @@ int main(int argc, const char* argv[])
 		}
 
 	}
+
+#else
+connecter.Receive();
+#endif
 
 	connecter.Close();
 
