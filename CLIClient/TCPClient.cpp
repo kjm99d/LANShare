@@ -33,6 +33,7 @@ void CTCPClient::Receive()
 		uintmax_t length = 0;
 		// 헤더를 읽고
 		const int HeaderType = ReadHeader(length);
+		ReConnect();
 		if (0 == HeaderType) continue;
 		std::cout << std::endl << "HeaderType : " << HeaderType << std::endl;
 
@@ -206,8 +207,14 @@ int CTCPClient::Connect()
 	addr.sin_addr.s_addr = inet_addr(m_address.c_str());
 	addr.sin_port = htons(m_port);
 
+	// Try ReConnect
+	int nTry = 0;
 	if (connect(m_socket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
-		return ERR_TCP_CONNECT_ERROR;
+	{
+		std::cout << "Try To Connect [" << ++nTry << std::endl;
+		Sleep(100);
+	}
+
 
 	// 논블로킹 소켓으로 변경한다.
 	SetNonBlocking();
