@@ -208,11 +208,11 @@ int CTCPClient::Connect()
 	addr.sin_port = htons(m_port);
 
 	// Try ReConnect
-	int nTry = 0;
 	if (connect(m_socket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
 	{
-		std::cout << "Try To Connect [" << ++nTry << std::endl;
+		std::cout << "Connect Failure " << std::endl;
 		Sleep(100);
+		return ERR_TCP_CONNECT_ERROR;
 	}
 
 
