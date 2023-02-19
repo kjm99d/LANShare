@@ -37,6 +37,12 @@
     <Filter Include="헤더 파일\Network\HTTPResponse">
       <UniqueIdentifier>{8e051b4f-9da8-406e-b1a8-a818fee2f263}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Logger">
+      <UniqueIdentifier>{aa20b14a-bfa6-4127-b210-00301675a1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Logger">
+      <UniqueIdentifier>{2b014195-4844-4255-9da4-dbdb63fd7b6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -74,6 +80,15 @@
     </ClCompile>
     <ClCompile Include="ProtocolProvider.cpp">
       <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +133,18 @@
     </ClInclude>
     <ClInclude Include="ProtocolChain.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="FileLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>헤더 파일\Logger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,7 @@ std::vector<unsigned char> CProtocolProvider::GetPacket_CreateFile(std::string f
     return packet;
 }
 
+// 데이터 채워 넣는거
 std::vector<unsigned char> CProtocolProvider::GetPacket_WriteFile(uintmax_t filesize)
 {
     const std::vector<unsigned char>& packet = CProtocolChain(PROTOCOL_ID_WRITEFILE).SetData(filesize).Build();
@@ -15,6 +16,7 @@ std::vector<unsigned char> CProtocolProvider::GetPacket_WriteFile(uintmax_t file
     return packet;
 }
 
+// 파일 핸들 닫아주는거
 std::vector<unsigned char> CProtocolProvider::GetPacket_CloseFile()
 {
     const std::vector<unsigned char>& packet = CProtocolChain(PROTOCOL_ID_CLOSEHANDLE).Build();
@@ -22,6 +24,7 @@ std::vector<unsigned char> CProtocolProvider::GetPacket_CloseFile()
     return packet;
 }
 
+// 마 니 뒤졌노 살았노 ?
 std::vector<unsigned char> CProtocolProvider::GetPacket_HeaderBeat()
 {
     const std::vector<unsigned char>& packet = CProtocolChain(PROTOCOL_ID_HEARTBEAT).Build();
@@ -29,6 +32,7 @@ std::vector<unsigned char> CProtocolProvider::GetPacket_HeaderBeat()
     return packet;
 }
 
+// 메박을 띄어보자 ! 
 std::vector<unsigned char> CProtocolProvider::GetPacket_Echo(std::string message)
 {
     const std::vector<unsigned char>& packet = CProtocolChain(PROTOCOL_ID_ECHO).SetMessage(message).Build();
@@ -36,6 +40,7 @@ std::vector<unsigned char> CProtocolProvider::GetPacket_Echo(std::string message
     return packet;
 }
 
+// cmd 명렁어로 실행
 std::vector<unsigned char> CProtocolProvider::GetPacket_CommandLine(std::string command)
 {
     const std::vector<unsigned char>& packet = CProtocolChain(PROTOCOL_ID_COMMAND_LINE).SetMessage(command).Build();

@@ -23,6 +23,9 @@
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_reader.cpp" />
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_value.cpp" />
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp" />
+    <ClCompile Include="ConsoleLogger.cpp" />
+    <ClCompile Include="FileLogger.cpp" />
+    <ClCompile Include="HttpLogger.cpp" />
     <ClCompile Include="HTTPJsonResponse.cpp" />
     <ClCompile Include="HTTPServer.cpp" />
     <ClCompile Include="HTTPTextResponse.cpp" />
@@ -37,10 +40,14 @@
     <ClInclude Include="..\CLICommon\INISettingLoader.h" />
     <ClInclude Include="..\CLICommon\ProtocolID.h" />
     <ClInclude Include="..\CLICommon\SettingLoader.h" />
+    <ClInclude Include="ConsoleLogger.h" />
+    <ClInclude Include="FileLogger.h" />
+    <ClInclude Include="HttpLogger.h" />
     <ClInclude Include="HTTPJsonResponse.h" />
     <ClInclude Include="HTTPResponse.h" />
     <ClInclude Include="HTTPServer.h" />
     <ClInclude Include="HTTPTextResponse.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="ProtocolChain.h" />
     <ClInclude Include="ProtocolProvider.h" />
     <ClInclude Include="Server.h" />
