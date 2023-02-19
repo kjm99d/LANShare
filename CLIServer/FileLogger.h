@@ -1,5 +1,9 @@
 ﻿#pragma once
+#include <fstream>
+#pragma hdrstop
+
 #include "Logger.h"
+
 class CFileLogger : public ILogger
 {
 public:
@@ -10,6 +14,6 @@ public:
 	void LogWrite(std::string function, int line, std::string message);
 
 private:
-	std::string m_filename;
+	std::ofstream file;
 };
 

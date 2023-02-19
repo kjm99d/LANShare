@@ -8,6 +8,7 @@
 
 #include "Logger.h"
 #include "ConsoleLogger.h"
+#include "FileLogger.h"
 
 #include "TCPServer.h"
 #include "HTTPServer.h"
@@ -102,9 +103,8 @@ std::string PostController(CTCPServer& tcp, std::string uri, std::map<string, st
 int main(int argc, const char* argv[])
 {
 	
-	ILogger * logger = new CConsoleLogger();
+	CFileLogger* logger = new CFileLogger("log.txt");
 	logger->LogWrite(__FUNCTION__, __LINE__, "Program Starting ...");
-	
 
 	signal(SIGINT, INThandler);
 
@@ -153,8 +153,8 @@ int main(int argc, const char* argv[])
 	tcp.Clear();
 	// ===============================================================================
 
-
 	delete logger;
+	
 	return 0;
 }
 
