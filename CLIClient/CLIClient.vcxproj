@@ -68,22 +68,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp" />
+    <ClCompile Include="..\CLICommon\Logger\ConsoleLogger.cpp" />
+    <ClCompile Include="..\CLICommon\Logger\FileLogger.cpp" />
+    <ClCompile Include="..\CLICommon\Logger\HttpLogger.cpp" />
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_reader.cpp" />
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_value.cpp" />
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Socket.cpp" />
-    <ClCompile Include="TCPClient.cpp" />
-    <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Network\Socket.cpp" />
+    <ClCompile Include="Network\TCPClient.cpp" />
+    <ClCompile Include="Util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CLICommon\INISettingLoader.h" />
+    <ClInclude Include="..\CLICommon\Logger\ConsoleLogger.h" />
+    <ClInclude Include="..\CLICommon\Logger\FileLogger.h" />
+    <ClInclude Include="..\CLICommon\Logger\HttpLogger.h" />
+    <ClInclude Include="..\CLICommon\Logger\Logger.h" />
     <ClInclude Include="..\CLICommon\ProtocolID.h" />
     <ClInclude Include="..\CLICommon\SettingLoader.h" />
+    <ClInclude Include="Network\Socket.h" />
+    <ClInclude Include="Network\TCPClient.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Socket.h" />
-    <ClInclude Include="TCPClient.h" />
-    <ClInclude Include="Util.h" />
+    <ClInclude Include="Util\Util.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CLIClient.rc" />
@@ -293,7 +300,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)lib\jsoncpp\include;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)$(ProjectName)\Network\;$(SolutionDir)$(ProjectName)\Util\;$(SolutionDir)lib\jsoncpp\include\;$(SolutionDir)CLICommon\Logger\;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -302,7 +309,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)lib\jsoncpp\include;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)$(ProjectName)\Network\;$(SolutionDir)$(ProjectName)\Util\;$(SolutionDir)lib\jsoncpp\include\;$(SolutionDir)CLICommon\Logger\;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -311,7 +318,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)lib\jsoncpp\include;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)$(ProjectName)\Network\;$(SolutionDir)$(ProjectName)\Util\;$(SolutionDir)lib\jsoncpp\include\;$(SolutionDir)CLICommon\Logger\;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -320,7 +327,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)lib\jsoncpp\include;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)$(ProjectName)\Network\;$(SolutionDir)$(ProjectName)\Util\;$(SolutionDir)lib\jsoncpp\include\;$(SolutionDir)CLICommon\Logger\;$(SolutionDir)CLICommon\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
