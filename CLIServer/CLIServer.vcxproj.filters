@@ -31,11 +31,23 @@
     <Filter Include="소스 파일\lib\jsoncpp">
       <UniqueIdentifier>{1a5eafbd-b12c-4609-9eb1-5b56c8c049fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Network\HTTPResponse">
-      <UniqueIdentifier>{cb7e173b-6301-4c16-bd71-7207316664bc}</UniqueIdentifier>
+    <Filter Include="소스 파일\Logger">
+      <UniqueIdentifier>{aa20b14a-bfa6-4127-b210-00301675a1eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\Network\HTTPResponse">
-      <UniqueIdentifier>{8e051b4f-9da8-406e-b1a8-a818fee2f263}</UniqueIdentifier>
+    <Filter Include="헤더 파일\Logger">
+      <UniqueIdentifier>{2b014195-4844-4255-9da4-dbdb63fd7b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Util">
+      <UniqueIdentifier>{05b49555-e129-4545-b38d-3a5055c53027}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Util">
+      <UniqueIdentifier>{af34ca8d-c7c0-49d1-aeb3-f3c04934d924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Protocol">
+      <UniqueIdentifier>{f62da1f1-016d-4b18-bc94-87e2238b24b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Protocol">
+      <UniqueIdentifier>{39a5d4d0-578d-4f02-ae04-1b1c7c7aacaf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,18 +55,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>소스 파일\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="HTTPServer.cpp">
-      <Filter>소스 파일\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="TCPServer.cpp">
-      <Filter>소스 파일\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Util.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_reader.cpp">
@@ -66,14 +66,35 @@
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>소스 파일\lib\jsoncpp</Filter>
     </ClCompile>
-    <ClCompile Include="HTTPJsonResponse.cpp">
-      <Filter>소스 파일\Network\HTTPResponse</Filter>
+    <ClCompile Include="..\CLICommon\Logger\FileLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
     </ClCompile>
-    <ClCompile Include="HTTPTextResponse.cpp">
-      <Filter>소스 파일\Network\HTTPResponse</Filter>
+    <ClCompile Include="..\CLICommon\Logger\HttpLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
     </ClCompile>
-    <ClCompile Include="ProtocolProvider.cpp">
+    <ClCompile Include="..\CLICommon\Logger\ConsoleLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\HTTPJsonResponse.cpp">
       <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\HTTPServer.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\HTTPTextResponse.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Server.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TCPServer.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Util.cpp">
+      <Filter>소스 파일\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Protocol\ProtocolProvider.cpp">
+      <Filter>소스 파일\Protocol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,32 +113,44 @@
     <ClInclude Include="..\CLICommon\INISettingLoader.h">
       <Filter>헤더 파일\Common\SettingLoader</Filter>
     </ClInclude>
-    <ClInclude Include="HTTPServer.h">
+    <ClInclude Include="..\CLICommon\Logger\ConsoleLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\Logger\FileLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\Logger\HttpLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\Logger\Logger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\HTTPJsonResponse.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Server.h">
+    <ClInclude Include="Network\HTTPResponse.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
-    <ClInclude Include="TCPServer.h">
+    <ClInclude Include="Network\HTTPServer.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Util.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="HTTPJsonResponse.h">
-      <Filter>헤더 파일\Network\HTTPResponse</Filter>
-    </ClInclude>
-    <ClInclude Include="HTTPResponse.h">
-      <Filter>헤더 파일\Network\HTTPResponse</Filter>
-    </ClInclude>
-    <ClInclude Include="HTTPTextResponse.h">
-      <Filter>헤더 파일\Network\HTTPResponse</Filter>
-    </ClInclude>
-    <ClInclude Include="ProtocolProvider.h">
+    <ClInclude Include="Network\HTTPTextResponse.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
-    <ClInclude Include="ProtocolChain.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Network\Server.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TCPServer.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Util.h">
+      <Filter>헤더 파일\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol\ProtocolChain.h">
+      <Filter>헤더 파일\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol\ProtocolProvider.h">
+      <Filter>헤더 파일\Protocol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

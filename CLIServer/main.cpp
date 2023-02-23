@@ -6,6 +6,10 @@
 #include <iostream>
 #include <istream>
 
+#include "Logger.h"
+#include "ConsoleLogger.h"
+#include "FileLogger.h"
+
 #include "TCPServer.h"
 #include "HTTPServer.h"
 #include "Util.h"
@@ -98,6 +102,10 @@ std::string PostController(CTCPServer& tcp, std::string uri, std::map<string, st
 
 int main(int argc, const char* argv[])
 {
+	
+	CFileLogger* logger = new CFileLogger("log.txt");
+	logger->LogWrite(__FUNCTION__, __LINE__, "Program Starting ...");
+
 	signal(SIGINT, INThandler);
 
 	http.SetPort(5004);
@@ -110,6 +118,8 @@ int main(int argc, const char* argv[])
 	constexpr long nPort = 5003;
 	tcp.SetPort(nPort);
 	tcp.Bind();
+
+	
 
 
 	// 명령어 입력 받기
@@ -142,6 +152,9 @@ int main(int argc, const char* argv[])
 	http.Clear();
 	tcp.Clear();
 	// ===============================================================================
+
+	delete logger;
+	
 	return 0;
 }
 

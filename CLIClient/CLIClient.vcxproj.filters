@@ -31,12 +31,21 @@
     <Filter Include="헤더 파일\Network">
       <UniqueIdentifier>{4d699162-410e-4fc4-bbf6-19d4031afc84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Logger">
+      <UniqueIdentifier>{926e54c9-dfc3-404f-a379-b53a73bfef52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Logger">
+      <UniqueIdentifier>{36a10630-4fa9-497a-bac2-69d6ecac4e67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Util">
+      <UniqueIdentifier>{4b9544ea-d1a3-4de1-aa18-8acea30bf145}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Util">
+      <UniqueIdentifier>{fb7dcf3b-cdd9-47b0-bf5f-3f8a05641900}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PakcetReader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="..\CLICommon\INISettingLoader.cpp">
@@ -51,11 +60,23 @@
     <ClCompile Include="..\lib\jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>소스 파일\lib\jsoncpp</Filter>
     </ClCompile>
-    <ClCompile Include="TCPClient.cpp">
+    <ClCompile Include="..\CLICommon\Logger\FileLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CLICommon\Logger\HttpLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CLICommon\Logger\ConsoleLogger.cpp">
+      <Filter>소스 파일\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Socket.cpp">
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Util.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Network\TCPClient.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Util.cpp">
+      <Filter>소스 파일\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,20 +86,32 @@
     <ClInclude Include="..\CLICommon\ProtocolID.h">
       <Filter>헤더 파일\Common</Filter>
     </ClInclude>
-    <ClInclude Include="PakcetReader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\CLICommon\SettingLoader.h">
       <Filter>헤더 파일\Common\SettingLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\CLICommon\INISettingLoader.h">
       <Filter>헤더 파일\Common\SettingLoader</Filter>
     </ClInclude>
-    <ClInclude Include="TCPClient.h">
+    <ClInclude Include="..\CLICommon\Logger\ConsoleLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\Logger\FileLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\Logger\HttpLogger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\Logger\Logger.h">
+      <Filter>헤더 파일\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TCPClient.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Util.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Network\Socket.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Util.h">
+      <Filter>헤더 파일\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

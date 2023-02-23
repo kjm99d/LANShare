@@ -3,9 +3,11 @@
 #include <WinSock2.h>
 #pragma comment (lib , "ws2_32.lib")
 
+#include <vector>
 #include <string>
-
-
+#include <fstream>
+#include <stdint.h>
+#include <ProtocolID.h>
 
 #pragma hdrstop
 
@@ -26,6 +28,9 @@ public:
 	int Connect();
 	int Close();
 	void ReConnect();
+
+	void Receive();
+	int ReadHeader(uintmax_t& ref_length);
 
 private:
 	void SetNonBlocking();

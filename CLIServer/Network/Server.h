@@ -45,7 +45,6 @@ protected:
 
 	void SafeSend(SOCKET& ref_sock, char* buffer, int length); // Legacy
 	void SafeSend(SOCKET& ref_sock, const std::string& buffer);
-
 	bool SafeRecv(SOCKET& ref_sock, std::string& ref_buffer);
 
 private:
