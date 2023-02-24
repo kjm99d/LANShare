@@ -173,6 +173,7 @@ void PrintCommand()
 	printf("| [3] 클라이언트 상태 확인하기                               | \n");
 	printf("| [4] 에코 메세지 전송하기                                   | \n");
 	printf("| [5] CommandLine 명령 전송하기                              | \n");
+	printf("| [6] 파일목록 조회하기                                      | \n");
 	printf("| ---------------------------------------------------------- | \n");
 	printf("| COMMAND >> ");
 	// 현재 커서 정보를 가져온다
@@ -242,6 +243,18 @@ void PrintCommand()
 		if (cmd.compare("q") != 0)
 			tcp.CommandLine(cmd);
 		break;
+	}
+	case 6:
+	{
+		std::string dir;
+		std::getline(cin, dir);
+		std::getline(cin, dir);
+		const auto & files = tcp.GetFileList(dir);
+		for (auto file : files)
+		{
+			std::cout << "Directory : " << file["is_dir"] << ", ";
+			std::cout << "Name : " << file["name"] << " " << std::endl;;
+		}
 	}
 	default:
 		break;
