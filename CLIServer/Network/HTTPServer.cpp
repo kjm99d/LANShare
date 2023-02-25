@@ -168,7 +168,10 @@ bool CHTTPServer::Parse(const string& data, RequestHeader& ref)
 		if (Split(vec, tokens[1], "?"))
 		{
 			ref.url = vec[0]; // URL
-			Split(vec2, vec[1], "&");
+			if (false == Split(vec2, vec[1], "&"))
+			{
+				vec2.emplace_back(vec[1]);
+			}
 
 			for (auto v : vec2)
 			{
