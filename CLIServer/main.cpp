@@ -32,6 +32,23 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string
 
 		return dispatcher.JSON(200, json);
 	}
+	else if (uri.compare("/ftp") == 0)
+	{
+		auto elem = querystring.find("path");
+		if (elem == querystring.end())
+		{
+
+		} 
+		else
+		{
+			auto path = elem->second;
+			path = Util::URLDecode(path);
+			std::cout << "Input Path = " << path << std::endl;
+
+			return dispatcher.JSON(200, tcp.GetFileList(path), "*");
+		}
+
+	}
 	else if (uri.compare("/ResponseFromText") == 0)
 	{
 
