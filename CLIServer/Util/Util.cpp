@@ -29,3 +29,31 @@ BOOL Util::OpenFileDialog(char* buffer, int length)
 	return ret;
 }
 
+/**
+ * URL 인코딩 된 문자열을 디코딩하여 원문을 구한다.
+ *
+ * \param src - 인코딩 된 문자열
+ * \return
+ */
+std::string Util::URLDecode(const std::string& src)
+{
+	std::string ret;
+	char ch;
+	int i, ii;
+	for (i = 0; i < src.length(); i++) 
+	{
+		if (src[i] == '%') 
+		{
+			sscanf_s(src.substr(i + 1, 2).c_str(), "%x", &ii);
+			ch = static_cast<char>(ii);
+			ret += ch;
+			i = i + 2;
+		}
+		else 
+		{
+			ret += src[i];
+		}
+	}
+
+	return ret;
+}
