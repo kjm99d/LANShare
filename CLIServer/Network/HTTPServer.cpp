@@ -94,12 +94,23 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 
 				closesocket(m_client);
 
+				ClearRequest();
+
 				ret = true;
 			}
 		}
 	}
 
 	return ret;
+
+}
+
+void CHTTPServer::ClearRequest()
+{
+	this->header.queryPayloads.clear();
+	this->header.querystring.clear();
+	this->header.header.clear();
+	this->header.jsonPayloads.clear();
 
 }
 

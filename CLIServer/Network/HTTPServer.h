@@ -101,6 +101,7 @@ public:
 public:
 	bool Receive(CTCPServer& tcp);
 	bool ReceiveV2(CTCPServer& tcp);
+	void ClearRequest();
 
 private:
 	string TcpCallbackSelectorFromV1(CTCPServer& tcp);
