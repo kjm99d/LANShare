@@ -6,7 +6,51 @@
 
     <script type="text/javascript" src="./js/jquery-3.6.3.min.js"></script>
     <script>
+            const strServerURL = "http://localhost:5004"
+            var absPath = "C:\\";
+
+
+            function FTP(path) {
+                console.log(path)
+                // 첫 요청시 C드라이브에 파일정보를 가져온다.
+                $.get({
+                    url: strServerURL + "/ftp?path=" + path,
+                    success: (res) => {
+                        $("#ftp_body").empty();
+                        absPath = absPath.replace(absPath, path);
+
+                        let row = "";
+                        for (item of res) {
+
+                            const is_dir = item["is_dir"];
+                            const file_type = (is_dir ? "📂" : "📄")
+                            const name = item["name"];
+                            const file_size = (item["size"] === undefined ? "" : item["size"])
+
+                            row = row + "<tr>";
+                            row = row + "<td>" + file_type + "</td>";
+                            row = row + "<td>" + name + "</td>";
+                            row = row + "<td>" + file_size + "</td>";
+
+                            if (is_dir)
+                                row = row + "<td onclick=FTP(\"" + (absPath + name) + "\")>" + "⏬" + "<td>"
+
+                            row = row + "</tr>";
+
+                        }
+
+                        $("#ftp_body").append(row);
+                    },
+                    error: (xhr, status, err) => {
+
+                    }
+                });
+            }
+
         $(document).ready(function () {
+
+
+
             const onClickSendAllButton = () => {
 
                 const strFileSrc = $("#filepath").val();
@@ -45,11 +89,22 @@
                     }
                 });
             };
-
+            
             // SetEvent
             $("#btnSendAll").on("click", onClickSendAllButton);
+
+
+            
+            FTP(absPath);
+            
         });
     </script>
+
+    <style>
+        tr {
+            border : 1px solid black;
+        }
+    </style>
 </head>
 
 <body>
@@ -57,6 +112,25 @@
     <a>Target </a><input type="text" /> </br>
     <a>Filename </a><input type="text" id="filename" /> </br>
     <button id="btnSendAll">SendAll</button>
+
+    <p>FTP Viewer</p>
+    <p id="current_path">PATH = </p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>파일타입</th>
+                <th>파일명</th>
+                <th>용량</th>
+                <th>-</th>
+            </tr>
+        </thead>
+        <tbody id="ftp_body">
+            <tr>
+                <td>s</td>
+            </tr>
+        </tbody>
+    </table>
 
 </body>
 
