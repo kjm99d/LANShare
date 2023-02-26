@@ -106,14 +106,23 @@ void IServer::SafeSend(SOCKET& ref_sock, char* buffer, int length)
 
 	while (countdown > 0)
 	{
- 		int result = send(ref_sock, (char*)buffer + (length - countdown), countdown, 0);
-		const int err = WSAGetLastError();
-
-
-		if (err == WSAECONNRESET && result == SOCKET_ERROR)
-			break;
+		int result = send(ref_sock, (char*)buffer + (length - countdown), countdown, 0);
 		if (result == SOCKET_ERROR)
+		{
+			const int err = WSAGetLastError();
+
+			if (err == WSAECONNRESET || err == WSAECONNABORTED || err == WSAECONNRESET || err == WSAETIMEDOUT || err == WSAEHOSTUNREACH)
+			{
+				// Connection closed or timed out
+				break;
+			}
 			continue;
+		}
+		else if (result == 0)
+		{
+			// connection closed
+			break;
+		}
 
 		countdown -= result;
 	}

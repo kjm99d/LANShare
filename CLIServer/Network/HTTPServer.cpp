@@ -92,7 +92,7 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 				SafeSend(m_client, (char*)"\r\n", strlen("\r\n")); // 개행인데 ?
 				SafeSend(m_client, response->GetResponseBody());
 
-				closesocket(m_client);
+				
 
 				ClearRequest();
 
@@ -100,6 +100,8 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 			}
 		}
 	}
+
+	closesocket(m_client);
 
 	return ret;
 
