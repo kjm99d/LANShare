@@ -30,6 +30,7 @@
     <ClCompile Include="Network\HTTPJsonResponse.cpp" />
     <ClCompile Include="Network\HTTPServer.cpp" />
     <ClCompile Include="Network\HTTPTextResponse.cpp" />
+    <ClCompile Include="Network\ResponseJsonProvider.cpp" />
     <ClCompile Include="Network\Server.cpp" />
     <ClCompile Include="Network\TCPServer.cpp" />
     <ClCompile Include="Protocol\ProtocolProvider.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="Network\HTTPResponse.h" />
     <ClInclude Include="Network\HTTPServer.h" />
     <ClInclude Include="Network\HTTPTextResponse.h" />
+    <ClInclude Include="Network\ResponseJsonProvider.h" />
     <ClInclude Include="Network\Server.h" />
     <ClInclude Include="Network\TCPServer.h" />
     <ClInclude Include="Protocol\ProtocolChain.h" />

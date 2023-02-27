@@ -96,6 +96,9 @@
     <ClCompile Include="Protocol\ProtocolProvider.cpp">
       <Filter>소스 파일\Protocol</Filter>
     </ClCompile>
+    <ClCompile Include="Network\ResponseJsonProvider.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -151,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="Protocol\ProtocolProvider.h">
       <Filter>헤더 파일\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\ResponseJsonProvider.h">
+      <Filter>헤더 파일\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

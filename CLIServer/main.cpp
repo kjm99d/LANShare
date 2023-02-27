@@ -25,44 +25,26 @@ void PrintCommand();
 
 IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
 {
-	if (uri.compare("/SendTo") == 0)
-	{
-		Json::Value json;
-		json["a"] = "hello";
+	int iStatusCode = 200;
+	std::string strMessage = "";
 
-		return dispatcher.JSON(200, json);
-	}
-	else if (uri.compare("/ftp") == 0)
+	if (uri.compare("/ftp") == 0)
 	{
+		Json::Value objs;
+
+		iStatusCode = 401;
+		strMessage = "QueryString Path is not found";
+
 		auto elem = querystring.find("path");
-		if (elem == querystring.end())
-		{
-
-		} 
-		else
+		if (elem != querystring.end())
 		{
 			auto path = elem->second;
 			path = Util::URLDecode(path);
-			std::cout << "Input Path = " << path << std::endl;
-
-			return dispatcher.JSON(200, tcp.GetFileList(path), "*");
+			objs = tcp.GetFileList(path);
+			strMessage = "success";
 		}
 
-	}
-	else if (uri.compare("/ResponseFromText") == 0)
-	{
-
-		std::string text = "";
-		text += "<!DOCTYPE html>\n";
-		text += "<head><title>hello</title></head>\n";
-		text += "<body><h1>world</h1></body>\n";
-
-
-		return dispatcher.Text(200, text);
-	}
-	else if (uri.compare("/HeartBeat") == 0)
-	{
-		return dispatcher.JSON(200, tcp.HeartBeat(), "*");
+		return dispatcher.JSON(iStatusCode, strMessage, objs);
 	}
 	else
 	{
@@ -73,48 +55,6 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string
 		return dispatcher.Text(404, text);
 
 	}
-}
-
-// HTTP Callback
-std::string GetController(CTCPServer& tcp,std::string uri, std::map<string, string> querystring)
-{
-
-	return 0;
-}
-
-std::string PostController(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads)
-{
-	if (uri.compare("/SendAll") == 0)
-	{
-		Json::Value filepath = jsonPayloads["filepath"];
-		Json::Value filename = jsonPayloads["filename"];
-		if (filepath.isNull() == false && filename.isNull() == false)
-			tcp.SendAll(filepath.asString().c_str(), filename.asString().c_str());
-		
-		// Feature : 
-		// JSON 객체로 만들어서 뱉어주고
-		// 밖에서는 인터페이스로 받아오고
-
-		return "Hello, SendAll";
-	}
-	else if (uri.compare("/SendTo") == 0)
-	{
-		if (queryPayloads.find("filepath") != queryPayloads.end() && queryPayloads.find("filename") != queryPayloads.end() && queryPayloads.find("address") != queryPayloads.end())
-			tcp.SendTo(queryPayloads["address"].c_str(), queryPayloads["filepath"].c_str(), queryPayloads["filename"].c_str());
-
-		return "Hello, SendTo";
-	}
-	else if (uri.compare("/HeartBeat") == 0)
-	{
-		//tcp.HeartBeat(responseBody);
-		//responseBody = "Heart Beat";
-	}
-	else if (uri.compare("/echo") == 0)
-	{
-
-	}
-
-	return 0;
 }
 
 int main(int argc, const char* argv[])
@@ -128,8 +68,6 @@ int main(int argc, const char* argv[])
 	http.SetPort(5004);
 	http.Bind();
 
-	http.SetController(GetController);
-	http.SetController(PostController);
 	http.SetController(GetControllerV2);
 
 	constexpr long nPort = 5003;

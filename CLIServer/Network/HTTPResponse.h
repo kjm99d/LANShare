@@ -55,6 +55,7 @@ public:
 	}
 
 protected:
+	/* HTTP 표준에 따른다 */
 	std::string m_cors;
 	std::string m_httpVersion;
 	int m_statusCode;

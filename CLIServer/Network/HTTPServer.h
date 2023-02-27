@@ -13,6 +13,7 @@
 #include "HTTPTextResponse.h"
 #include "HTTPResponse.h"
 #include "TCPServer.h"
+#include "ResponseJsonProvider.h"
 
 class ResponseDispatcher;
 class CHTTPServer;
@@ -30,13 +31,16 @@ typedef struct _RequestHeader {
 
 
 // V2 지원 콜백 함수 원형
-typedef IHTTPResponse* (*fp_HTTPGetControllerV2)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
+typedef IHTTPResponse * (*fp_HTTPGetControllerV2)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
 typedef IHTTPResponse * (*fp_HTTPPostControllerV2)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, ResponseDispatcher& dispatcher);
 
 // V1 지원 콜백 함수 원형
 typedef std::string (*fp_HTTPGetController)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring);
 typedef std::string (*fp_HTTPPostController)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads);
 
+/**
+ * 콜백 컨트롤러에서 만큼은 지원하는 범위 내에서 입맛대로 호출하세요.
+ */
 class ResponseDispatcher
 {
 	/**
@@ -61,6 +65,23 @@ public:
 		response = new CHTTPJsonResponse(json);
 		response->SetCORS(cors);
 		response->SetStatusCode(statusCode);
+		return response;
+	}
+
+	/**
+	 * CResponseJsonProvider 포맷으로 응답하는 함수.
+	 * 
+	 * \param statusCode - 상태코드
+	 * \param message - 상태코드에 따른 메세지 정보
+	 * \param json - JSON 객체
+	 * \param cors - CORS 정보
+	 * \return 
+	 */
+	IHTTPResponse* JSON(int statusCode, std::string message, Json::Value json, std::string cors = "")
+	{
+		response = new CResponseJsonProvider(statusCode, message, json);
+		response->SetCORS(cors);
+		response->SetStatusCode(200);
 		return response;
 	}
 
