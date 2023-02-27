@@ -178,31 +178,31 @@ Json::Value CTCPServer::HeartBeat()
 
 Json::Value CTCPServer::GetFileList(std::string path)
 {
-	Json::Value objs;
-
-	std::filesystem::path dir = path;
-	for (const auto& file : std::filesystem::directory_iterator(dir))
+	Json::Value objs(Json::arrayValue);
+	if (std::filesystem::exists(path) && std::filesystem::is_directory(path))
 	{
-		Json::Value obj;
-
-		// 디렉토리이거나 파일이던 이름은 존재하므로, 이름을 가져온다.
-		obj["name"] = file.path().filename().u8string();
-		if (file.is_directory())
+		std::filesystem::path dir = path;
+		for (const auto& file : std::filesystem::directory_iterator(dir))
 		{
-			// 디렉토리인경우 디렉토리임을 데이터에 삽입
-			obj["is_dir"] = true;
-		}
-		else
-		{
-			// 파일인경우 파일 크기 정보 추가
-			obj["is_dir"] = false;
-			obj["size"] = file.file_size();
-			
-		}
+			Json::Value obj;
 
-		objs.append(obj);
-		
+			// 디렉토리이거나 파일이던 이름은 존재하므로, 이름을 가져온다.
+			obj["name"] = file.path().filename().u8string();
+			if (file.is_directory())
+			{
+				// 디렉토리인경우 디렉토리임을 데이터에 삽입
+				obj["is_dir"] = true;
+			}
+			else
+			{
+				// 파일인경우 파일 크기 정보 추가
+				obj["is_dir"] = false;
+				obj["size"] = file.file_size();
 
+			}
+
+			objs.append(obj);
+		}
 	}
 
 	return objs;
