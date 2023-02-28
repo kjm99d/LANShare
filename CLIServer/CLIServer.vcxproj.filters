@@ -90,14 +90,14 @@
     <ClCompile Include="Network\TCPServer.cpp">
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Util\Util.cpp">
-      <Filter>소스 파일\Util</Filter>
-    </ClCompile>
     <ClCompile Include="Protocol\ProtocolProvider.cpp">
       <Filter>소스 파일\Protocol</Filter>
     </ClCompile>
     <ClCompile Include="Network\ResponseJsonProvider.cpp">
       <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CLICommon\Util\Util.cpp">
+      <Filter>소스 파일\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="Network\ResponseJsonProvider.h">
       <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\Util\CreateMutex.h">
+      <Filter>헤더 파일\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

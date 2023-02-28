@@ -12,12 +12,21 @@
 #include <fstream>
 #include <stdint.h>
 
+#include <CreateMutex.h>
+
 bool CreateDirecotryStaticPath(std::string path);
 void HideThisWindow();
 void SetStartupProgram();
 
 int main(int argc, const char* argv[])
 {
+	CCreateMutex MyMutex("LANShare.Client.Lock");
+	if (MyMutex.exist())
+	{
+		MessageBoxA(NULL, "동시 실행", "", MB_OK);
+		return -1;
+	}
+
 	SetStartupProgram();
 
 	// 연결할 소켓 서버 주소와 포트 가져오기

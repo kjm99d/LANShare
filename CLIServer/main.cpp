@@ -13,6 +13,7 @@
 #include "TCPServer.h"
 #include "HTTPServer.h"
 #include "Util.h"
+#include "CreateMutex.h"
 
 CHTTPServer http;
 CTCPServer tcp;
@@ -41,25 +42,29 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string
 			auto path = elem->second;
 			path = Util::URLDecode(path);
 			objs = tcp.GetFileList(path);
+			iStatusCode = 200;
 			strMessage = "success";
 		}
 
-		return dispatcher.JSON(iStatusCode, strMessage, objs);
+		return dispatcher.JSON(iStatusCode, strMessage, objs, "*");
 	}
 	else
 	{
-		// Favicon.ico 같은 것들을 여기서 처리를 해주던가
-		// 404 처리를 하던가 해야함
-		std::string text = "";
-
-		return dispatcher.Text(404, text);
+		// 404 페이지 전달 하는 곳
+		return dispatcher.Text(404, "");
 
 	}
 }
 
 int main(int argc, const char* argv[])
 {
-	
+	CCreateMutex MyMutex("LANShare.Server.Lock");
+	if (MyMutex.exist())
+	{
+		MessageBoxA(NULL, "동시 실행", "", MB_OK);
+		return -1;
+	}
+
 	CFileLogger* logger = new CFileLogger("log.txt");
 	logger->LogWrite(__FUNCTION__, __LINE__, "Program Starting ...");
 

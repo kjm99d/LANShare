@@ -30,6 +30,22 @@ BOOL Util::OpenFileDialog(char* buffer, int length)
 }
 
 /**
+ * Lock 파일을 생성하여 해당 파일이 존재할 경우 파일락에 걸린 것으로 간주한다.
+ * Modern C++17 FileSystem 기능을 사용한다.
+ * 
+ * \param strLockFileName - 락 파일의 이름
+ * \return Lock 파일 생성 유무
+ */
+bool Util::CreateFileLock(std::string strLockFileName)
+{
+	namespace fs = std::filesystem;
+	const fs::path lock_file_path = strLockFileName;
+	std::ofstream lock_file{ lock_file_path };
+
+	return lock_file ? true : false;
+}
+
+/**
  * URL 인코딩 된 문자열을 디코딩하여 원문을 구한다.
  *
  * \param src - 인코딩 된 문자열

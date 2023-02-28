@@ -75,7 +75,7 @@
     <ClCompile Include="Network\TCPClient.cpp">
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Util\Util.cpp">
+    <ClCompile Include="..\CLICommon\Util\Util.cpp">
       <Filter>소스 파일\Util</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,7 +110,10 @@
     <ClInclude Include="Network\Socket.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Util\Util.h">
+    <ClInclude Include="..\CLICommon\Util\CreateMutex.h">
+      <Filter>헤더 파일\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLICommon\Util\Util.h">
       <Filter>헤더 파일\Util</Filter>
     </ClInclude>
   </ItemGroup>
