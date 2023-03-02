@@ -1,4 +1,6 @@
 # LANShare
+[![MSBuild](https://github.com/kjm99d/LANShare/actions/workflows/msbuild.yml/badge.svg)](https://github.com/kjm99d/LANShare/actions/workflows/msbuild.yml)
+
 
 LAN(Local Area Network) 토폴로지에 연결된 네트워크상에서 파일을 공유하는 프로젝트입니다.
 
