@@ -4,8 +4,11 @@
 
 LAN(Local Area Network) 토폴로지에 연결된 네트워크상에서 파일을 공유하는 프로젝트입니다.
 
-일반적으로 오프라인 환경에서 사용하기 적합합니다.
+일반적으로 오프라인 환경에서 사용하기 적합합니다.   
 
+해당 프로젝트는 LANShare-WebConsole 과 연동하여 사용할 수 있습니다.   
+https://github.com/kjm99d/LANShare-WebConsole   
+Demo : https://kjm99d.github.io/LANShare-WebConsole/   
 
 
 ![image](/doc/background.jpg)
