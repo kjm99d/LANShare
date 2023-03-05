@@ -29,8 +29,16 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string
 	int iStatusCode = 200;
 	std::string strMessage = "";
 
-	if (uri.compare("/ftp") == 0)
+	std::cout << uri;
+
+	if (uri.compare("/status") == 0)
 	{
+		return dispatcher.JSON(200, "success", NULL, "*");
+	}
+	else if (uri.compare("/ftp") == 0)
+	{
+		std::cout << "?path=" << querystring["path"] << std::endl;
+
 		Json::Value objs;
 
 		iStatusCode = 401;
@@ -96,7 +104,7 @@ int main(int argc, const char* argv[])
 		bool isHttp = http.ReceiveV2(tcp);
 		if (isHttp)
 		{
-			printf("Http Request ! \n");
+			
 		}
 		else
 		{
