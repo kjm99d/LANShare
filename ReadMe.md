@@ -19,6 +19,7 @@ RESTAPI 또는 서버프로그램을 통해 각 클라이언트에게 파일공�
 ---
 |URI|Method|QueryString|Content-Type|Body|Response Example|
 |:---|:---:|:---|:---|:---|:---|
+|/status|GET||JSON||{</br>&nbsp;&nbsp;&nbsp;"data" : 0,</br>&nbsp;&nbsp;&nbsp;"message" : "success",</br>&nbsp;&nbsp;&nbsp;"status_code" : 200</br>}|
 |/SendAll|POST||JSON|filepath - source file full path</br>filename - saved filename|
 |/SendTo|POST||JSON|address - target client address</br>filepath - source file full path</br>filename - saved filename|
 |/HeartBeat|GET|||  |[ { "address" : "127.0.0.1", "status" : true } ]|
