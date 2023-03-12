@@ -99,6 +99,35 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 				ret = true;
 			}
 		}
+		else
+		{
+
+			if (header.method.compare("OPTIONS") == 0)
+			{
+				std::string r = "";
+				r += "HTTP/1.1 204 No Content\r\n";
+				r += "Allow: OPTIONS, GET, HEAD, POST\r\n";
+				r += "Access-Control-Allow-Headers: *\r\n";
+				r += "Access-Control-Allow-Origin: *\r\n";
+				r += "Cache-Control: max-age=604800\r\n";
+				r += "Date: Thu, 13 Oct 2016 11 : 45 : 00 GMT\r\n";
+				r += "Server: EOS(lax004 / 2813)\r\n";
+				SafeSend(m_client, r);
+
+#if 0
+				SafeSend(m_client, response->GetStartLine());
+				SafeSend(m_client, response->GetContentTypeHeader());
+				SafeSend(m_client, response->GetCORSHeader().c_str());
+				SafeSend(m_client, (char*)"\r\n", strlen("\r\n")); // 개행인데 ?
+				SafeSend(m_client, response->GetResponseBody());
+#endif
+
+
+				ClearRequest();
+
+				ret = true;
+			}
+		}
 	}
 
 	closesocket(m_client);
