@@ -31,6 +31,7 @@ typedef struct _RequestHeader {
 
 
 // V2 지원 콜백 함수 원형
+typedef IHTTPResponse * (*fp_HTTPOptionsControllerV2)(std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
 typedef IHTTPResponse * (*fp_HTTPGetControllerV2)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher);
 typedef IHTTPResponse * (*fp_HTTPPostControllerV2)(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, map<string, string> queryPayloads, Json::Value jsonPayloads, ResponseDispatcher& dispatcher);
 
@@ -86,7 +87,7 @@ public:
 	}
 
 	/**
-	 * Response Header 정보에 Content-Type을 text/html 타입으로 응답하는 함수..
+	 * Response Header 정보에 Content-Type을 text/html 타입으로 응답하는 함수.
 	 * 
 	 * \param statusCode - 상태코드
 	 * \param json - std::string 객체
@@ -98,6 +99,20 @@ public:
 		response = new CHTTPTextResponse(text);
 		response->SetCORS(cors);
 		response->SetStatusCode(statusCode);
+		return response;
+	}
+
+	/**
+	 * Preflight 요청에 대한 응답을 하는 함수.
+	 * 
+	 * \param cors
+	 * \return 
+	 */
+	IHTTPResponse* Preflight(std::string cors)
+	{
+		response = new CHTTPTextResponse("");
+		response->SetCORS(cors);
+		response->SetStatusCode(200);
 		return response;
 	}
 
@@ -118,6 +133,7 @@ public:
 	// V2 Sepc
 	void SetController(fp_HTTPGetControllerV2	fp);
 	void SetController(fp_HTTPPostControllerV2	fp);
+	void SetController(fp_HTTPOptionsControllerV2	fp);
 
 public:
 	bool Receive(CTCPServer& tcp);
@@ -139,6 +155,7 @@ private:
 
 	fp_HTTPGetControllerV2	fp_GetControllerV2;
 	fp_HTTPPostControllerV2	fp_PostControllerV2;
+	fp_HTTPOptionsControllerV2 fp_OptionsControllerV2;
 
 private:
 	SOCKET m_client; // 현재 소켓

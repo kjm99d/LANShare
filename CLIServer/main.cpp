@@ -24,6 +24,12 @@ static volatile int keepRunning = 1;
 
 void PrintCommand();
 
+IHTTPResponse* OptionsControllerV2(std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
+{
+	return dispatcher.Preflight("*");
+}
+
+
 IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
 {
 	int iStatusCode = 200;
@@ -110,6 +116,7 @@ int main(int argc, const char* argv[])
 
 	http.SetController(GetControllerV2);
 	http.SetController(PostControllerV2);
+	http.SetController(OptionsControllerV2);
 
 	constexpr long nPort = 5003;
 	tcp.SetPort(nPort);

@@ -30,6 +30,12 @@ void CHTTPServer::SetController(fp_HTTPPostControllerV2 fp)
 	this->fp_PostControllerV2 = fp;
 }
 
+void CHTTPServer::SetController(fp_HTTPOptionsControllerV2 fp)
+{
+	this->fp_OptionsControllerV2 = fp;
+
+}
+
 /**
  * ControllerV1 방식에서 사용한 코드. 
  * 하지만, 현재는 가능하면 사용하지 않는다.
@@ -102,31 +108,7 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 		else
 		{
 
-			if (header.method.compare("OPTIONS") == 0)
-			{
-				std::string r = "";
-				r += "HTTP/1.1 204 No Content\r\n";
-				r += "Allow: OPTIONS, GET, HEAD, POST\r\n";
-				r += "Access-Control-Allow-Headers: *\r\n";
-				r += "Access-Control-Allow-Origin: *\r\n";
-				r += "Cache-Control: max-age=604800\r\n";
-				r += "Date: Thu, 13 Oct 2016 11 : 45 : 00 GMT\r\n";
-				r += "Server: EOS(lax004 / 2813)\r\n";
-				SafeSend(m_client, r);
 
-#if 0
-				SafeSend(m_client, response->GetStartLine());
-				SafeSend(m_client, response->GetContentTypeHeader());
-				SafeSend(m_client, response->GetCORSHeader().c_str());
-				SafeSend(m_client, (char*)"\r\n", strlen("\r\n")); // 개행인데 ?
-				SafeSend(m_client, response->GetResponseBody());
-#endif
-
-
-				ClearRequest();
-
-				ret = true;
-			}
 		}
 	}
 
@@ -172,6 +154,8 @@ IHTTPResponse* CHTTPServer::TcpCallbackSelectorFromV2(CTCPServer& tcp)
 		response = fp_GetControllerV2(tcp, url, querystring, dispatcher);
 	else if (method.compare("POST") == 0 && fp_PostControllerV2 != nullptr)
 		response = fp_PostControllerV2(tcp, url, querystring, queryPayloads, jsonPayloads, dispatcher);
+	else if (method.compare("OPTIONS") == 0 && fp_OptionsControllerV2 != nullptr)
+		response = fp_OptionsControllerV2(url, querystring, dispatcher);
 	// else 404Page
 
 	return response;
