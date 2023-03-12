@@ -30,6 +30,12 @@ void CHTTPServer::SetController(fp_HTTPPostControllerV2 fp)
 	this->fp_PostControllerV2 = fp;
 }
 
+void CHTTPServer::SetController(fp_HTTPOptionsControllerV2 fp)
+{
+	this->fp_OptionsControllerV2 = fp;
+
+}
+
 /**
  * ControllerV1 방식에서 사용한 코드. 
  * 하지만, 현재는 가능하면 사용하지 않는다.
@@ -99,6 +105,11 @@ bool CHTTPServer::ReceiveV2(CTCPServer& tcp)
 				ret = true;
 			}
 		}
+		else
+		{
+
+
+		}
 	}
 
 	closesocket(m_client);
@@ -143,6 +154,8 @@ IHTTPResponse* CHTTPServer::TcpCallbackSelectorFromV2(CTCPServer& tcp)
 		response = fp_GetControllerV2(tcp, url, querystring, dispatcher);
 	else if (method.compare("POST") == 0 && fp_PostControllerV2 != nullptr)
 		response = fp_PostControllerV2(tcp, url, querystring, queryPayloads, jsonPayloads, dispatcher);
+	else if (method.compare("OPTIONS") == 0 && fp_OptionsControllerV2 != nullptr)
+		response = fp_OptionsControllerV2(url, querystring, dispatcher);
 	// else 404Page
 
 	return response;

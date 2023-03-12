@@ -24,6 +24,12 @@ static volatile int keepRunning = 1;
 
 void PrintCommand();
 
+IHTTPResponse* OptionsControllerV2(std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
+{
+	return dispatcher.Preflight("*");
+}
+
+
 IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, ResponseDispatcher& dispatcher)
 {
 	int iStatusCode = 200;
@@ -64,6 +70,33 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string
 	}
 }
 
+
+
+IHTTPResponse* PostControllerV2(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, 
+	map<string, string> queryPayloads, Json::Value jsonPayloads, ResponseDispatcher& dispatcher)
+{
+	int iStatusCode = 200;
+	std::string strMessage = "";
+
+	std::cout << uri;
+
+	if (uri.compare("/SendAll") == 0)
+	{
+		if (true == jsonPayloads.isMember("filepath") && true == jsonPayloads.isMember("filename"))
+		{
+
+			tcp.SendAll(jsonPayloads["filepath"].asString(), jsonPayloads["filename"].asString());
+			return dispatcher.JSON(200, "success", NULL, "*");
+		}
+		return dispatcher.JSON(200, "success", NULL, "*");
+	}
+	else
+	{
+		// 404 페이지 전달 하는 곳
+		return dispatcher.Text(404, "");
+	}
+}
+
 int main(int argc, const char* argv[])
 {
 	CCreateMutex MyMutex("LANShare.Server.Lock");
@@ -82,6 +115,8 @@ int main(int argc, const char* argv[])
 	http.Bind();
 
 	http.SetController(GetControllerV2);
+	http.SetController(PostControllerV2);
+	http.SetController(OptionsControllerV2);
 
 	constexpr long nPort = 5003;
 	tcp.SetPort(nPort);
