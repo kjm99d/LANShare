@@ -1,25 +1,23 @@
-﻿
+﻿#include <locale>
 #include "TCPClient.h"
-
 #include "ProtocolID.h"			// 패킷에 정의될 프로토콜 ID
-
 #include "INISettingLoader.h"
-
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
-
 #include <fstream>
 #include <stdint.h>
-
 #include <CreateMutex.h>
 
 bool CreateDirecotryStaticPath(std::string path);
 void HideThisWindow();
 void SetStartupProgram();
 
+
 int main(int argc, const char* argv[])
 {
+	std::locale::global(std::locale("en_US.UTF-8"));
+
 	CCreateMutex MyMutex("LANShare.Client.Lock");
 	if (MyMutex.exist())
 	{
@@ -189,7 +187,7 @@ int main(int argc, const char* argv[])
 	}
 
 #else
-connecter.Receive();
+	connecter.Receive();
 #endif
 
 	connecter.Close();

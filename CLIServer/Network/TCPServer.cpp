@@ -20,7 +20,7 @@ void CTCPServer::ShowClient()
 		const char* client_addr = inet_ntoa(client.ADDR.sin_addr);
 		const u_short client_port = ntohs(client.ADDR.sin_port);
 
-		printf("[%d] 클라이언트 접속 : IP 주소 = %s\t 포트 번호 = %d\n", seq, client_addr, client_port);
+		printf(u8"[%d] 클라이언트 접속 : IP 주소 = %s\t 포트 번호 = %d\n", seq, client_addr, client_port);
 
 	}
 }
@@ -100,6 +100,7 @@ void CTCPServer::SendAll(std::string src, std::string file_name)
 
 	// 파일 버퍼 쓰기
 	ifstream file(src, std::ios_base::binary);
+	file.imbue(std::locale()); // 파일의 인코딩을 시스템 로캘로 설정
 	auto file_size = std::filesystem::file_size(src);
 	auto WriteFileHeader = CProtocolProvider::GetPacket_WriteFile(file_size);
 	for (auto client : clients)

@@ -1,4 +1,5 @@
-﻿#include <signal.h>
+﻿#include <locale>
+#include <signal.h>
 #include <iostream>
 #include <thread>
 #include <string>
@@ -14,6 +15,8 @@
 #include "HTTPServer.h"
 #include "Util.h"
 #include "CreateMutex.h"
+
+
 
 CHTTPServer http;
 CTCPServer tcp;
@@ -70,8 +73,6 @@ IHTTPResponse* GetControllerV2(CTCPServer& tcp, std::string uri, std::map<string
 	}
 }
 
-
-
 IHTTPResponse* PostControllerV2(CTCPServer& tcp, std::string uri, std::map<string, string> querystring, 
 	map<string, string> queryPayloads, Json::Value jsonPayloads, ResponseDispatcher& dispatcher)
 {
@@ -84,7 +85,6 @@ IHTTPResponse* PostControllerV2(CTCPServer& tcp, std::string uri, std::map<strin
 	{
 		if (true == jsonPayloads.isMember("filepath") && true == jsonPayloads.isMember("filename"))
 		{
-
 			tcp.SendAll(jsonPayloads["filepath"].asString(), jsonPayloads["filename"].asString());
 			return dispatcher.JSON(200, "success", NULL, "*");
 		}
@@ -99,6 +99,8 @@ IHTTPResponse* PostControllerV2(CTCPServer& tcp, std::string uri, std::map<strin
 
 int main(int argc, const char* argv[])
 {
+	std::locale::global(std::locale("en_US.UTF-8"));
+
 	CCreateMutex MyMutex("LANShare.Server.Lock");
 	if (MyMutex.exist())
 	{
@@ -163,22 +165,24 @@ int main(int argc, const char* argv[])
 
 void PrintCommand()
 {
+	std::locale::global(std::locale("en_US.UTF-8"));
+
 	COORD Cur;
 	CONSOLE_SCREEN_BUFFER_INFO a;
 	int menu_num = 0;
 
 
-	printf("| ---------------------------------------------------------- | \n");
-	printf("| ---------------------- Command Box ----------------------- | \n");
-	printf("| ---------------------------------------------------------- | \n");
-	printf("| [1] 다이얼로그로 읽기                                      | \n");
-	printf("| [2] 현재 연결된 모든 클라이언트 정보 출력                  | \n");
-	printf("| [3] 클라이언트 상태 확인하기                               | \n");
-	printf("| [4] 에코 메세지 전송하기                                   | \n");
-	printf("| [5] CommandLine 명령 전송하기                              | \n");
-	printf("| [6] 파일목록 조회하기                                      | \n");
-	printf("| ---------------------------------------------------------- | \n");
-	printf("| COMMAND >> ");
+	printf(u8"| ---------------------------------------------------------- | \n");
+	printf(u8"| ---------------------- Command Box ----------------------- | \n");
+	printf(u8"| ---------------------------------------------------------- | \n");
+	printf(u8"| [1] 다이얼로그로 읽기                                      | \n");
+	printf(u8"| [2] 현재 연결된 모든 클라이언트 정보 출력                  | \n");
+	printf(u8"| [3] 클라이언트 상태 확인하기                               | \n");
+	printf(u8"| [4] 에코 메세지 전송하기                                   | \n");
+	printf(u8"| [5] CommandLine 명령 전송하기                              | \n");
+	printf(u8"| [6] 파일목록 조회하기                                      | \n");
+	printf(u8"| ---------------------------------------------------------- | \n");
+	printf(u8"| COMMAND >> ");
 	// 현재 커서 정보를 가져온다
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &a);
 	printf("                                                |");
@@ -204,12 +208,14 @@ void PrintCommand()
 		if (Util::OpenFileDialog(szPath, MAX_PATH) == TRUE)
 		{
 			// 경로에서 파일 이름만 가져온다.
+			// TODO:: 해당 파일 경로 정보가 UTF8이 아닌 EUC-KR로 들어오는 것 같음.
+			// UTF8로 변경해서 전달해야할 것 같음.
 			int nPosLastEscape = 0;
 			for (nPosLastEscape = strlen(szPath) - 1; szPath[nPosLastEscape] != '\\'; --nPosLastEscape);
 			const char* fileName = szPath + nPosLastEscape;
 
 			tcp.SendAll(szPath, fileName);
-			printf(">> %s \n", szPath);
+			printf(u8">> %s \n", szPath);
 		}
 	}
 	break;

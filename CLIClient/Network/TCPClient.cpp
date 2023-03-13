@@ -24,10 +24,11 @@ void CTCPClient::ReConnect()
 	}
 }
 
+
 void CTCPClient::Receive()
 {
 	std::ofstream file;
-
+	file.imbue(std::locale());
 	while (true)
 	{
 		uintmax_t length = 0;
@@ -56,13 +57,16 @@ void CTCPClient::Receive()
 				int tmp_read_size = recv(m_socket, (char*)pFilePath, nPath, 0);
 				if (tmp_read_size != nPath) continue;
 				pFilePath[nPath] = 0x00; // 마지막 위치를 NULL로 준다.
+
+
 				//CreateDirecotryStaticPath(pFilePath);
-				printf(">> 파일 생성 :: %s \n", pFilePath);
-				file.open(pFilePath, std::ios_base::binary);
+				printf(u8">> 파일 생성 :: %s \n", pFilePath);
+				file.open(pFilePath, std::ios_base::out | std::ios_base::binary);
+				file.imbue(std::locale());
 
 				if (file.is_open() == false)
 				{
-					file.open(pFilePath, std::ios_base::binary);
+					file.open(pFilePath, std::ios_base::out | std::ios_base::binary);
 				}
 				break;
 			}
@@ -98,7 +102,7 @@ void CTCPClient::Receive()
 				if (file.write(buffer, tmp_read_size))
 				{
 					size_t numberOfBytesWritten = file.tellp();
-					printf(">>[%f%] Current Length = [%10d]\n", readStack / (float)iFileSize * 100.0f, tmp_read_size);
+					printf(u8">>[%f%] Current Length = [%10d]\n", readStack / (float)iFileSize * 100.0f, tmp_read_size);
 
 				}
 				//fwrite(buffer, 1, tmp_read_size, file.);
@@ -111,7 +115,7 @@ void CTCPClient::Receive()
 		}
 		else if (HeaderType == PROTOCOL_ID_CLOSEHANDLE)
 		{
-			printf(">> 파일 다운로드 완료");
+			printf(u8">> 파일 다운로드 완료");
 			file.close();
 		}
 		else if (HeaderType == PROTOCOL_ID_HEARTBEAT)
